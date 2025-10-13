@@ -1,0 +1,224 @@
+# Candace Savonen 2021
+# Updated April 2025
+
+name: Render all output courses
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, staging ]
+    paths:
+      - '*.qmd'
+      - '*.Rmd'
+      - assets/*
+      - quizzes/*
+
+jobs:
+
+  yaml-check:
+    name: Load user automation choices
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+        # Use the yaml-env-action action.
+      - name: Load environment from YAML
+        uses: doughepi/yaml-env-action@v1.0.0
+        with:
+            files: config_automation.yml # Pass a space-separated list of configuration files. Rightmost files take precedence.
+    outputs:
+      toggle_website: "${{ env.RENDER_WEBSITE }}"
+      toggle_coursera: "${{ env.RENDER_COURSERA }}"
+      toggle_leanpub: "${{ env.RENDER_LEANPUB }}"
+      make_book_txt: "${{ env.MAKE_BOOK_TXT }}"
+      rendering_docker_image: "${{ env.RENDERING_DOCKER_IMAGE }}"
+      toggle_quiz_check: "${{ env.CHECK_QUIZZES }}"
+
+  render-course:
+    name: Render course preview
+    needs: yaml-check
+    runs-on: ubuntu-latest
+    
+
+    steps:
+      - name: Run render
+        id: render
+        uses: ottrproject/ottr-preview@main
+        with:
+          toggle_website: ${{needs.yaml-check.outputs.toggle_website}}
+          preview: false
+          token: ${{ secrets.GH_PAT }}
+          docker_image: ${{needs.yaml-check.outputs.rendering_docker_image}}
+
+  render-tocless:
+    name: Render TOC-less version for Leanpub or Coursera
+    needs: [yaml-check, render-course]
+    runs-on: ubuntu-latest
+    container:
+      image: ${{needs.yaml-check.outputs.rendering_docker_image}}
+    if: ${{needs.yaml-check.outputs.toggle_coursera == 'true' || needs.yaml-check.outputs.toggle_leanpub == 'true'}}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Login as github-actions bot
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://${GH_PAT}@github.com/${GITHUB_REPOSITORY}
+          git fetch origin
+          git pull --rebase --allow-unrelated-histories --strategy-option=ours
+
+      # Rendered content for Leanpub and Coursera is very similar.
+      # This job creates a shared scaffold for both.
+      - name: Run TOC-less version of render -- Rmd version
+        if: ${{needs.yaml-check.outputs.toggle_website == 'rmd' }}
+        id: tocless_rmd
+        run: Rscript -e "ottrpal::render_without_toc()"
+
+      - name: Run TOC-less version of render -- quarto version
+        id: tocless_quarto
+        if: ${{needs.yaml-check.outputs.toggle_website == 'quarto' }}
+        run: |
+          Rscript -e "quarto::quarto_render('.', metadata = list(sidebar = F, toc = F),
+          quarto_args = c('--output-dir', 'docs/no_toc/'))"
+
+      # Commit the TOC-less version files
+      - name: Commit tocless bookdown files
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git add --force docs/no_toc*
+          git commit -m 'Render toc-less' || echo "No changes to commit"
+          git status docs/no_toc*
+          git push --force -u origin main  || echo "No changes to push"
+
+  render-leanpub:
+    name: Finish Leanpub prep
+    needs: [yaml-check, render-tocless]
+    runs-on: ubuntu-latest
+    container:
+      image: jhudsl/base_ottr:dev
+    if: ${{needs.yaml-check.outputs.toggle_leanpub == 'true'}}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Login as github actions bot
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://${GH_PAT}@github.com/${GITHUB_REPOSITORY}
+          git fetch origin
+          git pull --rebase --allow-unrelated-histories --strategy-option=ours
+          ls docs/no_toc
+
+      # Create screenshots
+      - name: Run the screenshot creation
+        run: |
+          # Remove old folder
+          rm -rf resources/chapt_screen_images
+
+          # Make new screenshots
+          chapt_urls=$(Rscript -e " \
+           Sys.setenv(CHROMOTE_CHROME = '/usr/bin/vivaldi'); \
+           ottrpal::make_screenshots( \
+            token = '${{ secrets.GH_PAT }}', \
+            repo = '$GITHUB_REPOSITORY' )" \
+            )
+
+      # We want a fresh run of the renders each time
+      - name: Delete manuscript/
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          rm -rf manuscript/
+          git add .
+          git commit -m 'Delete manuscript folder' || echo "No changes to commit"
+          git push -u origin main || echo "No changes to push"
+
+      - name: Run ottrpal::bookdown_to_embed_leanpub -- No Quiz
+        if: ${{ needs.yaml-check.outputs.toggle_quiz_check != 'true'}}
+        run: |
+          Rscript -e "ottrpal::website_to_embed_leanpub(
+            render = FALSE, \
+            chapt_img_key = 'resources/chapt_screen_images/chapter_urls.tsv', \
+            make_book_txt = as.logical('${{needs.yaml-check.outputs.make_book_txt == 'true'}}'), \
+            quiz_dir = NULL)"
+
+      - name: Run ottrpal::bookdown_to_embed_leanpub -- with Quiz
+        if: ${{ needs.yaml-check.outputs.toggle_quiz_check == 'true'}}
+        run: |
+          Rscript -e "ottrpal::website_to_embed_leanpub(
+            render = FALSE, \
+            chapt_img_key = 'resources/chapt_screen_images/chapter_urls.tsv', \
+            make_book_txt = as.logical('${{needs.yaml-check.outputs.make_book_txt == 'true'}}'))"
+
+      # Commit the rendered Leanpub files
+      - name: Commit rendered Leanpub files
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git add --force manuscript/* || "No files to add"
+          git add --force resources/* || "No files to add"
+          git add --force docs/* || "No files to add"
+          git commit -m 'Render Leanpub' || echo "No changes to commit"
+          git status docs/*
+          git pull --rebase --allow-unrelated-histories --strategy-option=ours --autostash
+          git push --force --set-upstream origin main || echo "No changes to push"
+
+  render-coursera:
+    name: Finish Coursera prep
+    needs: [yaml-check, render-tocless]
+    runs-on: ubuntu-latest
+    container:
+      image: ${{needs.yaml-check.outputs.rendering_docker_image}}
+    if: ${{needs.yaml-check.outputs.toggle_coursera == 'true'}}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Login as github action
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://${GH_PAT}@github.com/${GITHUB_REPOSITORY}
+          git fetch origin
+          git pull --rebase --allow-unrelated-histories --strategy-option=ours
+
+      # Run Coursera version
+      - name: Convert Leanpub quizzes to Coursera
+        if: needs.yaml-check.outputs.toggle_leanpub == 'true' && needs.yaml-check.outputs.toggle_quiz_check == 'true'
+        id: coursera
+        run: Rscript -e "ottrpal::convert_coursera_quizzes()"
+
+      # Commit the rendered files
+      # Only commit coursera quizzes if the directory is present
+      - name: Commit rendered Coursera files
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -d 'coursera_quizzes' ]; then
+            git add --force coursera_quizzes/*
+          fi
+          git add --force resources/*
+          git add --force docs/*
+          git commit -m 'Render Coursera quizzes' || echo "No changes to commit"
+          git status
+          git push --force -u origin main  || echo "No changes to push"

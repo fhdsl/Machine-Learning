@@ -1,0 +1,39 @@
+# Candace Savonen Jan 2025
+# For info on how to update this file see: https://github.com/marketplace/actions/repo-file-sync-action#%EF%B8%8F-sync-configuration
+
+group:
+  - files:
+      - source: .github/workflows/
+        dest: .github/workflows/
+        deleteOrphaned: true
+        exclude: |
+          transfer-rendered-files.yml
+          send-updates.yml
+          test-send-updates.yml
+          starting-course.yml
+          release-notes.yml
+          docker-test.yml
+          docker-build.yml
+      - source: scripts/
+        dest: scripts/
+        deleteOrphaned: true
+      - source: assets/box_images/
+        dest: assets/box_images/
+      - source: resources/exclude_files.txt
+        dest: resources/exclude_files.txt
+      - source: config_automation.yml
+        dest: config_automation.yml
+  # Repositories to receive changes
+    repos: |
+      jhudsl/Containers_for_Scientists
+
+###ADD NEW REPO HERE following the format above#
+
+### These are custom groups for syncing -- not all files needs to be synced
+  - files:
+    - source: config_automation.yml
+      dest: config_automation.yml
+    - source: .github/workflows/pull-request.yml
+      dest: .github/workflows/pull-request.yml
+    repos: |
+      ottrproject/OTTR_Template_Quarto
