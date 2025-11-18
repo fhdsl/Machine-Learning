@@ -44,27 +44,27 @@
     "href": "01-Problem-Setup.html",
     "title": "2  Problem Set-Up",
     "section": "",
-    "text": "2.1 Population and Sample",
+    "text": "2.1 Population and Sample\nThe way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:\nPopulation: The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.\nSample: A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.\nIn Machine Learning problems, we often like to take two, non-overlapping samples from the population: the Training Set, and the Test Set. We train our model using the Training Set, which gives us a function \\(f()\\) that relates the predictors to the outcome. Then, for our main use cases:\nIf the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here [todo].",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Problem Set-Up</span>"
     ]
   },
   {
-    "objectID": "01-Problem-Setup.html#how-to-pick-a-model",
-    "href": "01-Problem-Setup.html#how-to-pick-a-model",
+    "objectID": "01-Problem-Setup.html#population-and-sample",
+    "href": "01-Problem-Setup.html#population-and-sample",
     "title": "2  Problem Set-Up",
-    "section": "2.2 How to pick a model?",
-    "text": "2.2 How to pick a model?",
+    "section": "",
+    "text": "Prediction: We use the trained model to predict the outcome using predictors from the Test Set and compare the predicted outcome to the true value in the Test Set.\nInference: We examine the function \\(f()\\)’s trained values, which are called parameters. For instance, \\(f(Age,BMI,Income,…)=20 + 3 \\cdot Age - .2 \\cdot BMI + .00015 \\cdot Income\\), the values \\(20\\), \\(3\\), \\(-.2\\), and \\(.00015\\) are the parameters. Because these parameters are derived from the Training Set, they are an estimated quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Problem Set-Up</span>"
     ]
   },
   {
-    "objectID": "01-Problem-Setup.html#how-to-evaluate-a-model",
-    "href": "01-Problem-Setup.html#how-to-evaluate-a-model",
+    "objectID": "01-Problem-Setup.html#how-to-evaluate-and-pick-a-model",
+    "href": "01-Problem-Setup.html#how-to-evaluate-and-pick-a-model",
     "title": "2  Problem Set-Up",
-    "section": "2.3 How to evaluate a model?",
-    "text": "2.3 How to evaluate a model?",
+    "section": "2.2 How to evaluate and pick a model?",
+    "text": "2.2 How to evaluate and pick a model?\nThe little example model we showcased above is an example of a linear model, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Problem Set-Up</span>"
     ]
@@ -73,8 +73,8 @@
     "objectID": "01-Problem-Setup.html#preview-linear-regression",
     "href": "01-Problem-Setup.html#preview-linear-regression",
     "title": "2  Problem Set-Up",
-    "section": "2.4 Preview: linear regression",
-    "text": "2.4 Preview: linear regression",
+    "section": "2.3 Preview: linear regression",
+    "text": "2.3 Preview: linear regression",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Problem Set-Up</span>"
     ]
