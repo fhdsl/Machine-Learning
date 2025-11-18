@@ -253,18 +253,18 @@ window.Quarto = {
 <p>Suppose that we are given the <a href="https://www.cdc.gov/nchs/nhanes/"><strong>N</strong>ational <strong>H</strong>ealth <strong>A</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>urvey (NHANES) dataset</a> and want to build a machine learning model to predict a person’s blood pressure based on clinical and demographic variables.</p>
 <p>Using algebraic expressions, we formulate the following:</p>
 <p><span class="math display">\[
-BloodPressure=f(Age, BMI, Income, ...)+\epsilon
+BloodPressure=f(Age, BMI, Income)+\epsilon
 \]</span></p>
 <p>Where <span class="math inline">\(f(Age, BMI, Income, ...)\)</span> is a machine learning model that takes in the clinical and demographic variables and make a prediction on the <span class="math inline">\(BloodPressure\)</span>. This model is not perfect to give the correct prediction, so there is an “error term” <span class="math inline">\(\epsilon\)</span> (Greek letter epsilon) that captures the imperfectness of the model.</p>
 <p>A machine learning model, such as the one described above, has <em>two main uses:</em></p>
 <ol type="1">
 <li><p><strong>Prediction:</strong> How accurately can we predict outcomes?</p>
 <ul>
-<li>Given a new person’s <span class="math inline">\(Age, BMI, Income, …\)</span> , predict the person’s <span class="math inline">\(BloodPressure\)</span> and compare it to the true value.</li>
+<li>Given a new person’s <span class="math inline">\(Age, BMI, Income\)</span> , predict the person’s <span class="math inline">\(BloodPressure\)</span> and compare it to the true value.</li>
 </ul></li>
 <li><p><strong>Inference:</strong> Which predictors are associated with the response, and how strong is the association?</p>
 <ul>
-<li>Suppose the model is described as <span class="math inline">\(BloodPressure = f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>. Each variable has a relationship to the outcome: an increase of <span class="math inline">\(Age\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 3. This measures the strength of association between a variable and the outcome.</li>
+<li>Suppose the model is described as <span class="math inline">\(BloodPressure = f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>. Each variable has a relationship to the outcome: an increase of <span class="math inline">\(Age\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 3. This measures the strength of association between a variable and the outcome.</li>
 </ul></li>
 </ol>
 <section id="population-and-sample" class="level2" data-number="2.1">
@@ -275,7 +275,7 @@ BloodPressure=f(Age, BMI, Income, ...)+\epsilon
 <p>In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the <strong>Training Set</strong>, and the <strong>Test Set</strong>. We <strong>train</strong> our model using the Training Set, which gives us a function <span class="math inline">\(f()\)</span> that relates the predictors to the outcome. Then, for our main use cases:</p>
 <ol type="1">
 <li><strong>Prediction:</strong> We use the trained model to predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.</li>
-<li><strong>Inference</strong>: We examine the function <span class="math inline">\(f()\)</span>’s trained values, which are called <strong>parameters</strong>. For instance, <span class="math inline">\(f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>, the values <span class="math inline">\(20\)</span>, <span class="math inline">\(3\)</span>, <span class="math inline">\(-.2\)</span>, and <span class="math inline">\(.00015\)</span> are the parameters. Because these parameters are derived from the Training Set, they are an <em>estimated</em> quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.</li>
+<li><strong>Inference</strong>: We examine the function <span class="math inline">\(f()\)</span>’s trained values, which are called <strong>parameters</strong>. For instance, <span class="math inline">\(f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>, the values <span class="math inline">\(20\)</span>, <span class="math inline">\(3\)</span>, <span class="math inline">\(-.2\)</span>, and <span class="math inline">\(.00015\)</span> are the parameters. Because these parameters are derived from the Training Set, they are an <em>estimated</em> quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.</li>
 </ol>
 <p>If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here [todo].</p>
 </section>
@@ -284,8 +284,8 @@ BloodPressure=f(Age, BMI, Income, ...)+\epsilon
 <p>The little example model we showcased above is an example of a <strong>linear model</strong>, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model. Let’s start with the use case of prediction.</p>
 <section id="prediction" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="prediction"><span class="header-section-number">2.2.1</span> Prediction</h3>
-<p>Suppose we try to use the variable <span class="math inline">\(BMI\)</span> to predict <span class="math inline">\(BloodPressure\)</span> using a linear model.</p>
-<div id="d53b5a44" class="cell" data-execution_count="1">
+<p>Suppose we try to use the single variable <span class="math inline">\(BMI\)</span> to predict <span class="math inline">\(BloodPressure\)</span> using a linear model.</p>
+<div id="2938934e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>nhanes <span class="op">=</span> pd.read_csv(<span class="st">"classroom_data/NHANES.csv"</span>)</span>
