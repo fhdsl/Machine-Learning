@@ -1,6 +1,6 @@
 # Problem Set-Up
 
-*In the first week of class, we will go over...*
+*In the first week of class, we will go over what machine learning models are good for, what kind of machine learning models are out there and how does one evaluate and pick models, all at a conceptual level. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.*
 
 Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's blood pressure based on clinical and demographic variables.
 
