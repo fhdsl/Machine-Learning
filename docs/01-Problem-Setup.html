@@ -178,9 +178,8 @@ window.Quarto = {
    
   <ul>
   <li><a href="#population-and-sample" id="toc-population-and-sample" class="nav-link active" data-scroll-target="#population-and-sample"><span class="header-section-number">2.1</span> Population and Sample</a></li>
-  <li><a href="#how-to-pick-a-model" id="toc-how-to-pick-a-model" class="nav-link" data-scroll-target="#how-to-pick-a-model"><span class="header-section-number">2.2</span> How to pick a model?</a></li>
-  <li><a href="#how-to-evaluate-a-model" id="toc-how-to-evaluate-a-model" class="nav-link" data-scroll-target="#how-to-evaluate-a-model"><span class="header-section-number">2.3</span> How to evaluate a model?</a></li>
-  <li><a href="#preview-linear-regression" id="toc-preview-linear-regression" class="nav-link" data-scroll-target="#preview-linear-regression"><span class="header-section-number">2.4</span> Preview: linear regression</a></li>
+  <li><a href="#how-to-evaluate-and-pick-a-model" id="toc-how-to-evaluate-and-pick-a-model" class="nav-link" data-scroll-target="#how-to-evaluate-and-pick-a-model"><span class="header-section-number">2.2</span> How to evaluate and pick a model?</a></li>
+  <li><a href="#preview-linear-regression" id="toc-preview-linear-regression" class="nav-link" data-scroll-target="#preview-linear-regression"><span class="header-section-number">2.3</span> Preview: linear regression</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ottrproject/OTTR_Quarto/edit/main/01-Problem-Setup.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfBvVELBg8lcynKj0TrzMlov1zil-Sbkh9VhMKRcSpeo1xo6g/viewform" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -212,23 +211,36 @@ window.Quarto = {
 <p><span class="math display">\[
 BloodPressure=f(Age, BMI, Income, ...)+\epsilon
 \]</span></p>
-<p>Where <span class="math inline">\(f(Age, BMI, Income, ...)\)</span> is a machine learning model that takes in the clinical and demographic variables and make a prediction on the <span class="math inline">\(BloodPressure\)</span>. This model is not perfect to give a perfect, correct prediction, so there is an “error term” <span class="math inline">\(\epsilon\)</span> that captures the imperfectness of the model.</p>
+<p>Where <span class="math inline">\(f(Age, BMI, Income, ...)\)</span> is a machine learning model that takes in the clinical and demographic variables and make a prediction on the <span class="math inline">\(BloodPressure\)</span>. This model is not perfect to give the correct prediction, so there is an “error term” <span class="math inline">\(\epsilon\)</span> (Greek letter epsilon) that captures the imperfectness of the model.</p>
 <p>A machine learning model, such as the one described above, has <em>two main uses:</em></p>
+<ol type="1">
+<li><p><strong>Prediction:</strong> How accurately can we predict outcomes?</p>
 <ul>
-<li><p><strong>Prediction:</strong> How accurately can we predict outcomes?</p></li>
-<li><p><strong>Inference:</strong> Which predictors are associated with the response, and how strong is the association?</p></li>
-</ul>
+<li>Given a new person’s <span class="math inline">\(Age, BMI, Income, …\)</span> , predict the person’s <span class="math inline">\(BloodPressure\)</span> and compare it to the true value.</li>
+</ul></li>
+<li><p><strong>Inference:</strong> Which predictors are associated with the response, and how strong is the association?</p>
+<ul>
+<li>Suppose the model is described as <span class="math inline">\(BloodPressure = f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>. Each variable has a relationship to the outcome: an increase of <span class="math inline">\(Age\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 3. This measures the strength of association between a variable and the outcome.</li>
+</ul></li>
+</ol>
 <section id="population-and-sample" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="population-and-sample"><span class="header-section-number">2.1</span> Population and Sample</h2>
+<p>The way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:</p>
+<p><strong>Population:</strong> The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.</p>
+<p><strong>Sample:</strong> A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.</p>
+<p>In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the <strong>Training Set</strong>, and the <strong>Test Set</strong>. We <strong>train</strong> our model using the Training Set, which gives us a function <span class="math inline">\(f()\)</span> that relates the predictors to the outcome. Then, for our main use cases:</p>
+<ol type="1">
+<li><strong>Prediction:</strong> We use the trained model to predict the outcome using predictors from the Test Set and compare the predicted outcome to the true value in the Test Set.</li>
+<li><strong>Inference</strong>: We examine the function <span class="math inline">\(f()\)</span>’s trained values, which are called <strong>parameters</strong>. For instance, <span class="math inline">\(f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>, the values <span class="math inline">\(20\)</span>, <span class="math inline">\(3\)</span>, <span class="math inline">\(-.2\)</span>, and <span class="math inline">\(.00015\)</span> are the parameters. Because these parameters are derived from the Training Set, they are an <em>estimated</em> quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.</li>
+</ol>
+<p>If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here [todo].</p>
 </section>
-<section id="how-to-pick-a-model" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="how-to-pick-a-model"><span class="header-section-number">2.2</span> How to pick a model?</h2>
+<section id="how-to-evaluate-and-pick-a-model" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="how-to-evaluate-and-pick-a-model"><span class="header-section-number">2.2</span> How to evaluate and pick a model?</h2>
+<p>The little example model we showcased above is an example of a <strong>linear model</strong>, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model.</p>
 </section>
-<section id="how-to-evaluate-a-model" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="how-to-evaluate-a-model"><span class="header-section-number">2.3</span> How to evaluate a model?</h2>
-</section>
-<section id="preview-linear-regression" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="preview-linear-regression"><span class="header-section-number">2.4</span> Preview: linear regression</h2>
+<section id="preview-linear-regression" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="preview-linear-regression"><span class="header-section-number">2.3</span> Preview: linear regression</h2>
 
 
 </section>
