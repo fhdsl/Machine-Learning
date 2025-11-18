@@ -15,10 +15,7 @@ book:
   
   chapters:
     - index.qmd
-    - intro.qmd
-    - part: "First Section"
-      chapters:
-        - first-section-new-chapter.qmd
+    - 01-Problem-Setup.qmd
     - conclusion.qmd
     - references.qmd
   

@@ -1,9 +1,21 @@
 # Machine Learning
 
+## Target Audience
+
+The course is intended for folks with basic Python programming experience who are interested in predictive modeling and model interpretation from a machine learning perspective. The course is also appropriate for scientists and clinicians who are interested to communicate with data scientists to understand the ins and outs of a machine learning problem. The pre-requisites for the course is [Intro to Python](https://hutchdatascience.org/Intro_to_Python/), or being able to use Lists and Pandas Dataframes to manipulate data. Basic knowledge of statistics, such as hypothesis testing and p-values, is also strongly recommended.
+
+## Curriculum
+
+The course covers the framework of machine learning for predictive modeling and model interpretation from a practitioner's perspective. You will be able to implement several popular machine learning techniques based on the question of interest and the dataset at hand. You will then evaluate the model based on their performance and diagnostics to understand its strengths and limitations. Technical mathematics and algorithms will not be emphasized.
+
 ## Learning Objectives
 
--   **Compare** machine learning models in terms of flexibility vs. interpretability.
--   **Compare** machine learning model performance in terms of bias and variance trade-off.
+-   **Compare** machine learning models in terms of flexibility vs. Interpretability.
+
+-   **Compare** machine learning model performance in terms of overfitting and underfitting.
+
 -   **Implement** **and Interpret** models such as linear regression, logistic regression, and lasso using a Tidy dataset via existing packages such as Sklearn and Statsmodels.
+
 -   **Evaluate** model performance metrics for inference and prediction, such as AIC, BIC, MSE, and AUC, under a cross validated framework if appropriate.
+
 -   **Explain** the difference in machine learning techniques between low and high dimensional data.

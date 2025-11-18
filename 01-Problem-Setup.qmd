@@ -1,0 +1,27 @@
+# Problem Set-Up
+
+*In the first week of class, we will go over...*
+
+Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's blood pressure based on clinical and demographic variables.
+
+Using algebraic expressions, we formulate the following:
+
+$$
+BloodPressure=f(Age, BMI, Income, ...)+\epsilon 
+$$
+
+Where $f(Age, BMI, Income, ...)$ is a machine learning model that takes in the clinical and demographic variables and make a prediction on the $BloodPressure$. This model is not perfect to give a perfect, correct prediction, so there is an "error term" $\epsilon$ that captures the imperfectness of the model.
+
+A machine learning model, such as the one described above, has *two main uses:*
+
+-   **Prediction:** How accurately can we predict outcomes?
+
+-   **Inference:** Which predictors are associated with the response, and how strong is the association?
+
+## Population and Sample
+
+## How to pick a model?
+
+## How to evaluate a model?
+
+## Preview: linear regression
