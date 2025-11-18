@@ -249,7 +249,7 @@ window.Quarto = {
 </header>
 
 
-<p><em>In the first week of class, we will go over…</em></p>
+<p><em>In the first week of class, we will go over what machine learning models are good for, what kind of machine learning models are out there and how does one evaluate and pick models, all at a conceptual level. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.</em></p>
 <p>Suppose that we are given the <a href="https://www.cdc.gov/nchs/nhanes/"><strong>N</strong>ational <strong>H</strong>ealth <strong>A</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>urvey (NHANES) dataset</a> and want to build a machine learning model to predict a person’s blood pressure based on clinical and demographic variables.</p>
 <p>Using algebraic expressions, we formulate the following:</p>
 <p><span class="math display">\[
@@ -285,7 +285,7 @@ BloodPressure=f(Age, BMI, Income, ...)+\epsilon
 <section id="prediction" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="prediction"><span class="header-section-number">2.2.1</span> Prediction</h3>
 <p>Suppose we try to use the variable <span class="math inline">\(BMI\)</span> to predict <span class="math inline">\(BloodPressure\)</span> using a linear model.</p>
-<div id="2c1f20ff" class="cell" data-execution_count="1">
+<div id="d53b5a44" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>nhanes <span class="op">=</span> pd.read_csv(<span class="st">"classroom_data/NHANES.csv"</span>)</span>
