@@ -7,7 +7,7 @@ Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E
 Using algebraic expressions, we formulate the following:
 
 $$
-BloodPressure=f(Age, BMI, Income, ...)+\epsilon 
+BloodPressure=f(Age, BMI, Income)+\epsilon 
 $$
 
 Where $f(Age, BMI, Income, ...)$ is a machine learning model that takes in the clinical and demographic variables and make a prediction on the $BloodPressure$. This model is not perfect to give the correct prediction, so there is an "error term" $\epsilon$ (Greek letter epsilon) that captures the imperfectness of the model.
@@ -16,11 +16,11 @@ A machine learning model, such as the one described above, has *two main uses:*
 
 1.  **Prediction:** How accurately can we predict outcomes?
 
-    -   Given a new person's $Age, BMI, Income, …$ , predict the person's $BloodPressure$ and compare it to the true value.
+    -   Given a new person's $Age, BMI, Income$ , predict the person's $BloodPressure$ and compare it to the true value.
 
 2.  **Inference:** Which predictors are associated with the response, and how strong is the association?
 
-    -   Suppose the model is described as $BloodPressure = f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $BloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
+    -   Suppose the model is described as $BloodPressure = f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $BloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
 
 ## Population and Sample
 
@@ -33,7 +33,7 @@ The way we formulate machine learning model is based on some fundamental concept
 In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the **Training Set**, and the **Test Set**. We **train** our model using the Training Set, which gives us a function $f()$ that relates the predictors to the outcome. Then, for our main use cases:
 
 1.  **Prediction:** We use the trained model to predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.
-2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. For instance, $f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$, the values $20$, $3$, $-.2$, and $.00015$ are the parameters. Because these parameters are derived from the Training Set, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
+2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. For instance, $f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$, the values $20$, $3$, $-.2$, and $.00015$ are the parameters. Because these parameters are derived from the Training Set, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
 
 If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here \[todo\].
 
@@ -43,7 +43,7 @@ The little example model we showcased above is an example of a **linear model**,
 
 ### Prediction
 
-Suppose we try to use the variable $BMI$ to predict $BloodPressure$ using a linear model.
+Suppose we try to use the single variable $BMI$ to predict $BloodPressure$ using a linear model.
 
 ```{python}
 import pandas as pd
