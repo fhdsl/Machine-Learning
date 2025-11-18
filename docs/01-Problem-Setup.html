@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -178,8 +212,18 @@ window.Quarto = {
    
   <ul>
   <li><a href="#population-and-sample" id="toc-population-and-sample" class="nav-link active" data-scroll-target="#population-and-sample"><span class="header-section-number">2.1</span> Population and Sample</a></li>
-  <li><a href="#how-to-evaluate-and-pick-a-model" id="toc-how-to-evaluate-and-pick-a-model" class="nav-link" data-scroll-target="#how-to-evaluate-and-pick-a-model"><span class="header-section-number">2.2</span> How to evaluate and pick a model?</a></li>
-  <li><a href="#preview-linear-regression" id="toc-preview-linear-regression" class="nav-link" data-scroll-target="#preview-linear-regression"><span class="header-section-number">2.3</span> Preview: linear regression</a></li>
+  <li><a href="#how-to-evaluate-and-pick-a-model" id="toc-how-to-evaluate-and-pick-a-model" class="nav-link" data-scroll-target="#how-to-evaluate-and-pick-a-model"><span class="header-section-number">2.2</span> How to evaluate and pick a model?</a>
+  <ul class="collapse">
+  <li><a href="#prediction" id="toc-prediction" class="nav-link" data-scroll-target="#prediction"><span class="header-section-number">2.2.1</span> Prediction</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">2.2.2</span> Inference</a></li>
+  </ul></li>
+  <li><a href="#the-numpy-package" id="toc-the-numpy-package" class="nav-link" data-scroll-target="#the-numpy-package"><span class="header-section-number">2.3</span> The NumPy Package</a>
+  <ul class="collapse">
+  <li><a href="#subsetting" id="toc-subsetting" class="nav-link" data-scroll-target="#subsetting"><span class="header-section-number">2.3.1</span> Subsetting</a></li>
+  <li><a href="#how-to-split-the-data-for-training-and-testing" id="toc-how-to-split-the-data-for-training-and-testing" class="nav-link" data-scroll-target="#how-to-split-the-data-for-training-and-testing"><span class="header-section-number">2.3.2</span> How to split the data for training and testing</a></li>
+  </ul></li>
+  <li><a href="#linear-regression-preview" id="toc-linear-regression-preview" class="nav-link" data-scroll-target="#linear-regression-preview"><span class="header-section-number">2.4</span> Linear Regression Preview?</a></li>
+  <li><a href="#appendix-other-terms" id="toc-appendix-other-terms" class="nav-link" data-scroll-target="#appendix-other-terms"><span class="header-section-number">2.5</span> Appendix: Other terms</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ottrproject/OTTR_Quarto/edit/main/01-Problem-Setup.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfBvVELBg8lcynKj0TrzMlov1zil-Sbkh9VhMKRcSpeo1xo6g/viewform" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -230,17 +274,84 @@ BloodPressure=f(Age, BMI, Income, ...)+\epsilon
 <p><strong>Sample:</strong> A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.</p>
 <p>In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the <strong>Training Set</strong>, and the <strong>Test Set</strong>. We <strong>train</strong> our model using the Training Set, which gives us a function <span class="math inline">\(f()\)</span> that relates the predictors to the outcome. Then, for our main use cases:</p>
 <ol type="1">
-<li><strong>Prediction:</strong> We use the trained model to predict the outcome using predictors from the Test Set and compare the predicted outcome to the true value in the Test Set.</li>
+<li><strong>Prediction:</strong> We use the trained model to predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.</li>
 <li><strong>Inference</strong>: We examine the function <span class="math inline">\(f()\)</span>’s trained values, which are called <strong>parameters</strong>. For instance, <span class="math inline">\(f(Age,BMI,Income,…)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income\)</span>, the values <span class="math inline">\(20\)</span>, <span class="math inline">\(3\)</span>, <span class="math inline">\(-.2\)</span>, and <span class="math inline">\(.00015\)</span> are the parameters. Because these parameters are derived from the Training Set, they are an <em>estimated</em> quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.</li>
 </ol>
 <p>If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here [todo].</p>
 </section>
 <section id="how-to-evaluate-and-pick-a-model" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="how-to-evaluate-and-pick-a-model"><span class="header-section-number">2.2</span> How to evaluate and pick a model?</h2>
-<p>The little example model we showcased above is an example of a <strong>linear model</strong>, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model.</p>
+<p>The little example model we showcased above is an example of a <strong>linear model</strong>, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model. Let’s start with the use case of prediction.</p>
+<section id="prediction" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="prediction"><span class="header-section-number">2.2.1</span> Prediction</h3>
+<p>Suppose we try to use the variable <span class="math inline">\(BMI\)</span> to predict <span class="math inline">\(BloodPressure\)</span> using a linear model.</p>
+<div id="2c1f20ff" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>nhanes <span class="op">=</span> pd.read_csv(<span class="st">"classroom_data/NHANES.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>nhanes[<span class="st">'BloodPressure'</span>] <span class="op">=</span> nhanes[<span class="st">'BPDiaAve'</span>] <span class="op">+</span> (nhanes[<span class="st">'BPSysAve'</span>] <span class="op">-</span> nhanes[<span class="st">'BPDiaAve'</span>]) <span class="op">/</span> <span class="dv">3</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>plot <span class="op">=</span> sns.lmplot(x<span class="op">=</span><span class="st">"BMI"</span>, y<span class="op">=</span><span class="st">"BloodPressure"</span>, data<span class="op">=</span>nhanes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-2-output-1.png" width="470" height="470" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We examine how well our model performs in terms of prediction by seeing how close our model’s predicted <span class="math inline">\(BloodPressure\)</span> is to the Training Set’s true <span class="math inline">\(BloodPressure\)</span>: the <strong>Training Error</strong>. We also take the model to the Testing Set to predict <span class="math inline">\(BloodPressure\)</span> using predictors from the Test Set and compare to the true <span class="math inline">\(BloodPressure\)</span> in the Test Set: the <strong>Testing Error.</strong> We want the model’s Training Error to be adequately small on the Training Set, but what we really care about is the Testing Error, because it is a true test of how the model performs on unseen, new data, and allows us to see how generalizeable the model is.</p>
+<p>Okay, let’s how it does on the Training Set:</p>
+<p>[graph here]</p>
+<p>And then on the Test Set:</p>
+<p>[graph here]</p>
+<p>We see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of <strong>Underfitting</strong>, where our model failed to capture the complexity of the data in both the Training and Testing Set.</p>
+<p>Let’s return to the drawing board and fit a new type of model that has more flexibility around complicated patterns of data. Let’s see how it does on the Training Set:</p>
+<p>[graph here]</p>
+<p>And then on the Test Set:</p>
+<p>[graph here]</p>
+<p>We see that the Training Error is low, but the Testing Error is huge! This is an example of <strong>Overfitting</strong>, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set.</p>
+<p>We want to find a model that is “just right” that doesn’t underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. See below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/testing_error-01.png" class="img-fluid figure-img"></p>
+<figcaption>Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.</figcaption>
+</figure>
+</div>
+<p>Also see this interactive tutorial: <a href="https://mlu-explain.github.io/bias-variance/+">https://mlu-explain.github.io/bias-variance/</a></p>
 </section>
-<section id="preview-linear-regression" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="preview-linear-regression"><span class="header-section-number">2.3</span> Preview: linear regression</h2>
+<section id="inference" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="inference"><span class="header-section-number">2.2.2</span> Inference</h3>
+<p>Let’s consider how we would evaluate and choose models for Inference.</p>
+<p>For models with low number of predictors, there are some plots and metrics one would consider, such as BIC.</p>
+<p>For models with high number of predictors, we will talk about it in more detail in weeks 5 &amp; 6.</p>
+<p>Besides how flexible a model is, another categorization of machine models is how <strong>interpretable</strong> they are. The more interpretable a model is, the better one can describe how each variable has an predictor of the model. That makes the inference process easier.</p>
+<p>Below are some example models mapped to these two dichotomies. The linear model lies very similar as the “Least Squares” models.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/flexibility_vs_interpretability.png" class="img-fluid figure-img" width="500"></p>
+<figcaption>Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="the-numpy-package" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="the-numpy-package"><span class="header-section-number">2.3</span> The NumPy Package</h2>
+<section id="subsetting" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="subsetting"><span class="header-section-number">2.3.1</span> Subsetting</h3>
+</section>
+<section id="how-to-split-the-data-for-training-and-testing" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="how-to-split-the-data-for-training-and-testing"><span class="header-section-number">2.3.2</span> How to split the data for training and testing</h3>
+</section>
+</section>
+<section id="linear-regression-preview" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="linear-regression-preview"><span class="header-section-number">2.4</span> Linear Regression Preview?</h2>
+</section>
+<section id="appendix-other-terms" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="appendix-other-terms"><span class="header-section-number">2.5</span> Appendix: Other terms</h2>
+<p>Parametric vs.&nbsp;Non-parametric</p>
+<p>Bias-Variance trade-off</p>
+<p>Supervised vs.&nbsp;Unsupervised</p>
 
 
 </section>
