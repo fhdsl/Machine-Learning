@@ -2,15 +2,33 @@
 
 *In the first week of class, we will go over what machine learning models are good for, what kind of machine learning models are out there and how does one evaluate and pick models, all at a conceptual level. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.*
 
-Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's blood pressure based on clinical and demographic variables.
+Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to classify whether a person has hypertension blood pressure based on clinical and demographic variables.
 
 Using algebraic expressions, we formulate the following:
 
 $$
-BloodPressure=f(Age, BMI, Income)+\epsilon 
+Hypertension=f(Age, BMI, Income) 
 $$
 
-Where $f(Age, BMI, Income, ...)$ is a machine learning model that takes in the clinical and demographic variables and make a prediction on the $BloodPressure$. This model is not perfect to give the correct prediction, so there is an "error term" $\epsilon$ (Greek letter epsilon) that captures the imperfectness of the model.
+Where $f(Age, BMI, Income, ...)$ is a machine learning model that takes in the clinical and demographic variables and make a classification on whether someone has $Hypertension$.
+
+```{python}
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+import statsmodels.api as sm
+
+nhanes = pd.read_csv("classroom_data/NHANES.csv")
+nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
+
+plt.scatter(nhanes.BMI, nhanes.Hypertension, alpha=.3, color="brown", label="label")
+
+```
+
+(This model is not perfect to give the correct prediction, so sometimes there is an "error term" $\epsilon$ (Greek letter epsilon) that captures the imperfectness of the model.)
 
 A machine learning model, such as the one described above, has *two main uses:*
 
@@ -48,25 +66,72 @@ Suppose we try to use the single variable $BMI$ to predict $BloodPressure$ using
 ```{python}
 import pandas as pd
 import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+import statsmodels.api as sm
+
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
 nhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
 
-plot = sns.lmplot(x="BMI", y="BloodPressure", data=nhanes)
+y, X = model_matrix("BloodPressure ~ BMI", nhanes)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+model = sm.OLS(y_train, X_train)
+results = model.fit()
+results.summary()
+
+plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
+plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
+plt.legend();
+
 ```
 
 We examine how well our model performs in terms of prediction by seeing how close our model's predicted $BloodPressure$ is to the Training Set's true $BloodPressure$: the **Training Error**. We also take the model to the Testing Set to predict $BloodPressure$ using predictors from the Test Set and compare to the true $BloodPressure$ in the Test Set: the **Testing Error.** We want the model's Training Error to be adequately small on the Training Set, but what we really care about is the Testing Error, because it is a true test of how the model performs on unseen, new data, and allows us to see how generalizeable the model is.
 
 Okay, let's how it does on the Training Set:
 
+```{python}
+np.mean((results.fittedvalues - y_train.BloodPressure) ** 2)
+```
+
+```{python}
+results.mse_resid
+```
+
 \[graph here\]
 
 And then on the Test Set:
 
-\[graph here\]
+```{python}
+np.mean((results.get_prediction(X_test).predicted_mean - y_test.BloodPressure) ** 2)
+
+```
+
+```{python}
+
+plt.plot(X_test.BMI, results.get_prediction(X_test).predicted_mean, label="fitted line")
+plt.scatter(X_test.BMI, y_test, alpha=.3, color="black", label="test set")
+plt.legend();
+```
 
 We see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of **Underfitting**, where our model failed to capture the complexity of the data in both the Training and Testing Set.
 
 Let's return to the drawing board and fit a new type of model that has more flexibility around complicated patterns of data. Let's see how it does on the Training Set:
+
+```{python}
+y, X = model_matrix("BloodPressure ~ poly(BMI, degree=5)", nhanes)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+model = sm.OLS(y_train, X_train)
+results = model.fit()
+results.summary()
+
+plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
+plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
+plt.legend();
+```
 
 \[graph here\]
 
