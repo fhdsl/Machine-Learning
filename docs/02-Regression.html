@@ -274,7 +274,7 @@ window.Quarto = {
 <section id="prediction" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="prediction"><span class="header-section-number">3.2.1</span> Prediction</h3>
 <p>Suppose we try to use the single variable <span class="math inline">\(BMI\)</span> to predict <span class="math inline">\(BloodPressure\)</span> using a linear model.</p>
-<div id="b7ad8e12" class="cell" data-execution_count="1">
+<div id="2db1d15e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -306,13 +306,13 @@ window.Quarto = {
 </div>
 <p>We examine how well our model performs in terms of prediction by seeing how close our model’s predicted <span class="math inline">\(BloodPressure\)</span> is to the Training Set’s true <span class="math inline">\(BloodPressure\)</span>: the <strong>Training Error</strong>. We also take the model to the Testing Set to predict <span class="math inline">\(BloodPressure\)</span> using predictors from the Test Set and compare to the true <span class="math inline">\(BloodPressure\)</span> in the Test Set: the <strong>Testing Error.</strong> We want the model’s Training Error to be adequately small on the Training Set, but what we really care about is the Testing Error, because it is a true test of how the model performs on unseen, new data, and allows us to see how generalizeable the model is.</p>
 <p>Okay, let’s how it does on the Training Set:</p>
-<div id="9b82cf2a" class="cell" data-execution_count="2">
+<div id="7d434e3c" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>np.mean((results.fittedvalues <span class="op">-</span> y_train.BloodPressure) <span class="op">**</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>np.float64(152.36993639963026)</code></pre>
 </div>
 </div>
-<div id="378efddd" class="cell" data-execution_count="3">
+<div id="5a147f70" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>results.mse_resid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>np.float64(152.44179206404883)</code></pre>
@@ -320,13 +320,13 @@ window.Quarto = {
 </div>
 <p>[graph here]</p>
 <p>And then on the Test Set:</p>
-<div id="6826d069" class="cell" data-execution_count="4">
+<div id="e0aab7aa" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.mean((results.get_prediction(X_test).predicted_mean <span class="op">-</span> y_test.BloodPressure) <span class="op">**</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>np.float64(155.83019738256448)</code></pre>
 </div>
 </div>
-<div id="96bbe6f8" class="cell" data-execution_count="5">
+<div id="1d7dc384" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.plot(X_test.BMI, results.get_prediction(X_test).predicted_mean, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_test.BMI, y_test, alpha<span class="op">=</span><span class="fl">.3</span>, color<span class="op">=</span><span class="st">"black"</span>, label<span class="op">=</span><span class="st">"test set"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -340,7 +340,7 @@ window.Quarto = {
 </div>
 <p>We see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of <strong>Underfitting</strong>, where our model failed to capture the complexity of the data in both the Training and Testing Set.</p>
 <p>Let’s return to the drawing board and fit a new type of model that has more flexibility around complicated patterns of data. Let’s see how it does on the Training Set:</p>
-<div id="6ff0b83e" class="cell" data-execution_count="6">
+<div id="4919d554" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#y, X = model_matrix("BloodPressure ~ poly(BMI, degree=5)", nhanes)</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)</span></span>

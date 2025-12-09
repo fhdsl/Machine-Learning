@@ -226,6 +226,7 @@ window.Quarto = {
   <li><a href="#numpy" id="toc-numpy" class="nav-link" data-scroll-target="#numpy"><span class="header-section-number">2.2.1</span> NumPy</a></li>
   <li><a href="#what-is-this-data-structure" id="toc-what-is-this-data-structure" class="nav-link" data-scroll-target="#what-is-this-data-structure"><span class="header-section-number">2.2.2</span> What is this data structure?</a></li>
   </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">2.3</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ottrproject/OTTR_Quarto/edit/main/01-Problem-Setup.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfBvVELBg8lcynKj0TrzMlov1zil-Sbkh9VhMKRcSpeo1xo6g/viewform" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -275,7 +276,7 @@ Hypertension=f(Age, BMI)
 </ol>
 <p>Let’s start with the easiest case for just <span class="math inline">\(Hypertension = f(Age)\)</span>, a single predictor.</p>
 <p>Before we fit models, we often visualize the data to get a sense whether our setup makes sense.</p>
-<div id="a3646300" class="cell" data-execution_count="1">
+<div id="f8050da5" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -302,7 +303,7 @@ Hypertension=f(Age, BMI)
 </div>
 <p>Okay, great, it looks like when someone’s BMI is higher, then it is more likely that the person has Hypertension.</p>
 <p>Now, let’s build the model <span class="math inline">\(Hypertension = f(BMI)\)</span> to make a prediction of <span class="math inline">\(Hyptertension\)</span> given <span class="math inline">\(BMI\)</span>.</p>
-<div id="988ad8fc" class="cell" data-execution_count="2">
+<div id="0cb97a2f" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"Hypertension ~ BMI"</span>, nhanes)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>logit_model <span class="op">=</span> sm.Logit(y, X).fit() </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -329,7 +330,7 @@ Hypertension=f(Age, BMI)
 <p>Instead of boxplots, we plotted the data just using points, with “Hypertension” having a probability of 1 and “No Hypertension” having a probability of 0. We see that we have a fitted line in blue for every value of BMI, which represents our machine learning model <span class="math inline">\(f(BMI)\)</span>. This model is called <strong>Logistic Regression</strong>.</p>
 <p>The first thing we want to investigate about this model is how well it performs in terms of Classification. Just using <span class="math inline">\(BMI\)</span> as a variable, what is the Accuracy of <span class="math inline">\(f(BMI)\)</span> classifying whether a person has <span class="math inline">\(Hypertension\)</span>? Notice that first <span class="math inline">\(f(BMI)\)</span> gives us continuous probability values, such as given a BMI of 30, there is a 20% chance the person has Hypertension. We need a discrete cutoff of this model to decide whether the person has Hypertension.</p>
 <p>A reasonable cutoff to start is 50%: if the probability of having Hypertension is &gt;=50%, then classify that person having Hypertension. Same for &lt; 50%. This is called the <strong>Decision Boundary</strong>.</p>
-<div id="413a4a2b" class="cell" data-execution_count="3">
+<div id="fa842769" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(X.BMI, logit_model.predict(), color<span class="op">=</span><span class="st">"blue"</span>, label<span class="op">=</span><span class="st">"Fitted Line"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.scatter(X.BMI, y, alpha<span class="op">=</span><span class="fl">.3</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Data"</span>)</span>
@@ -347,7 +348,7 @@ Hypertension=f(Age, BMI)
 </div>
 </div>
 <p>Given this decision boundary, what is the accuracy?</p>
-<div id="980739d3" class="cell" data-execution_count="4">
+<div id="7290d2b2" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (confusion_matrix, accuracy_score)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>prediction_cut <span class="op">=</span> [<span class="dv">1</span> <span class="cf">if</span> x <span class="op">&gt;=</span> <span class="fl">.5</span> <span class="cf">else</span> <span class="dv">0</span> <span class="cf">for</span> x <span class="kw">in</span> logit_model.predict()]</span>
@@ -358,7 +359,7 @@ Hypertension=f(Age, BMI)
 </div>
 <p>Okay, that’s a starting point!</p>
 <p>We can break down classification accuracy to four additional results:</p>
-<div id="039f6146" class="cell" data-execution_count="5">
+<div id="897349a7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tn, fp, fn, tp <span class="op">=</span> confusion_matrix(y, prediction_cut).ravel().tolist()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"True Positive:"</span>, tp, <span class="st">"</span><span class="ch">\n</span><span class="st">False Positive: "</span>, fp, <span class="st">"</span><span class="ch">\n</span><span class="st">True Negative: "</span>, tn, <span class="st">"</span><span class="ch">\n</span><span class="st">False Negative:"</span>, fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -370,7 +371,7 @@ False Negative: 2153</code></pre>
 </div>
 <p>define tp, fp, tn, fn</p>
 <p>define confusion matrix</p>
-<div id="125ff488" class="cell" data-execution_count="6">
+<div id="12bf2e05" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y, prediction_cut) </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Confusion Matrix : </span><span class="ch">\n</span><span class="st">"</span>, cm) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -454,9 +455,13 @@ False Negative: 2153</code></pre>
 <section id="what-is-this-data-structure" class="level3" data-number="2.2.2">
 <h3 data-number="2.2.2" class="anchored" data-anchor-id="what-is-this-data-structure"><span class="header-section-number">2.2.2</span> What is this data structure?</h3>
 <p>If you are not sure about what your variable’s data structure, use the <code>type()</code> function, such as <code>type(mystery_data)</code> and it will tell you.</p>
-
-
 </section>
+</section>
+<section id="exercises" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.3</span> Exercises</h2>
+<p>Exercises for week 1 can be <a href="https://colab.research.google.com/drive/1FmxlZoFAlSJczejg5x0nL4eM6UzfmINH?usp=sharing">found here</a>.</p>
+
+
 </section>
 
 </main> <!-- /main -->
