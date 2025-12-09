@@ -40,6 +40,7 @@ from formulaic import model_matrix
 import statsmodels.api as sm
 
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
+nhanes.drop_duplicates()
 nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
 
 nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
@@ -184,7 +185,7 @@ So, let's see some examples:
 
     -   Two-dimensional subsetting, similar to lists: `data[:5, :3]` subsets for for the first 5 rows and first three columns. `data[:5, [0, 2, 3]]` subsets for the first 5 rows and 1st, 3rd, and 4th columns.
 
-    -   `data.shape` gives the shape of the NumPy Array. `data.dim` will tell you the number of dimensions of the NumPy Array.
+    -   `data.shape` gives the shape of the NumPy Array. `data.ndim` will tell you the number of dimensions of the NumPy Array.
 
 -   **Methods** that can be used on the object:
 
