@@ -197,3 +197,7 @@ More introduction can be found on [NumPy's tutorial guide](https://numpy.org/dev
 ### What is this data structure?
 
 If you are not sure about what your variable's data structure, use the `type()` function, such as `type(mystery_data)` and it will tell you.
+
+## Exercises
+
+Exercises for week 1 can be [found here](https://colab.research.google.com/drive/1FmxlZoFAlSJczejg5x0nL4eM6UzfmINH?usp=sharing).
