@@ -1,0 +1,140 @@
+# Regression
+
+*In the second week of class, we blah blah blah*
+
+## Population and Sample
+
+The way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:
+
+**Population:** The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.
+
+**Sample:** A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.
+
+In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the **Training Set**, and the **Test Set**. We **train** our model using the Training Set, which gives us a function $f()$ that relates the predictors to the outcome. Then, for our main use cases:
+
+1.  **Prediction:** We use the trained model to predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.
+2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. For instance, $f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$, the values $20$, $3$, $-.2$, and $.00015$ are the parameters. Because these parameters are derived from the Training Set, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
+
+If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here \[todo\].
+
+## How to evaluate and pick a model?
+
+The little example model we showcased above is an example of a **linear model**, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model. Let's start with the use case of prediction.
+
+### Prediction
+
+Suppose we try to use the single variable $BMI$ to predict $BloodPressure$ using a linear model.
+
+```{python}
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+import statsmodels.api as sm
+
+nhanes = pd.read_csv("classroom_data/NHANES.csv")
+nhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
+
+y, X = model_matrix("BloodPressure ~ BMI", nhanes)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+model = sm.OLS(y_train, X_train)
+results = model.fit()
+results.summary()
+
+plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
+plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
+plt.legend();
+
+```
+
+We examine how well our model performs in terms of prediction by seeing how close our model's predicted $BloodPressure$ is to the Training Set's true $BloodPressure$: the **Training Error**. We also take the model to the Testing Set to predict $BloodPressure$ using predictors from the Test Set and compare to the true $BloodPressure$ in the Test Set: the **Testing Error.** We want the model's Training Error to be adequately small on the Training Set, but what we really care about is the Testing Error, because it is a true test of how the model performs on unseen, new data, and allows us to see how generalizeable the model is.
+
+Okay, let's how it does on the Training Set:
+
+```{python}
+np.mean((results.fittedvalues - y_train.BloodPressure) ** 2)
+```
+
+```{python}
+results.mse_resid
+```
+
+\[graph here\]
+
+And then on the Test Set:
+
+```{python}
+np.mean((results.get_prediction(X_test).predicted_mean - y_test.BloodPressure) ** 2)
+
+```
+
+```{python}
+
+plt.plot(X_test.BMI, results.get_prediction(X_test).predicted_mean, label="fitted line")
+plt.scatter(X_test.BMI, y_test, alpha=.3, color="black", label="test set")
+plt.legend();
+```
+
+We see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of **Underfitting**, where our model failed to capture the complexity of the data in both the Training and Testing Set.
+
+Let's return to the drawing board and fit a new type of model that has more flexibility around complicated patterns of data. Let's see how it does on the Training Set:
+
+```{python}
+#y, X = model_matrix("BloodPressure ~ poly(BMI, degree=5)", nhanes)
+
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+#model = sm.OLS(y_train, X_train)
+#results = model.fit()
+#results.summary()
+
+#plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
+#plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
+#plt.legend();
+```
+
+\[graph here\]
+
+And then on the Test Set:
+
+\[graph here\]
+
+We see that the Training Error is low, but the Testing Error is huge! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set.
+
+We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. See below:
+
+![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/testing_error-01.png){alt="Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor."}
+
+Also see this interactive tutorial: [https://mlu-explain.github.io/bias-variance/](https://mlu-explain.github.io/bias-variance/+)
+
+### Inference
+
+Let's consider how we would evaluate and choose models for Inference.
+
+For models with low number of predictors, there are some plots and metrics one would consider, such as BIC.
+
+For models with high number of predictors, we will talk about it in more detail in weeks 5 & 6.
+
+Besides how flexible a model is, another categorization of machine models is how **interpretable** they are. The more interpretable a model is, the better one can describe how each variable has an predictor of the model. That makes the inference process easier.
+
+Below are some example models mapped to these two dichotomies. The linear model lies very similar as the "Least Squares" models.
+
+![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor](images/flexibility_vs_interpretability.png){alt="Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor" width="500"}
+
+## The NumPy Package
+
+### Subsetting
+
+### How to split the data for training and testing
+
+## Linear Regression Preview?
+
+## Appendix: Other terms
+
+Parametric vs. Non-parametric
+
+Bias-Variance trade-off
+
+Supervised vs. Unsupervised

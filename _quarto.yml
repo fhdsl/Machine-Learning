@@ -16,6 +16,7 @@ book:
   chapters:
     - index.qmd
     - 01-Problem-Setup.qmd
+    - 02-Regression.qmd
     - conclusion.qmd
     - references.qmd
   
