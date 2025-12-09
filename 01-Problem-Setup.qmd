@@ -1,16 +1,34 @@
 # Problem Set-Up
 
-*In the first week of class, we will go over what machine learning models are good for, what kind of machine learning models are out there and how does one evaluate and pick models, all at a conceptual level. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.*
+*In the first week of class, we will go over what machine learning models are good for, and look at an classification model as an example to show the model development workflow. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.*
+
+## Classification model example
 
 Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to classify whether a person has hypertension blood pressure based on clinical and demographic variables.
 
 Using algebraic expressions, we formulate the following:
 
 $$
-Hypertension=f(Age, BMI, Income) 
+Hypertension=f(Age, BMI) 
 $$
 
-Where $f(Age, BMI, Income, ...)$ is a machine learning model that takes in the clinical and demographic variables and make a classification on whether someone has $Hypertension$.
+Where $f(Age, BMI)$ is a machine learning model that takes in the variables $Age$, $BMI$, and make a classification on whether someone has $Hypertension$.
+
+A machine learning model, such as the one described above, has *two main uses:*
+
+1.  **Classification and Prediction:** How accurately can we classify or predict the outcome?
+
+    -   Classification: Given a new person's $Age, BMI$, classify whether the person has $Hyptertension$. The outcome is a yes/no classification.
+    -   Prediction: Given a person's $Age, BMI$, predict the person's $BloodPressure$ value. The outcome is a continuous value.
+
+2.  **Inference:** Which predictors are associated with the response, and how strong is the association?
+
+    -   Classification model example: What is the odds ratio of of $Age$ on $Hyptertension$? If the odds ratio of $Age$ on $Hyptertension$ is 2, then an increase of 1 in $Age$ increases the odds of $Hyptertension$ by 2.
+    -   Prediction model example: Suppose the model is described as $BloodPressure = f(Age,BMI)=20 + 3 \cdot Age - .2 \cdot BMI$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $BloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
+
+Let's start with the easiest case for just $Hypertension = f(Age)$, a single predictor.
+
+Before we fit models, we often visualize the data to get a sense whether our setup makes sense.
 
 ```{python}
 import pandas as pd
@@ -24,21 +42,164 @@ import statsmodels.api as sm
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
 nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
 
-plt.scatter(nhanes.BMI, nhanes.Hypertension, alpha=.3, color="brown", label="label")
-
+nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
+plt.clf()
+ax = sns.boxplot(y="Hypertension2", x="BMI", data=nhanes)
+ax.set_ylabel('')
+plt.show()
 ```
 
-(This model is not perfect to give the correct prediction, so sometimes there is an "error term" $\epsilon$ (Greek letter epsilon) that captures the imperfectness of the model.)
+Okay, great, it looks like when someone's BMI is higher, then it is more likely that the person has Hypertension.
 
-A machine learning model, such as the one described above, has *two main uses:*
+Now, let's build the model $Hypertension = f(BMI)$ to make a prediction of $Hyptertension$ given $BMI$.
 
-1.  **Prediction:** How accurately can we predict outcomes?
+```{python}
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+import statsmodels.api as sm
 
-    -   Given a new person's $Age, BMI, Income$ , predict the person's $BloodPressure$ and compare it to the true value.
+nhanes = pd.read_csv("classroom_data/NHANES.csv")
+nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
 
-2.  **Inference:** Which predictors are associated with the response, and how strong is the association?
+y, X = model_matrix("Hypertension ~ BMI", nhanes)
+logit_model = sm.Logit(y, X).fit() 
 
-    -   Suppose the model is described as $BloodPressure = f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $BloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
+plt.clf()
+plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
+plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
+plt.xlabel('BMI')
+plt.ylabel('Probability of Hypertension')
+plt.legend()
+plt.show()
+```
+
+Instead of boxplots, we plotted the data just using points, with "Hypertension" having a probability of 1 and "No Hypertension" having a probability of 0. We see that we have a fitted line in blue for every value of BMI, which represents our machine learning model $f(BMI)$. This model is called **Logistic Regression**.
+
+The first thing we want to investigate about this model is how well it performs in terms of Classification. Just using $BMI$ as a variable, what is the Accuracy of $f(BMI)$ classifying whether a person has $Hypertension$? Notice that first $f(BMI)$ gives us continuous probability values, such as given a BMI of 30, there is a 20% chance the person has Hypertension. We need a discrete cutoff of this model to decide whether the person has Hypertension.
+
+A reasonable cutoff to start is 50%: if the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Same for \< 50%. This is called the **Decision Boundary**.
+
+```{python}
+plt.clf()
+plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
+plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
+plt.xlabel('BMI')
+plt.ylabel('Probability of Hypertension')
+plt.axhline(y=0.5, color='r', linestyle='--', label='Prediction Cutoff')
+plt.legend();
+plt.show()
+```
+
+Given this decision boundary, what is the accuracy?
+
+```{python}
+from sklearn.metrics import (confusion_matrix, accuracy_score)
+
+prediction_cut = [1 if x >= .5 else 0 for x in logit_model.predict()]
+print('Accuracy = ', accuracy_score(y, prediction_cut)) 
+```
+
+Okay, that's a starting point!
+
+We can break down classification accuracy to four additional results:
+
+```{python}
+tn, fp, fn, tp = confusion_matrix(y, prediction_cut).ravel().tolist()
+print("True Positive:", tp, "\nFalse Positive: ", fp, "\nTrue Negative: ", tn, "\nFalse Negative:", fn)
+```
+
+define tp, fp, tn, fn
+
+define confusion matrix
+
+```{python}
+cm = confusion_matrix(y, prediction_cut) 
+print("Confusion Matrix : \n", cm) 
+```
+
+### Summary of Exampl;e
+
+So what have we done so far? / Preview of what is to come:
+
+1.  Selected a predictor and binary outcome, and visualized it
+
+    -   Eventually we will look at a continuous outcome, multiple predictors, and how to select multiple predictors
+
+2.  Fit it to a logistic regression model, which is a classification model
+
+    -   Logistic regression is a type of linear model, which is the basis for most machine learning models
+
+3.  We evaluated the model in terms of accuracy, true positive rate, true negative rate, false positive rate, false negative rate
+
+    -   We evaluated the model on the same data that we built the model. Ideally, we want to evaluate the model on data it has never seen before. More on this next week.
+
+Before we race ahead....there's a lot of new Python data structures that we are working with in this course. So let's brush up on our data structures and how to make sense of the new ones coming our way!
+
+## Review of Data Structures
+
+We will be seeing *a lot* of different data structures in this course beyond DataFrames, Series, and Lists. So let's review how we think about learning new data structures to make our lives easier when we encounter new data structures.
+
+Let's review the List data structure. For any data structure, we ask the following:
+
+-   What does it contain (in terms of data)?
+
+-   What can it do (in terms of functions)?
+
+And if it "makes sense" to us, then it is well-designed.
+
+The list data structure we have been working with is an example of an **Object**. The definition of an object allows us to ask the questions above: *what does it contain, and what can it do?* It is an organizational tool for a collection of data and functions that we can relate to, like a physical object. Formally, an object contains the following:
+
+-   **Value** that holds the essential data for the object.
+
+-   **Attributes** that hold subset or additional data for the object.
+
+-   Functions called **Methods** that are for the object and *have to* take in the variable referenced as an input.
+
+This organizing structure on an object applies to pretty much all Python data types and data structures.
+
+Let's see how this applies to the **List**:
+
+-   **Value**: the contents of the list, such as `[2, 3, 4].`
+
+-   **Attributes** that store additional values: Not relevant for lists.
+
+-   **Methods** that can be used on the object: [my_list.append(x)](https://docs.python.org/3/tutorial/datastructures.html)
+
+How about **Dataframe**?
+
+-   **Value**: the 2-dimensional spreadsheet of the dataframe.
+
+-   **Attributes** that store additional values: `df.shape` gives the number of rows and columns. `df.my_col_name` access the column called "my_col_name".
+
+-   **Methods** that can be used on the object: [df.merge(other_df, on="column_name")](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html)
+
+Feel free to look at the [cheatsheet on data structures from Intro to Python](https://docs.google.com/document/d/1IHD9_Edg3mbMY9lilAF0QWVjaKBK0eE0-hbo0fSywAA/edit?tab=t.0#heading=h.2bko76vfr8r6).
+
+### NumPy
+
+A new Data Structure we will work with in this course is NumPy's ndarray data structure. It is very similar to a Dataframe, but has the following characteristics for building machine learning models:
+
+-   All elements are homogeneous and numeric.
+
+-   There are no column or row labels.
+
+-   Mathematical operations are optimized
+
+So, let's see some examples:
+
+-   **Value**: the 2-dimensional numerical table. It actually can go up to n-dimensions.
+
+-   **Attributes** that store additional values:
+
+    -   
+
+-   **Methods** that can be used on the object:
+
+    -   
 
 ## Population and Sample
 
@@ -121,16 +282,16 @@ We see that the Training Error is fairly high, and the Testing Error is even hig
 Let's return to the drawing board and fit a new type of model that has more flexibility around complicated patterns of data. Let's see how it does on the Training Set:
 
 ```{python}
-y, X = model_matrix("BloodPressure ~ poly(BMI, degree=5)", nhanes)
+#y, X = model_matrix("BloodPressure ~ poly(BMI, degree=5)", nhanes)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-model = sm.OLS(y_train, X_train)
-results = model.fit()
-results.summary()
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+#model = sm.OLS(y_train, X_train)
+#results = model.fit()
+#results.summary()
 
-plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
-plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
-plt.legend();
+#plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
+#plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
+#plt.legend();
 ```
 
 \[graph here\]
@@ -143,7 +304,7 @@ We see that the Training Error is low, but the Testing Error is huge! This is an
 
 We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. See below:
 
-![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor. ](images/testing_error-01.png)
+![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/testing_error-01.png)
 
 Also see this interactive tutorial: [https://mlu-explain.github.io/bias-variance/](https://mlu-explain.github.io/bias-variance/+)
 
@@ -169,7 +330,7 @@ Below are some example models mapped to these two dichotomies. The linear model 
 
 ## Linear Regression Preview?
 
-## Appendix: Other terms 
+## Appendix: Other terms
 
 Parametric vs. Non-parametric
 

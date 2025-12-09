@@ -1,0 +1,96 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{python}
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+import statsmodels.api as sm
+
+nhanes = pd.read_csv("classroom_data/NHANES.csv")
+nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
+
+plt.clf()
+sns.boxplot(x="Hypertension", y="BMI", data=nhanes)
+plt.show()
+```
+
+```{python}
+y, X = model_matrix("Hypertension ~ BMI", nhanes)
+
+logit_model = sm.Logit(y, X).fit() 
+```
+
+```{python}
+logit_model.summary()
+
+plt.clf()
+plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
+plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
+plt.axhline(y=0.5, color='r', linestyle='--', label='Prediction Cutoff')
+plt.legend();
+plt.show()
+
+```
+
+```{python}
+
+from sklearn.metrics import (confusion_matrix, accuracy_score)
+
+prediction_cut = [round(x) for x in logit_model.predict()]
+cm = confusion_matrix(y, prediction_cut) 
+
+print ("Confusion Matrix : \n", cm) 
+print('Accuracy = ', accuracy_score(y, prediction_cut)) 
+```
+
+Different cutoff
+
+```{python}
+prediction_cut = [1 if x > .1 else 0 for x in logit_model.predict()]
+cm = confusion_matrix(y, prediction_cut) 
+
+print ("Confusion Matrix : \n", cm) 
+tn, fp, fn, tp = confusion_matrix(y, prediction_cut).ravel().tolist()
+print('Accuracy = ', accuracy_score(y, prediction_cut)) 
+```
+
+```{python}
+from sklearn.metrics import roc_curve, roc_auc_score, RocCurveDisplay
+
+y, X = model_matrix("Hypertension ~ BMI + Age", nhanes)
+logit_model = sm.Logit(y, X).fit() 
+
+logit_model.summary()
+
+prediction_cut = [round(x) for x in logit_model.predict()]
+cm = confusion_matrix(y, prediction_cut) 
+
+print ("Confusion Matrix : \n", cm) 
+print('Accuracy = ', accuracy_score(y, prediction_cut)) 
+
+fpr, tpr, thresholds = roc_curve(y, logit_model.predict())
+
+auc_score = roc_auc_score(y, logit_model.predict())
+
+plt.figure(figsize=(8, 6))
+RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=auc_score, estimator_name='Logistic Regression').plot(ax=plt.gca())
+plt.title('ROC Curve for Logistic Regression')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.show()
+```
