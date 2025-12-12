@@ -35,6 +35,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import (confusion_matrix, accuracy_score)
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
 import statsmodels.api as sm
@@ -44,6 +45,7 @@ nhanes.drop_duplicates()
 nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
 
 nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
+
 plt.clf()
 ax = sns.boxplot(y="Hypertension2", x="BMI", data=nhanes)
 ax.set_ylabel('')
@@ -87,7 +89,6 @@ plt.show()
 Given this decision boundary, what is the accuracy?
 
 ```{python}
-from sklearn.metrics import (confusion_matrix, accuracy_score)
 
 prediction_cut = [1 if x >= .5 else 0 for x in logit_model.predict()]
 print('Accuracy = ', accuracy_score(y, prediction_cut)) 

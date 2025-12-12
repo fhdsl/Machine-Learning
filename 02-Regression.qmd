@@ -2,6 +2,8 @@
 
 *In the second week of class, we blah blah blah*
 
+In the week 1 exercise, you fitted the model on a Training Set, and evaluated the model on the Testing Set. Let's try to understand the theory behind that today.
+
 ## Population and Sample
 
 The way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:
@@ -10,20 +12,28 @@ The way we formulate machine learning model is based on some fundamental concept
 
 **Sample:** A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.
 
-In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the **Training Set**, and the **Test Set**. We **train** our model using the Training Set, which gives us a function $f()$ that relates the predictors to the outcome. Then, for our main use cases:
+In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the **Training Set**, and the **Test Set**. We **train** our model using the Training Set, which gives us a function $f()$ that relates the predictors to the outcome. Then, for 2 main use cases:
 
-1.  **Prediction:** We use the trained model to predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.
-2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. For instance, $f(Age,BMI,Income)=20 + 3 \cdot Age - .2 \cdot BMI + .00015 \cdot Income$, the values $20$, $3$, $-.2$, and $.00015$ are the parameters. Because these parameters are derived from the Training Set, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
+1.  **Classification and Prediction:** We use the trained model to classify or predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.
+2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. Because these parameters are derived from the **Training Set**, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
 
-If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here \[todo\].
+If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here <https://www.nature.com/collections/qghhqm/pointsofsignificance.>
 
-## How to evaluate and pick a model?
+## Generalizability of a model
 
-The little example model we showcased above is an example of a **linear model**, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model. Let's start with the use case of prediction.
+The above section connects our Training and Testing sets to the statistical concepts of Sample and Population. But why do we *need* Training and Testing sets in Classification and Prediction? Moreover, why is the Training and Testing accuracy different in the first week's exercise?
 
-### Prediction
+-   There is always going to be some variation, because Training and Test are samples from the population, as we discussed above.
 
-Suppose we try to use the single variable $BMI$ to predict $BloodPressure$ using a linear model.
+-   The model was trained on the Training Set, so the prediction is going to naturally perform better than data it has never seen before on the Testing Set.
+
+    -   Is that always the case?
+
+To see how generalizable a model is, let's look at a problem in prediction, not classification. The underlying principles of model generalizability, but it is generally easier to visualize this concept in prediction models.
+
+In a prediction model, the outcome is continuous. Instead of yes/no for $Hyptertension$, we will use the clinical metric to $BloodPressure$, which is a formula based on \_\_\_\_. We use $Age$ as our predictor, which was something we explored in the first exercise.
+
+To evaluate the model, we will let the model make prediction given the input variable. This prediction is on the scale of $BloodPressure$, so there's no to draw a Decision Boundary in prediction problems. To examine the accuracy, we will look at the mean squared error between the true $BloodPressure$ and the predicted $BloodPressure$. Let's take a look.
 
 ```{python}
 import pandas as pd
@@ -37,18 +47,45 @@ import statsmodels.api as sm
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
 nhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
 
-y, X = model_matrix("BloodPressure ~ BMI", nhanes)
+y, X = model_matrix("BloodPressure ~ Age", nhanes)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 model = sm.OLS(y_train, X_train)
-results = model.fit()
-results.summary()
+linear_model = model.fit()
 
-plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
-plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
-plt.legend();
+plt.clf()
+fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
 
+ax1.plot(X_train.Age, linear_model.predict(), label="fitted line")
+ax1.scatter(X_train.Age, y_train, alpha=.3, color="brown", label="Training set")
+ax1.set(xlabel='Age', ylabel='Blood Pressure')
+ax1.set_title('Training Error: ' + str(round(results.mse_resid, 2)))
+
+ax2.plot(X_test.Age, linear_model.predict(X_test), label="fitted line")
+ax2.scatter(X_test.Age, y_test, alpha=.3, color="brown", label="Testing set")
+ax2.set(xlabel='Age', ylabel='Blood Pressure')
+test_err = np.mean((results.predict(X_test) - y_test.BloodPressure) ** 2)
+ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
+
+
+plt.show()
 ```
+
+We see that Training Error \> Testing Error.
+
+That's a different trend than what we saw in our Week 1 Exercise! We saw Training Error \< Testing Error for the Hypertension \~ BMI model.
+
+It turns out that the relationship between Training Error and Testing Error is connected to the **Model Complexity.**
+
+A model is more complex if....
+
+## How to evaluate and pick a model?
+
+The little example model we showcased above is an example of a **linear model**, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model. Let's start with the use case of prediction.
+
+### Prediction
+
+Suppose we try to use the single variable $BMI$ to predict $BloodPressure$ using a linear model.
 
 We examine how well our model performs in terms of prediction by seeing how close our model's predicted $BloodPressure$ is to the Training Set's true $BloodPressure$: the **Training Error**. We also take the model to the Testing Set to predict $BloodPressure$ using predictors from the Test Set and compare to the true $BloodPressure$ in the Test Set: the **Testing Error.** We want the model's Training Error to be adequately small on the Training Set, but what we really care about is the Testing Error, because it is a true test of how the model performs on unseen, new data, and allows us to see how generalizeable the model is.
 
@@ -67,7 +104,7 @@ results.mse_resid
 And then on the Test Set:
 
 ```{python}
-np.mean((results.get_prediction(X_test).predicted_mean - y_test.BloodPressure) ** 2)
+np.mean((results.predict(X_test) - y_test.BloodPressure) ** 2)
 
 ```
 
