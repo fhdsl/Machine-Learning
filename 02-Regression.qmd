@@ -14,24 +14,28 @@ The way we formulate machine learning model is based on some fundamental concept
 
 In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the **Training Set**, and the **Test Set**. We **train** our model using the Training Set, which gives us a function $f()$ that relates the predictors to the outcome. Then, for 2 main use cases:
 
-1.  **Classification and Prediction:** We use the trained model to classify or predict the outcome using predictors from the Test Set and compare to the true value in the Test Set.
+1.  **Classification and Prediction:** We use the trained model to classify or predict the outcome using predictors from the Test Set. We look at the Testing Error to evaluate the model.
 2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. Because these parameters are derived from the **Training Set**, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
 
 If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here <https://www.nature.com/collections/qghhqm/pointsofsignificance.>
 
 ## Generalizability of a model
 
-The above section connects our Training and Testing sets to the statistical concepts of Sample and Population. But why do we *need* Training and Testing sets in Classification and Prediction? Moreover, why is the Training and Testing accuracy different in the first week's exercise?
+When we look how the model performs in Classification and Prediction on the training and test data, we are asking how **generalizable** a model is. Usually we want our model to perform well on unseen, testing data that also represent the population.
+
+We saw that in the first exercise, the Training and Testing Error looked different - why?
 
 -   There is always going to be some variation, because Training and Test are samples from the population, as we discussed above.
 
 -   The model was trained on the Training Set, so the prediction is going to naturally perform better than data it has never seen before on the Testing Set.
 
-    -   Is that always the case?
+    -   How do we interpret the difference between Training Error and Testing Error?
 
-To see how generalizable a model is, let's look at a problem in prediction, not classification. The underlying principles of model generalizability, but it is generally easier to visualize this concept in prediction models.
+To see how generalizable a model is, let's look at a problem in **prediction**, not classification. The underlying principles of **model generalizability** applies to both prediction and classification, but it is generally easier to visualize this concept in prediction models.
 
-In a prediction model, the outcome is continuous. Instead of yes/no for $Hyptertension$, we will use the clinical metric to $BloodPressure$, which is a formula based on \_\_\_\_. We use $Age$ as our predictor, which was something we explored in the first exercise.
+### Underfitting and Overfitting a Prediction Model
+
+In a prediction model, the outcome is continuous. Instead of yes/no for $Hyptertension$, we will use the clinical metric to $BloodPressure$, which is a formula based on \_\_\_\_. The prediction model we will use is called a **Linear Model**, in its basic form draws a straight line as a line of "best fit" for given the data.
 
 To evaluate the model, we will let the model make prediction given the input variable. This prediction is on the scale of $BloodPressure$, so there's no to draw a Decision Boundary in prediction problems. To examine the accuracy, we will look at the mean squared error between the true $BloodPressure$ and the predicted $BloodPressure$. Let's take a look.
 
@@ -40,14 +44,20 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import (confusion_matrix, accuracy_score)
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
 import statsmodels.api as sm
 
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
-nhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
+nhanes.drop_duplicates()
 
-y, X = model_matrix("BloodPressure ~ Age", nhanes)
+nhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
+nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
+
+nhanes_tiny = nhanes.sample(n=300, random_state=1)
+
+y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 model = sm.OLS(y_train, X_train)
@@ -56,122 +66,261 @@ linear_model = model.fit()
 plt.clf()
 fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
 
-ax1.plot(X_train.Age, linear_model.predict(), label="fitted line")
-ax1.scatter(X_train.Age, y_train, alpha=.3, color="brown", label="Training set")
-ax1.set(xlabel='Age', ylabel='Blood Pressure')
-ax1.set_title('Training Error: ' + str(round(results.mse_resid, 2)))
+ax1.plot(X_train.BMI, linear_model.predict(X_train), label="fitted line")
+ax1.scatter(X_train.BMI, y_train, alpha=.5, color="brown", label="Training set")
+ax1.set(xlabel='BMI', ylabel='Blood Pressure')
+ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)
+ax1.set_title('Training Error: ' + str(round(train_err, 2)))
 
-ax2.plot(X_test.Age, linear_model.predict(X_test), label="fitted line")
-ax2.scatter(X_test.Age, y_test, alpha=.3, color="brown", label="Testing set")
-ax2.set(xlabel='Age', ylabel='Blood Pressure')
-test_err = np.mean((results.predict(X_test) - y_test.BloodPressure) ** 2)
+ax2.plot(X_test.BMI, linear_model.predict(X_test), label="fitted line")
+ax2.scatter(X_test.BMI, y_test, alpha=.5, color="brown", label="Testing set")
+ax2.set(xlabel='BMI', ylabel='Blood Pressure')
+ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)
 ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
-
 
 plt.show()
 ```
 
-We see that Training Error \> Testing Error.
-
-That's a different trend than what we saw in our Week 1 Exercise! We saw Training Error \< Testing Error for the Hypertension \~ BMI model.
+We see that Training Error \< Testing Error.
 
 It turns out that the relationship between Training Error and Testing Error is connected to the **Model Complexity.**
 
-A model is more complex if....
+A model is more complex relative to another model if:
 
-## How to evaluate and pick a model?
+-   It contains more predictors
 
-The little example model we showcased above is an example of a **linear model**, but we will look at several types of models in this course. In order to decide how to evaluate and pick a model, we will need to develop a framework to assess a model. Let's start with the use case of prediction.
+-   The relationship between a predictor and response is fit via a higher order polynomial or smooth function
 
-### Prediction
-
-Suppose we try to use the single variable $BMI$ to predict $BloodPressure$ using a linear model.
-
-We examine how well our model performs in terms of prediction by seeing how close our model's predicted $BloodPressure$ is to the Training Set's true $BloodPressure$: the **Training Error**. We also take the model to the Testing Set to predict $BloodPressure$ using predictors from the Test Set and compare to the true $BloodPressure$ in the Test Set: the **Testing Error.** We want the model's Training Error to be adequately small on the Training Set, but what we really care about is the Testing Error, because it is a true test of how the model performs on unseen, new data, and allows us to see how generalizeable the model is.
-
-Okay, let's how it does on the Training Set:
+Let's look at what happens if we increase the complexity of the model by fitting it with a more smooth function. We use a polynomial function of order 2.
 
 ```{python}
-np.mean((results.fittedvalues - y_train.BloodPressure) ** 2)
+p_degree = 2
+y, X = model_matrix("BloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
+X_train_BMI = X_train.BMI
+X_test_BMI = X_test.BMI
+X_train.drop('BMI', axis=1, inplace=True)
+X_test.drop('BMI', axis=1, inplace=True)
+
+model = sm.OLS(y_train, X_train)
+linear_model = model.fit()
+
+plt.clf()
+fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
+
+ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
+ax1.scatter(X_train_BMI, linear_model.predict(), label="fitted line")
+
+ax1.set(xlabel='BMI', ylabel='Blood Pressure')
+train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)
+ax1.set_title('Training Error: ' + str(round(train_err, 2)))
+ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+
+ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
+ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
+ax2.set(xlabel='BMI', ylabel='Blood Pressure')
+test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)
+ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
+ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+
+fig.suptitle('Polynomial Degree: ' + str(p_degree))
+plt.show()
 ```
+
+We see that both Training and Testing error both decreased slightly!
+
+What happens if we keep increasing the model complexity?
 
 ```{python}
-results.mse_resid
+for p_degree in [4, 10]:
+  y, X = model_matrix("BloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+  
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+  
+  X_train_BMI = X_train.BMI
+  X_test_BMI = X_test.BMI
+  X_train.drop('BMI', axis=1, inplace=True)
+  X_test.drop('BMI', axis=1, inplace=True)
+  
+  model = sm.OLS(y_train, X_train)
+  linear_model = model.fit()
+  
+  plt.clf()
+  fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
+  
+  ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
+  ax1.scatter(X_train_BMI, linear_model.predict(), label="fitted line")
+  
+  ax1.set(xlabel='BMI', ylabel='Blood Pressure')
+  train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)
+  ax1.set_title('Training Error: ' + str(round(train_err, 2)))
+  ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+  ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+
+  ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
+  ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
+  ax2.set(xlabel='BMI', ylabel='Blood Pressure')
+  test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)
+  ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
+  ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+  ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+
+  fig.suptitle('Polynomial Degree: ' + str(p_degree))
+  plt.show()
+
 ```
 
-\[graph here\]
-
-And then on the Test Set:
+Let's summarize it:
 
 ```{python}
-np.mean((results.predict(X_test) - y_test.BloodPressure) ** 2)
+train_err = []
+test_err = []
+polynomials = list(range(1, 10))
+
+for p_degree in polynomials:
+  if p_degree == 1:
+    y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
+  else:
+    y, X = model_matrix("BloodPressure ~ poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+  
+  model = sm.OLS(y_train, X_train)
+  linear_model = model.fit()
+
+  train_err.append(np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2))
+  test_err.append(np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2))
+  
+plt.clf()
+plt.plot(polynomials, train_err, color="blue", label="Training Error")
+plt.plot(polynomials, test_err, color="red", label="Testing Error")
+plt.xlabel('Polynomial Degree')
+plt.ylabel('Error')
+plt.legend()
+plt.show()  
+  
+  
 
 ```
+
+As our Polynomial Degree increased, the following happened:
+
+-   In the linear model, we see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of **Underfitting**, where our model failed to capture the complexity of the data in both the Training and Testing Set.
+
+-   After degree 6, we see that the Training Error is low, but the Testing Error is huge! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set.
+
+We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 5 or 6, with the minimal Testing Error.
+
+Here is another illustration of the phenomena, using synthetic controlled data:
+
+On the left shows the Training Data in black dots. Then, three models are displayed: linear regression (orange line), two other models of increasing complexity in blue and green.
+
+On the right shows the training error (grey curve), testing error (red curve), and where each of the three models on the left land in the error rate with their respective colors.
+
+![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/testing_error-01.png)
+
+Lastly, we recommend examining interactive tutorial: [https://mlu-explain.github.io/bias-variance/](https://mlu-explain.github.io/bias-variance/+)
+
+Hopefully you start to see the importance of examining the Testing Error instead of the Training Error to evaluate our model. A highly flexible data will overfit the model and make it seem like the Training Error is small, but it will not generalize to the Testing data, which will have Testing Error.
+
+### Underfitting and Overfitting a Classification Model
+
+Let's do the same exercise for a Classification model. We won't be able to visualize each individual model fit clearly, but we can look at the classification Training and Testing Error.
 
 ```{python}
+train_err = []
+test_err = []
+polynomials = list(range(1, 8))
 
-plt.plot(X_test.BMI, results.get_prediction(X_test).predicted_mean, label="fitted line")
-plt.scatter(X_test.BMI, y_test, alpha=.3, color="black", label="test set")
-plt.legend();
+for p_degree in polynomials:
+  if p_degree == 1:
+    y, X = model_matrix("Hypertension ~ BMI", nhanes_tiny)
+  else:
+    y, X = model_matrix("Hypertension ~ poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+  
+  logit_model = sm.Logit(y_train, X_train).fit() 
+  
+  train_pred_cut = [1 if x >= .5 else 0 for x in logit_model.predict(X_train)]
+  train_err.append(1 - accuracy_score(y_train, train_pred_cut))
+  
+  test_pred_cut = [1 if x >= .5 else 0 for x in logit_model.predict(X_test)]
+  test_err.append(1 - accuracy_score(y_test, train_pred_cut))
+  
+  
+plt.clf()
+plt.plot(polynomials, train_err, color="blue", label="Training Error")
+plt.plot(polynomials, test_err, color="red", label="Testing Error")
+plt.xlabel('Polynomial Degree')
+plt.ylabel('Error')
+plt.legend()
+plt.show()  
+  
 ```
 
-We see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of **Underfitting**, where our model failed to capture the complexity of the data in both the Training and Testing Set.
+## Inference
 
-Let's return to the drawing board and fit a new type of model that has more flexibility around complicated patterns of data. Let's see how it does on the Training Set:
+Now let's examine the function $f()$'s trained values, which are called **parameters**.
+
+### Linear Model
+
+For the Linear Model, the model we first fitted was of the following form:
+
+$$
+BloodPressure=\beta_0 + \beta_1 \cdot BMI
+$$
+
+which is an equation of a line.
+
+$\beta_0$ is a parameter describing the intercept of the line, and $\beta_1$ is a parameter describing the slope of the line.
+
+Suppose that from fitting the model on the Training Set, $\beta_1=2$. That means increasing $BMI$ by 1 will lead to an increase of $BloodPressure$ by 2. This measures the strength of association between a variable and the outcome.
+
+Let's see this in practice:
 
 ```{python}
-#y, X = model_matrix("BloodPressure ~ poly(BMI, degree=5)", nhanes)
+y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
 
-#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-#model = sm.OLS(y_train, X_train)
-#results = model.fit()
-#results.summary()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+linear_model = sm.OLS(y_train, X_train).fit()
 
-#plt.plot(X_train.BMI, results.fittedvalues, label="fitted line")
-#plt.scatter(X_train.BMI, y_train, alpha=.3, color="brown", label="training set")
-#plt.legend();
+linear_model.summary()
 ```
 
-\[graph here\]
+Based on the output, $\beta_0=69$, $\beta_1=.55$. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87).
 
-And then on the Test Set:
+### Logistic Regression
 
-\[graph here\]
+Let's do the same for our Logic Regression Classifier model, which has an equation of:
 
-We see that the Training Error is low, but the Testing Error is huge! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set.
+$$
+\frac{p(Hypertension)}{1-p(Hypertension)}=e^{\beta_0 + \beta_1 \cdot BMI}
+$$
 
-We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. See below:
+On the left hand side of the equationis the **Odds** of having Hypertension.
 
-![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/testing_error-01.png){alt="Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor."}
+$\beta_0$ is a parameter describing \_\_, and $\beta_1$ is a parameter describing \_\_\_
 
-Also see this interactive tutorial: [https://mlu-explain.github.io/bias-variance/](https://mlu-explain.github.io/bias-variance/+)
+```{python}
+y, X = model_matrix("Hypertension ~ BMI", nhanes_tiny)
 
-### Inference
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+logit_model = sm.Logit(y_train, X_train).fit()
 
-Let's consider how we would evaluate and choose models for Inference.
+logit_model.summary()
+```
 
-For models with low number of predictors, there are some plots and metrics one would consider, such as BIC.
+## Appendix
 
-For models with high number of predictors, we will talk about it in more detail in weeks 5 & 6.
+Flexibility vs. Interpretability of models
 
-Besides how flexible a model is, another categorization of machine models is how **interpretable** they are. The more interpretable a model is, the better one can describe how each variable has an predictor of the model. That makes the inference process easier.
+![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor](images/flexibility_vs_interpretability.png){width="500"}
 
-Below are some example models mapped to these two dichotomies. The linear model lies very similar as the "Least Squares" models.
-
-![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor](images/flexibility_vs_interpretability.png){alt="Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor" width="500"}
-
-## The NumPy Package
-
-### Subsetting
-
-### How to split the data for training and testing
-
-## Linear Regression Preview?
-
-## Appendix: Other terms
-
-Parametric vs. Non-parametric
-
-Bias-Variance trade-off
-
-Supervised vs. Unsupervised
+## 
