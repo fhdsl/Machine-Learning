@@ -35,7 +35,9 @@ To see how generalizable a model is, let's look at a problem in **prediction**, 
 
 ### Underfitting and Overfitting a Prediction Model
 
-In a prediction model, the outcome is continuous. Instead of yes/no for $Hyptertension$, we will use the clinical metric to $BloodPressure$, which is a formula based on \_\_\_\_. The prediction model we will use is called a **Linear Model**, in its basic form draws a straight line as a line of "best fit" for given the data.
+In a prediction model, the outcome is continuous. Instead of yes/no for $Hyptertension$, we will use the clinical metric of Mean Arterial Pressure $BloodPressure$. Here is how to interpret the continuous value:
+
+The prediction model we will use is called a **Linear Model**, in its basic form draws a straight line as a line of "best fit" for given the data.
 
 To evaluate the model, we will let the model make prediction given the input variable. This prediction is on the scale of $BloodPressure$, so there's no to draw a Decision Boundary in prediction problems. To examine the accuracy, we will look at the mean squared error between the true $BloodPressure$ and the predicted $BloodPressure$. Let's take a look.
 

@@ -1,34 +1,54 @@
-# Problem Set-Up
+# The Whole Game
 
-*In the first week of class, we will go over what machine learning models are good for, and look at an classification model as an example to show the model development workflow. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.*
+*In the first week of class, we will look at Machine Learning from a end-to-end perspective to see what the course will be about! Then, we will get our hands on the NumPy package to prepare our data for our machine learning models for the rest of the course.*
 
-## Classification model example
+## An conceptual example
 
-Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to classify whether a person has hypertension blood pressure based on clinical and demographic variables.
+Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's [Mean Blood Pressure](https://en.wikipedia.org/wiki/Mean_arterial_pressure) (also known as Mean Arterial Pressure), which is related to person's diastolic and systolic blood pressures. The Mean Arterial Pressure is our **Response Variable** or **Outcome** we wish to make predictions on, given **Predictor Variables** we have in the NHANES dataset. We have \~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.
 
-Using algebraic expressions, we formulate the following:
+Suppose that we decide to use the predictors $Age$ and $BMI$ for our machine learning model, and formulate it algebraically:
 
 $$
-Hypertension=f(Age, BMI) 
+MeanBloodPressure=f(Age, BMI) 
 $$
 
-Where $f(Age, BMI)$ is a machine learning model that takes in the variables $Age$, $BMI$, and make a classification on whether someone has $Hypertension$.
+Where $f(Age, BMI)$ is a machine learning model that takes in the predictors $Age$, $BMI$, and make a prediction on one's $MeanBloodPressure$. The predictor's value is almost always known, and the response is not, which gives us our problem making sound predictions. The process of machine learning is figuring out the appropriate function $f()$. For example,
+
+$$
+MeanBloodPressure= 20 + 3 \cdot Age - .2 \cdot BMI
+$$
+
+How did we arrive at this equation form and the numbers $20$, $3$, and $-.2$? They were **estimated** from the data as well as some assumptions of the equation form to be **Linear**.
+
+Given this model, suppose are given a person's $Age$ to be 30 and $BMI$ to be 34. Then, we can make a prediction using this model:
+
+$$
+MeanBloodPressure=20 + 3 \cdot Age - .2 \cdot BMI = 103.2
+$$
+
+To see how accurate our prediction is, we can compare our predicted response to the true response, if we have the data for that. That will give us feedback on how well our model is and let us make improvements to it.
+
+### Broader Usage
 
 A machine learning model, such as the one described above, has *two main uses:*
 
-1.  **Classification and Prediction (Focus of this course):** How accurately can we classify or predict the outcome?
+1.  **Classification and Prediction (Focus of this course):** How accurately can we predict or classify the outcome?
 
-    -   Classification: Given a new person's $Age, BMI$, classify whether the person has $Hyptertension$. The outcome is a yes/no classification.
-    -   Prediction: Given a person's $Age, BMI$, predict the person's $BloodPressure$ value. The outcome is a continuous value.
+    -   Prediction: Given a person's $Age, BMI$, predict the person's $MeanBloodPressure$ value. The outcome is a continuous value.
+    -   Classification: This is when the response is a categorical value, such as Yes/No. As an example, we can consider classifying Yes/No whether a person has $Hypertension$ or not using predictors $Age$ and $BMI$.
 
 2.  **Inference (Secondary in this course):** Which predictors are associated with the response, and how strong is the association?
 
+    -   Prediction model example: Suppose the model is described as $MeanBloodPressure = f(Age,BMI)=20 + 3 \cdot Age - .2 \cdot BMI$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $MeanBloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
     -   Classification model example: What is the odds ratio of of $Age$ on $Hyptertension$? If the odds ratio of $Age$ on $Hyptertension$ is 2, then an increase of 1 in $Age$ increases the odds of $Hyptertension$ by 2.
-    -   Prediction model example: Suppose the model is described as $BloodPressure = f(Age,BMI)=20 + 3 \cdot Age - .2 \cdot BMI$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $BloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
 
-Let's start with the easiest case for just $Hypertension = f(Age)$, a single predictor.
+## The conceptual example, in more depth
 
-Before we fit models, we often visualize the data to get a sense whether our setup makes sense.
+Let's walk through our conceptual example again, but in more depth, and with code examples. This will illustrate the complexity and the strategies involved in the Machine Learning roadmap we will explore carefully throughout the course.
+
+### Visualizing the outcome
+
+Building a sound machine learning model requires careful understanding of the data, and we often start looking at the response variable.
 
 ```{python}
 import pandas as pd
@@ -41,92 +61,210 @@ from formulaic import model_matrix
 import statsmodels.api as sm
 
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
-nhanes.drop_duplicates()
-nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
-
-nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
+nhanes.drop_duplicates(inplace=True)
+nhanes['MeanBloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
 
 plt.clf()
-ax = sns.boxplot(y="Hypertension2", x="BMI", data=nhanes)
-ax.set_ylabel('')
+g = sns.displot(x="MeanBloodPressure", data=nhanes)
+g.refline(x=70, color='r', linestyle='--')
+g.refline(x=90, color='r', linestyle='--')
 plt.show()
 ```
 
-Okay, great, it looks like when someone's BMI is higher, then it is more likely that the person has Hypertension.
+We see that the $MeanBloodPressure$ is fairly symmetrically distributed. A person has normal blood pressure if their $MeanBloodPressure$ is between values of 70 and \~90, which we have shown in the dotted vertical lines. There seems to be more people with elevated blood pressure, as there are more counts above 80 than below 80.
 
-Now, let's build the model $Hypertension = f(BMI)$ to make a prediction of $Hyptertension$ given $BMI$.
+| Mean Arterial Pressure | Interpretation |
+|------------------------|----------------|
+| Hypotension            | \<70           |
+| Normal                 | 70-92          |
+| Stage 1 Hypertension   | 92-96          |
+| Stage 2 Hypertension   | \>96           |
+
+Usually, a symmetric, continuous distribution for the response variable is a great way to start the machine learning modeling process, as a lot of models assume a symmetric, continuous distribution for the model to perform well.
+
+If the response distribution is strongly skewed, then we may want to perform mathematical transformations fix it.
+
+If the response distribution has multiple peaks (multi-modal), we may want to perform mathematical transformations, or consider reformulate the problem as a (multi-class) classification problem, if the interpretation makes sense.
+
+### Splitting the data
+
+Our dataset has 7832 data points:
 
 ```{python}
-y, X = model_matrix("Hypertension ~ BMI", nhanes)
-logit_model = sm.Logit(y, X).fit() 
+print(nhanes.shape)
+```
 
+In Machine Learning, we need to carefully *allocate* how we want to use our data. In the machine learning model development process, we reserve some of the data, called the **Training Set** to allow the model learn from the data, and reserve the rest of the data, called the **Testing Set** to allow the model to be tested on new, unseen data.
+
+A logistical and psychological challenge of Machine Learning is to not have the model know anything about the Testing Set as you develop it. This is because as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is why we have a separate, unseen testing set to see if the model will generalize its performance.
+
+In the previous section, we looked at the response data of the entire dataset, because if we don't have a lot of data and if the distribution has multiple peaks, we may consider splitting data more carefully.
+
+Below, we split the entire data randomlly into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:
+
+-   Time series data
+
+-   Spatial data
+
+-   The response data is small has multiple peaks
+
+but random splitting will suffice for this example.
+
+```{python}
+nhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)
+```
+
+And let's look at the number of data points after splitting:
+
+```{python}
+print("Training size:", nhanes_train.shape)
+print("Testing size:", nhanes_test.shape)
+```
+
+### Exploratory Data Analysis
+
+Now, using *only* the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from visual discernment to entirely quantitative methods, and we will be more comprehensive later in this course, but we will start with Exploratory Data Analysis.
+
+Let's look at the relationship between $MeanBloodPressure$ and potential predictor $BMI$. We add a smooth line fit to the scatterplot, because it shows the average trend between these two variables. The black dotted lines are the ranges of healthy mean blood pressure from our response histogram.
+
+```{python}
 plt.clf()
-plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
-plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
-plt.xlabel('BMI')
-plt.ylabel('Probability of Hypertension')
-plt.legend()
+ax = sns.regplot(y="MeanBloodPressure", x="BMI", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+ax.set_xlim([10, 50])
 plt.show()
 ```
 
-Instead of boxplots, we plotted the data just using points, with "Hypertension" having a probability of 1 and "No Hypertension" having a probability of 0. We see that we have a fitted line in blue for every value of BMI, which represents our machine learning model $f(BMI)$. This model is called **Logistic Regression**.
+Okay, great, it looks like when someone's BMI is higher, then it is more likely they have higher mean blood pressure.
 
-The first thing we want to investigate about this model is how well it performs in terms of Classification. Just using $BMI$ as a variable, what is the Accuracy of $f(BMI)$ classifying whether a person has $Hypertension$? Notice that first $f(BMI)$ gives us continuous probability values, such as given a BMI of 30, there is a 20% chance the person has Hypertension. We need a discrete cutoff of this model to decide whether the person has Hypertension.
-
-A reasonable cutoff to start is 50%: if the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Same for \< 50%. This is called the **Decision Boundary**.
+Let's look at $Age$:
 
 ```{python}
 plt.clf()
-plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
-plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
-plt.xlabel('BMI')
-plt.ylabel('Probability of Hypertension')
-plt.axhline(y=0.5, color='r', linestyle='--', label='Prediction Cutoff')
-plt.legend();
+ax = sns.regplot(y="MeanBloodPressure", x="Age", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
 plt.show()
 ```
 
-Given this decision boundary, what is the accuracy?
+We see a similar trend. How about $Gender$?
 
 ```{python}
-
-prediction_cut = [1 if x >= .5 else 0 for x in logit_model.predict()]
-print('Accuracy = ', accuracy_score(y, prediction_cut)) 
+plt.clf()
+ax = sns.boxplot(x="Gender", y="MeanBloodPressure", data=nhanes)
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+plt.show()
 ```
 
-Okay, that's a starting point!
-
-We can break down classification accuracy to four additional results:
+Males tend to have a higher $MeanBloodPressure$. Let's look at one more, $DirectChol$:
 
 ```{python}
-tn, fp, fn, tp = confusion_matrix(y, prediction_cut).ravel().tolist()
-print("True Positive:", tp, "\nFalse Positive: ", fp, "\nTrue Negative: ", tn, "\nFalse Negative:", fn)
+plt.clf()
+ax = sns.regplot(y="MeanBloodPressure", x="DirectChol", data=nhanes, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':"r"})
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+plt.show()
 ```
 
-define tp, fp, tn, fn
+This has a more nonlinear trend to it.
 
-define confusion matrix
+Given our (very brief) Exploratory Data Analysis, let's pick a few predictors that seem promising: $BMI$, $Age$, $Gender$.
+
+### Correlations and Interactions
+
+Besides looking at the single predictors vs. the response, we also need to how the predictors relate to each other:
+
+-   Some predictors may be highly **correlated** with each other, so adding them to the model doesn't give the model more information to work with.
+
+-   It is possible that multiple predictors can have an synergestic effect on the outcome; their effect on the outcome occurs jointly - this is called an **Interaction**.
+
+In the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are *not* mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y *together* affect Z (the outcome).
+
+#### Exercise: Correlations
 
 ```{python}
-cm = confusion_matrix(y, prediction_cut) 
-print("Confusion Matrix : \n", cm) 
+plt.clf()
+ax = sns.regplot(y="Age", x="BMI", data=nhanes, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':"r"})
+ax.set_xlim([10, 50])
+plt.show()
 ```
 
-### Summary of Example
+#### Exercise: Interactions
 
-So what have we done so far? / Preview of what is to come:
+```{python}
+plt.clf()
+ax = sns.lmplot(y="BloodPressure", x="BMI", hue="Gender", data=nhanes, lowess=True, scatter_kws={'alpha':0.1})
+ax.set(xlim=(10, 50)) 
+plt.show()
+```
 
-1.  Selected a predictor and binary outcome, and visualized it
+## Picking a model: Linear Regression
 
-    -   Eventually we will look at a continuous outcome, multiple predictors, and how to select multiple predictors
+We will explore a whole range of models in this course to try in our predictive model, but one of the most fundamental model that has been robust and connects to nearly all Machine Learning models is **Linear Regression**. A common strategy is to start with a simple model such as Linear Regression and build out complexity from it. So we gotta see this in action.
 
-2.  Fit it to a logistic regression model, which is a classification model
+Given our decided predictors, the model will look like this:
 
-    -   Logistic regression is a type of linear model, which is the basis for most machine learning models
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cdot Gender
+$$
 
-3.  We evaluated the model in terms of accuracy, true positive rate, true negative rate, false positive rate, false negative rate
+where the unknown variables $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, called **parameters**, will be learned in the model training process.
 
-    -   We evaluated the model on the same data that we built the model. Ideally, we want to evaluate the model on data it has never seen before. More on this next week.
+We specify this form:
+
+```{python}
+y_train, X_train = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_train)
+```
+
+And fit the model:
+
+```{python}
+from sklearn import linear_model
+linear_reg = linear_model.LinearRegression()
+linear_reg = linear_reg.fit(X_train, y_train)
+print(linear_reg.intercept_)
+print(linear_reg.coef_)
+
+```
+
+## Picking a model: Decision Tree Regression?
+
+todo
+
+## Model Evaluation
+
+Now that we have fitted our model on the training set, we can see how it performs on the testing set. In our testing set, we already know all the values of the predictors and outcomes, so to simulate a realistic scenario, we feed the predictor to the model, let it make a prediction, and compare it to the true outcome.
+
+When we compare the predicted outcome vs. true outcome, we need to use a metric to compare the two quantities. Here are two popular metrics:
+
+-   Mean Absolute Error (MAE): the average of the *absolute* difference between predicted vs. true outcome. This scale of this metric is the same as the outcome's scale, which is easy to interpret.
+
+-   Mean Squared Error (MSE): the average of the *squared* difference between predicted vs. true outcome. The scale of this metric is harder to interpret, but it has very nice mathematical properties for the model fitting that it remains very popular.
+
+Let's look at our MAE of our model on the test data:
+
+```{python}
+from sklearn.metrics import mean_absolute_error
+y_test, X_test = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_test)
+y_test_predicted = linear_reg.predict(X_test)
+
+mean_absolute_error(y_test_predicted, y_test)
+```
+
+Okay, on average our model is off by 8.64 on the scale of $MeanBloodPressure$.
+
+Let's visualize this:
+
+```{python}
+plt.clf()
+plt.scatter(y_test_predicted, y_test, alpha=.5)
+plt.axline((70, 70), slope=1, color='r', linestyle='--')
+plt.xlabel('Predicted MeanBloodPressure')
+plt.ylabel('True MeanBloodPressure')
+plt.show()
+```
 
 Before we race ahead....there's a lot of new Python data structures that we are working with in this course. So let's brush up on our data structures and how to make sense of the new ones coming our way!
 
