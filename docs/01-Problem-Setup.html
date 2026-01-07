@@ -265,7 +265,8 @@ window.Quarto = {
 <p><em>In the first week of class, we will look at Machine Learning from a end-to-end perspective to see what the course will be about! Then, we will get our hands on the NumPy package to prepare our data for our machine learning models for the rest of the course.</em></p>
 <section id="an-conceptual-example" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="an-conceptual-example"><span class="header-section-number">2.1</span> An conceptual example</h2>
-<p>Suppose that we are given the <a href="https://www.cdc.gov/nchs/nhanes/"><strong>N</strong>ational <strong>H</strong>ealth <strong>A</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>urvey (NHANES) dataset</a> and want to build a machine learning model to predict a person’s <a href="https://en.wikipedia.org/wiki/Mean_arterial_pressure">Mean Blood Pressure</a> (also known as Mean Arterial Pressure), which is related to person’s diastolic and systolic blood pressures. The Mean Arterial Pressure is our <strong>Response Variable</strong> or <strong>Outcome</strong> we wish to make predictions on, given <strong>Predictor Variables</strong> we have in the NHANES dataset. We have ~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.</p>
+<p>Suppose that we are given the <a href="https://www.cdc.gov/nchs/nhanes/"><strong>N</strong>ational <strong>H</strong>ealth <strong>A</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>urvey (NHANES) dataset</a> and want to build a machine learning model to predict a person’s <a href="https://en.wikipedia.org/wiki/Mean_arterial_pressure">Mean Blood Pressure</a> (also known as Mean Arterial Pressure), which is related to person’s diastolic and systolic blood pressures.</p>
+<p>The Mean Arterial Pressure is our <strong>Response Variable</strong> or <strong>Outcome</strong> we wish to make predictions on, given <strong>Predictor Variables</strong> we have in the NHANES dataset. We have ~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.</p>
 <p>Suppose that we decide to use the predictors <span class="math inline">\(Age\)</span> and <span class="math inline">\(BMI\)</span> for our machine learning model, and formulate it algebraically:</p>
 <p><span class="math display">\[
 MeanBloodPressure=f(Age, BMI)
@@ -303,7 +304,7 @@ MeanBloodPressure=20 + 3 \cdot Age - .2 \cdot BMI = 103.2
 <section id="visualizing-the-outcome" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="visualizing-the-outcome"><span class="header-section-number">2.2.1</span> Visualizing the outcome</h3>
 <p>Building a sound machine learning model requires careful understanding of the data, and we often start looking at the response variable.</p>
-<div id="6afd039a" class="cell" data-execution_count="1">
+<div id="060c6a78" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -366,27 +367,27 @@ MeanBloodPressure=20 + 3 \cdot Age - .2 \cdot BMI = 103.2
 <section id="splitting-the-data" class="level3" data-number="2.2.2">
 <h3 data-number="2.2.2" class="anchored" data-anchor-id="splitting-the-data"><span class="header-section-number">2.2.2</span> Splitting the data</h3>
 <p>Our dataset has 7832 data points:</p>
-<div id="3158650f" class="cell" data-execution_count="2">
+<div id="d4202cc9" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(nhanes.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(7832, 77)</code></pre>
 </div>
 </div>
 <p>In Machine Learning, we need to carefully <em>allocate</em> how we want to use our data. In the machine learning model development process, we reserve some of the data, called the <strong>Training Set</strong> to allow the model learn from the data, and reserve the rest of the data, called the <strong>Testing Set</strong> to allow the model to be tested on new, unseen data.</p>
-<p>A logistical and psychological challenge of Machine Learning is to not have the model know anything about the Testing Set as you develop it. This is because as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is why we have a separate, unseen testing set to see if the model will generalize its performance.</p>
+<p>A logistical and psychological challenge of Machine Learning is to not have the model know anything about the Testing Set as you develop it. This is because as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called <strong>Overfitting</strong>. This is why we have a separate, unseen testing set to see if the model will generalize its performance.</p>
 <p>In the previous section, we looked at the response data of the entire dataset, because if we don’t have a lot of data and if the distribution has multiple peaks, we may consider splitting data more carefully.</p>
-<p>Below, we split the entire data randomlly into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:</p>
+<p>Below, we split the entire data <em>randomlly</em> into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:</p>
 <ul>
 <li><p>Time series data</p></li>
 <li><p>Spatial data</p></li>
 <li><p>The response data is small has multiple peaks</p></li>
 </ul>
 <p>but random splitting will suffice for this example.</p>
-<div id="49b8f96d" class="cell" data-execution_count="3">
+<div id="f247e2bc" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nhanes_train, nhanes_test <span class="op">=</span> train_test_split(nhanes, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And let’s look at the number of data points after splitting:</p>
-<div id="de5c080b" class="cell" data-execution_count="4">
+<div id="46b9b1ef" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Training size:"</span>, nhanes_train.shape)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Testing size:"</span>, nhanes_test.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -397,9 +398,9 @@ Testing size: (1567, 77)</code></pre>
 </section>
 <section id="exploratory-data-analysis" class="level3" data-number="2.2.3">
 <h3 data-number="2.2.3" class="anchored" data-anchor-id="exploratory-data-analysis"><span class="header-section-number">2.2.3</span> Exploratory Data Analysis</h3>
-<p>Now, using <em>only</em> the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from visual discernment to entirely quantitative methods, and we will be more comprehensive later in this course, but we will start with Exploratory Data Analysis.</p>
+<p>Now, using <em>only</em> the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from Exploratory Data Analysis to entirely quantitative methods, and we will be more comprehensive later in this course.</p>
 <p>Let’s look at the relationship between <span class="math inline">\(MeanBloodPressure\)</span> and potential predictor <span class="math inline">\(BMI\)</span>. We add a smooth line fit to the scatterplot, because it shows the average trend between these two variables. The black dotted lines are the ranges of healthy mean blood pressure from our response histogram.</p>
-<div id="951c1a6d" class="cell" data-execution_count="5">
+<div id="2979aa84" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.2</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
@@ -416,7 +417,7 @@ Testing size: (1567, 77)</code></pre>
 </div>
 <p>Okay, great, it looks like when someone’s BMI is higher, then it is more likely they have higher mean blood pressure.</p>
 <p>Let’s look at <span class="math inline">\(Age\)</span>:</p>
-<div id="01df3853" class="cell" data-execution_count="6">
+<div id="2ad4d9d9" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"Age"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.2</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
@@ -431,7 +432,7 @@ Testing size: (1567, 77)</code></pre>
 </div>
 </div>
 <p>We see a similar trend. How about <span class="math inline">\(Gender\)</span>?</p>
-<div id="9d1ffb5b" class="cell" data-execution_count="7">
+<div id="ff1ca17e" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.boxplot(x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, data<span class="op">=</span>nhanes)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
@@ -446,7 +447,7 @@ Testing size: (1567, 77)</code></pre>
 </div>
 </div>
 <p>Males tend to have a higher <span class="math inline">\(MeanBloodPressure\)</span>. Let’s look at one more, <span class="math inline">\(DirectChol\)</span>:</p>
-<div id="5c3d9f4a" class="cell" data-execution_count="8">
+<div id="170d7368" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"DirectChol"</span>, data<span class="op">=</span>nhanes, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
@@ -465,7 +466,7 @@ Testing size: (1567, 77)</code></pre>
 </section>
 <section id="correlations-and-interactions" class="level3" data-number="2.2.4">
 <h3 data-number="2.2.4" class="anchored" data-anchor-id="correlations-and-interactions"><span class="header-section-number">2.2.4</span> Correlations and Interactions</h3>
-<p>Besides looking at the single predictors vs.&nbsp;the response, we also need to how the predictors relate to each other:</p>
+<p>Besides looking at the single predictors vs.&nbsp;the response, we also need to how the predictors relate to each other and with the response:</p>
 <ul>
 <li><p>Some predictors may be highly <strong>correlated</strong> with each other, so adding them to the model doesn’t give the model more information to work with.</p></li>
 <li><p>It is possible that multiple predictors can have an synergestic effect on the outcome; their effect on the outcome occurs jointly - this is called an <strong>Interaction</strong>.</p></li>
@@ -473,7 +474,7 @@ Testing size: (1567, 77)</code></pre>
 <p>In the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are <em>not</em> mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y <em>together</em> affect Z (the outcome).</p>
 <section id="exercise-correlations" class="level4" data-number="2.2.4.1">
 <h4 data-number="2.2.4.1" class="anchored" data-anchor-id="exercise-correlations"><span class="header-section-number">2.2.4.1</span> Exercise: Correlations</h4>
-<div id="0449e7d5" class="cell" data-execution_count="9">
+<div id="58610356" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"Age"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="dv">10</span>, <span class="dv">50</span>])</span>
@@ -489,7 +490,7 @@ Testing size: (1567, 77)</code></pre>
 </section>
 <section id="exercise-interactions" class="level4" data-number="2.2.4.2">
 <h4 data-number="2.2.4.2" class="anchored" data-anchor-id="exercise-interactions"><span class="header-section-number">2.2.4.2</span> Exercise: Interactions</h4>
-<div id="ba2b0dba" class="cell" data-execution_count="10">
+<div id="030ce807" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lmplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, data<span class="op">=</span>nhanes, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>})</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlim<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">50</span>)) </span>
@@ -515,13 +516,13 @@ Testing size: (1567, 77)</code></pre>
 <p><span class="math display">\[
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cdot Gender
 \]</span></p>
-<p>where the unknown variables <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, <span class="math inline">\(\beta_3\)</span>, called <strong>parameters</strong>, will be learned in the model training process.</p>
+<p>where the unknown variables <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, <span class="math inline">\(\beta_3\)</span>, called <strong>parameters</strong> or coefficients, will be learned in the model training process.</p>
 <p>We specify this form:</p>
-<div id="630bfdff" class="cell" data-execution_count="11">
+<div id="98b49a3c" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ Age + BMI + Gender"</span>, nhanes_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>And fit the model:</p>
-<div id="554f5d89" class="cell" data-execution_count="12">
+<p>And fit the model, which gives our parameters:</p>
+<div id="90087695" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> linear_model</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_reg.fit(X_train, y_train)</span>
@@ -546,7 +547,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cd
 <li><p>Mean Squared Error (MSE): the average of the <em>squared</em> difference between predicted vs.&nbsp;true outcome. The scale of this metric is harder to interpret, but it has very nice mathematical properties for the model fitting that it remains very popular.</p></li>
 </ul>
 <p>Let’s look at our MAE of our model on the test data:</p>
-<div id="575ceac2" class="cell" data-execution_count="13">
+<div id="effb0dc8" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_absolute_error</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ Age + BMI + Gender"</span>, nhanes_test)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
@@ -558,7 +559,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cd
 </div>
 <p>Okay, on average our model is off by 8.64 on the scale of <span class="math inline">\(MeanBloodPressure\)</span>.</p>
 <p>Let’s visualize this:</p>
-<div id="7f88389a" class="cell" data-execution_count="14">
+<div id="1fa1d9ff" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test_predicted, y_test, alpha<span class="op">=</span><span class="fl">.5</span>)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="dv">70</span>, <span class="dv">70</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
@@ -573,7 +574,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cd
 </div>
 </div>
 </div>
-<p>Before we race ahead….there’s a lot of new Python data structures that we are working with in this course. So let’s brush up on our data structures and how to make sense of the new ones coming our way!</p>
+<p>How satisified are we? What can be improved here?</p>
 </section>
 <section id="review-of-data-structures" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="review-of-data-structures"><span class="header-section-number">2.6</span> Review of Data Structures</h2>
