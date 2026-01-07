@@ -4,7 +4,9 @@
 
 ## An conceptual example
 
-Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's [Mean Blood Pressure](https://en.wikipedia.org/wiki/Mean_arterial_pressure) (also known as Mean Arterial Pressure), which is related to person's diastolic and systolic blood pressures. The Mean Arterial Pressure is our **Response Variable** or **Outcome** we wish to make predictions on, given **Predictor Variables** we have in the NHANES dataset. We have \~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.
+Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's [Mean Blood Pressure](https://en.wikipedia.org/wiki/Mean_arterial_pressure) (also known as Mean Arterial Pressure), which is related to person's diastolic and systolic blood pressures.
+
+The Mean Arterial Pressure is our **Response Variable** or **Outcome** we wish to make predictions on, given **Predictor Variables** we have in the NHANES dataset. We have \~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.
 
 Suppose that we decide to use the predictors $Age$ and $BMI$ for our machine learning model, and formulate it algebraically:
 
@@ -95,11 +97,11 @@ print(nhanes.shape)
 
 In Machine Learning, we need to carefully *allocate* how we want to use our data. In the machine learning model development process, we reserve some of the data, called the **Training Set** to allow the model learn from the data, and reserve the rest of the data, called the **Testing Set** to allow the model to be tested on new, unseen data.
 
-A logistical and psychological challenge of Machine Learning is to not have the model know anything about the Testing Set as you develop it. This is because as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is why we have a separate, unseen testing set to see if the model will generalize its performance.
+A logistical and psychological challenge of Machine Learning is to not have the model know anything about the Testing Set as you develop it. This is because as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called **Overfitting**. This is why we have a separate, unseen testing set to see if the model will generalize its performance.
 
 In the previous section, we looked at the response data of the entire dataset, because if we don't have a lot of data and if the distribution has multiple peaks, we may consider splitting data more carefully.
 
-Below, we split the entire data randomlly into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:
+Below, we split the entire data *randomlly* into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:
 
 -   Time series data
 
@@ -122,7 +124,7 @@ print("Testing size:", nhanes_test.shape)
 
 ### Exploratory Data Analysis
 
-Now, using *only* the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from visual discernment to entirely quantitative methods, and we will be more comprehensive later in this course, but we will start with Exploratory Data Analysis.
+Now, using *only* the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from Exploratory Data Analysis to entirely quantitative methods, and we will be more comprehensive later in this course.
 
 Let's look at the relationship between $MeanBloodPressure$ and potential predictor $BMI$. We add a smooth line fit to the scatterplot, because it shows the average trend between these two variables. The black dotted lines are the ranges of healthy mean blood pressure from our response histogram.
 
@@ -173,7 +175,7 @@ Given our (very brief) Exploratory Data Analysis, let's pick a few predictors th
 
 ### Correlations and Interactions
 
-Besides looking at the single predictors vs. the response, we also need to how the predictors relate to each other:
+Besides looking at the single predictors vs. the response, we also need to how the predictors relate to each other and with the response:
 
 -   Some predictors may be highly **correlated** with each other, so adding them to the model doesn't give the model more information to work with.
 
@@ -209,7 +211,7 @@ $$
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cdot Gender
 $$
 
-where the unknown variables $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, called **parameters**, will be learned in the model training process.
+where the unknown variables $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, called **parameters** or coefficients, will be learned in the model training process.
 
 We specify this form:
 
@@ -217,7 +219,7 @@ We specify this form:
 y_train, X_train = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_train)
 ```
 
-And fit the model:
+And fit the model, which gives our parameters:
 
 ```{python}
 from sklearn import linear_model
@@ -265,7 +267,7 @@ plt.ylabel('True MeanBloodPressure')
 plt.show()
 ```
 
-Before we race ahead....there's a lot of new Python data structures that we are working with in this course. So let's brush up on our data structures and how to make sense of the new ones coming our way!
+How satisified are we? What can be improved here?
 
 ## Review of Data Structures
 
