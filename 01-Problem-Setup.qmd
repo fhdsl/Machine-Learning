@@ -55,7 +55,6 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import (confusion_matrix, accuracy_score)
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
 import statsmodels.api as sm
@@ -195,7 +194,7 @@ plt.show()
 
 ```{python}
 plt.clf()
-ax = sns.lmplot(y="BloodPressure", x="BMI", hue="Gender", data=nhanes, lowess=True, scatter_kws={'alpha':0.1})
+ax = sns.lmplot(y="MeanBloodPressure", x="BMI", hue="Gender", data=nhanes, lowess=True, scatter_kws={'alpha':0.1})
 ax.set(xlim=(10, 50)) 
 plt.show()
 ```
