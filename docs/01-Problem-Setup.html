@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Problem Set-Up – Machine Learning</title>
+<title>2&nbsp; The Whole Game – Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -147,7 +147,7 @@ window.Quarto = {
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-          <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Problem Set-Up</span></h1>
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Whole Game</span></h1>
         </a>     
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -186,7 +186,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-Problem-Setup.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Problem Set-Up</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Whole Game</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -217,16 +217,26 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#classification-model-example" id="toc-classification-model-example" class="nav-link active" data-scroll-target="#classification-model-example"><span class="header-section-number">2.1</span> Classification model example</a>
+  <li><a href="#an-conceptual-example" id="toc-an-conceptual-example" class="nav-link active" data-scroll-target="#an-conceptual-example"><span class="header-section-number">2.1</span> An conceptual example</a>
   <ul class="collapse">
-  <li><a href="#summary-of-example" id="toc-summary-of-example" class="nav-link" data-scroll-target="#summary-of-example"><span class="header-section-number">2.1.1</span> Summary of Example</a></li>
+  <li><a href="#broader-usage" id="toc-broader-usage" class="nav-link" data-scroll-target="#broader-usage"><span class="header-section-number">2.1.1</span> Broader Usage</a></li>
   </ul></li>
-  <li><a href="#review-of-data-structures" id="toc-review-of-data-structures" class="nav-link" data-scroll-target="#review-of-data-structures"><span class="header-section-number">2.2</span> Review of Data Structures</a>
+  <li><a href="#the-conceptual-example-in-more-depth" id="toc-the-conceptual-example-in-more-depth" class="nav-link" data-scroll-target="#the-conceptual-example-in-more-depth"><span class="header-section-number">2.2</span> The conceptual example, in more depth</a>
   <ul class="collapse">
-  <li><a href="#numpy" id="toc-numpy" class="nav-link" data-scroll-target="#numpy"><span class="header-section-number">2.2.1</span> NumPy</a></li>
-  <li><a href="#what-is-this-data-structure" id="toc-what-is-this-data-structure" class="nav-link" data-scroll-target="#what-is-this-data-structure"><span class="header-section-number">2.2.2</span> What is this data structure?</a></li>
+  <li><a href="#visualizing-the-outcome" id="toc-visualizing-the-outcome" class="nav-link" data-scroll-target="#visualizing-the-outcome"><span class="header-section-number">2.2.1</span> Visualizing the outcome</a></li>
+  <li><a href="#splitting-the-data" id="toc-splitting-the-data" class="nav-link" data-scroll-target="#splitting-the-data"><span class="header-section-number">2.2.2</span> Splitting the data</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis"><span class="header-section-number">2.2.3</span> Exploratory Data Analysis</a></li>
+  <li><a href="#correlations-and-interactions" id="toc-correlations-and-interactions" class="nav-link" data-scroll-target="#correlations-and-interactions"><span class="header-section-number">2.2.4</span> Correlations and Interactions</a></li>
   </ul></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">2.3</span> Exercises</a></li>
+  <li><a href="#picking-a-model-linear-regression" id="toc-picking-a-model-linear-regression" class="nav-link" data-scroll-target="#picking-a-model-linear-regression"><span class="header-section-number">2.3</span> Picking a model: Linear Regression</a></li>
+  <li><a href="#picking-a-model-decision-tree-regression" id="toc-picking-a-model-decision-tree-regression" class="nav-link" data-scroll-target="#picking-a-model-decision-tree-regression"><span class="header-section-number">2.4</span> Picking a model: Decision Tree Regression?</a></li>
+  <li><a href="#model-evaluation" id="toc-model-evaluation" class="nav-link" data-scroll-target="#model-evaluation"><span class="header-section-number">2.5</span> Model Evaluation</a></li>
+  <li><a href="#review-of-data-structures" id="toc-review-of-data-structures" class="nav-link" data-scroll-target="#review-of-data-structures"><span class="header-section-number">2.6</span> Review of Data Structures</a>
+  <ul class="collapse">
+  <li><a href="#numpy" id="toc-numpy" class="nav-link" data-scroll-target="#numpy"><span class="header-section-number">2.6.1</span> NumPy</a></li>
+  <li><a href="#what-is-this-data-structure" id="toc-what-is-this-data-structure" class="nav-link" data-scroll-target="#what-is-this-data-structure"><span class="header-section-number">2.6.2</span> What is this data structure?</a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">2.7</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ottrproject/OTTR_Quarto/edit/main/01-Problem-Setup.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfBvVELBg8lcynKj0TrzMlov1zil-Sbkh9VhMKRcSpeo1xo6g/viewform" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -235,7 +245,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Problem Set-Up</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Whole Game</span></h1>
 </div>
 
 
@@ -252,157 +262,321 @@ window.Quarto = {
 </header>
 
 
-<p><em>In the first week of class, we will go over what machine learning models are good for, and look at an classification model as an example to show the model development workflow. Then, we will get our hands on the NumPy package to prepare our data for our models for the rest of the course.</em></p>
-<section id="classification-model-example" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="classification-model-example"><span class="header-section-number">2.1</span> Classification model example</h2>
-<p>Suppose that we are given the <a href="https://www.cdc.gov/nchs/nhanes/"><strong>N</strong>ational <strong>H</strong>ealth <strong>A</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>urvey (NHANES) dataset</a> and want to build a machine learning model to classify whether a person has hypertension blood pressure based on clinical and demographic variables.</p>
-<p>Using algebraic expressions, we formulate the following:</p>
+<p><em>In the first week of class, we will look at Machine Learning from a end-to-end perspective to see what the course will be about! Then, we will get our hands on the NumPy package to prepare our data for our machine learning models for the rest of the course.</em></p>
+<section id="an-conceptual-example" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="an-conceptual-example"><span class="header-section-number">2.1</span> An conceptual example</h2>
+<p>Suppose that we are given the <a href="https://www.cdc.gov/nchs/nhanes/"><strong>N</strong>ational <strong>H</strong>ealth <strong>A</strong>nd <strong>N</strong>utrition <strong>E</strong>xamination <strong>S</strong>urvey (NHANES) dataset</a> and want to build a machine learning model to predict a person’s <a href="https://en.wikipedia.org/wiki/Mean_arterial_pressure">Mean Blood Pressure</a> (also known as Mean Arterial Pressure), which is related to person’s diastolic and systolic blood pressures. The Mean Arterial Pressure is our <strong>Response Variable</strong> or <strong>Outcome</strong> we wish to make predictions on, given <strong>Predictor Variables</strong> we have in the NHANES dataset. We have ~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.</p>
+<p>Suppose that we decide to use the predictors <span class="math inline">\(Age\)</span> and <span class="math inline">\(BMI\)</span> for our machine learning model, and formulate it algebraically:</p>
 <p><span class="math display">\[
-Hypertension=f(Age, BMI)
+MeanBloodPressure=f(Age, BMI)
 \]</span></p>
-<p>Where <span class="math inline">\(f(Age, BMI)\)</span> is a machine learning model that takes in the variables <span class="math inline">\(Age\)</span>, <span class="math inline">\(BMI\)</span>, and make a classification on whether someone has <span class="math inline">\(Hypertension\)</span>.</p>
+<p>Where <span class="math inline">\(f(Age, BMI)\)</span> is a machine learning model that takes in the predictors <span class="math inline">\(Age\)</span>, <span class="math inline">\(BMI\)</span>, and make a prediction on one’s <span class="math inline">\(MeanBloodPressure\)</span>. The predictor’s value is almost always known, and the response is not, which gives us our problem making sound predictions. The process of machine learning is figuring out the appropriate function <span class="math inline">\(f()\)</span>. For example,</p>
+<p><span class="math display">\[
+MeanBloodPressure= 20 + 3 \cdot Age - .2 \cdot BMI
+\]</span></p>
+<p>How did we arrive at this equation form and the numbers <span class="math inline">\(20\)</span>, <span class="math inline">\(3\)</span>, and <span class="math inline">\(-.2\)</span>? They were <strong>estimated</strong> from the data as well as some assumptions of the equation form to be <strong>Linear</strong>.</p>
+<p>Given this model, suppose are given a person’s <span class="math inline">\(Age\)</span> to be 30 and <span class="math inline">\(BMI\)</span> to be 34. Then, we can make a prediction using this model:</p>
+<p><span class="math display">\[
+MeanBloodPressure=20 + 3 \cdot Age - .2 \cdot BMI = 103.2
+\]</span></p>
+<p>To see how accurate our prediction is, we can compare our predicted response to the true response, if we have the data for that. That will give us feedback on how well our model is and let us make improvements to it.</p>
+<section id="broader-usage" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="broader-usage"><span class="header-section-number">2.1.1</span> Broader Usage</h3>
 <p>A machine learning model, such as the one described above, has <em>two main uses:</em></p>
 <ol type="1">
-<li><p><strong>Classification and Prediction (Focus of this course):</strong> How accurately can we classify or predict the outcome?</p>
+<li><p><strong>Classification and Prediction (Focus of this course):</strong> How accurately can we predict or classify the outcome?</p>
 <ul>
-<li>Classification: Given a new person’s <span class="math inline">\(Age, BMI\)</span>, classify whether the person has <span class="math inline">\(Hyptertension\)</span>. The outcome is a yes/no classification.</li>
-<li>Prediction: Given a person’s <span class="math inline">\(Age, BMI\)</span>, predict the person’s <span class="math inline">\(BloodPressure\)</span> value. The outcome is a continuous value.</li>
+<li>Prediction: Given a person’s <span class="math inline">\(Age, BMI\)</span>, predict the person’s <span class="math inline">\(MeanBloodPressure\)</span> value. The outcome is a continuous value.</li>
+<li>Classification: This is when the response is a categorical value, such as Yes/No.&nbsp;As an example, we can consider classifying Yes/No whether a person has <span class="math inline">\(Hypertension\)</span> or not using predictors <span class="math inline">\(Age\)</span> and <span class="math inline">\(BMI\)</span>.</li>
 </ul></li>
 <li><p><strong>Inference (Secondary in this course):</strong> Which predictors are associated with the response, and how strong is the association?</p>
 <ul>
+<li>Prediction model example: Suppose the model is described as <span class="math inline">\(MeanBloodPressure = f(Age,BMI)=20 + 3 \cdot Age - .2 \cdot BMI\)</span>. Each variable has a relationship to the outcome: an increase of <span class="math inline">\(Age\)</span> by 1 will lead to an increase of <span class="math inline">\(MeanBloodPressure\)</span> by 3. This measures the strength of association between a variable and the outcome.</li>
 <li>Classification model example: What is the odds ratio of of <span class="math inline">\(Age\)</span> on <span class="math inline">\(Hyptertension\)</span>? If the odds ratio of <span class="math inline">\(Age\)</span> on <span class="math inline">\(Hyptertension\)</span> is 2, then an increase of 1 in <span class="math inline">\(Age\)</span> increases the odds of <span class="math inline">\(Hyptertension\)</span> by 2.</li>
-<li>Prediction model example: Suppose the model is described as <span class="math inline">\(BloodPressure = f(Age,BMI)=20 + 3 \cdot Age - .2 \cdot BMI\)</span>. Each variable has a relationship to the outcome: an increase of <span class="math inline">\(Age\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 3. This measures the strength of association between a variable and the outcome.</li>
 </ul></li>
 </ol>
-<p>Let’s start with the easiest case for just <span class="math inline">\(Hypertension = f(Age)\)</span>, a single predictor.</p>
-<p>Before we fit models, we often visualize the data to get a sense whether our setup makes sense.</p>
-<div id="8fe9d316" class="cell" data-execution_count="1">
+</section>
+</section>
+<section id="the-conceptual-example-in-more-depth" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="the-conceptual-example-in-more-depth"><span class="header-section-number">2.2</span> The conceptual example, in more depth</h2>
+<p>Let’s walk through our conceptual example again, but in more depth, and with code examples. This will illustrate the complexity and the strategies involved in the Machine Learning roadmap we will explore carefully throughout the course.</p>
+<section id="visualizing-the-outcome" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="visualizing-the-outcome"><span class="header-section-number">2.2.1</span> Visualizing the outcome</h3>
+<p>Building a sound machine learning model requires careful understanding of the data, and we often start looking at the response variable.</p>
+<div id="6afd039a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (confusion_matrix, accuracy_score)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> formulaic <span class="im">import</span> model_matrix</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nhanes <span class="op">=</span> pd.read_csv(<span class="st">"classroom_data/NHANES.csv"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>nhanes.drop_duplicates()</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>nhanes[<span class="st">'Hypertension'</span>] <span class="op">=</span> (nhanes[<span class="st">'BPDiaAve'</span>] <span class="op">&gt;</span> <span class="dv">80</span>) <span class="op">|</span> (nhanes[<span class="st">'BPSysAve'</span>] <span class="op">&gt;</span> <span class="dv">130</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>nhanes[<span class="st">'Hypertension2'</span>] <span class="op">=</span> nhanes[<span class="st">'Hypertension'</span>].replace({<span class="va">True</span>: <span class="st">"Hypertension"</span>, <span class="va">False</span>: <span class="st">"No Hypertension"</span>})</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.boxplot(y<span class="op">=</span><span class="st">"Hypertension2"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">''</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> formulaic <span class="im">import</span> model_matrix</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>nhanes <span class="op">=</span> pd.read_csv(<span class="st">"classroom_data/NHANES.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nhanes.drop_duplicates(inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>nhanes[<span class="st">'MeanBloodPressure'</span>] <span class="op">=</span> nhanes[<span class="st">'BPDiaAve'</span>] <span class="op">+</span> (nhanes[<span class="st">'BPSysAve'</span>] <span class="op">-</span> nhanes[<span class="st">'BPDiaAve'</span>]) <span class="op">/</span> <span class="dv">3</span> </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.displot(x<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, data<span class="op">=</span>nhanes)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>g.refline(x<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>g.refline(x<span class="op">=</span><span class="dv">90</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="01-Problem-Setup_files/figure-html/cell-2-output-1.png" width="661" height="429" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Okay, great, it looks like when someone’s BMI is higher, then it is more likely that the person has Hypertension.</p>
-<p>Now, let’s build the model <span class="math inline">\(Hypertension = f(BMI)\)</span> to make a prediction of <span class="math inline">\(Hyptertension\)</span> given <span class="math inline">\(BMI\)</span>.</p>
-<div id="f4e286a5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"Hypertension ~ BMI"</span>, nhanes)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>logit_model <span class="op">=</span> sm.Logit(y, X).fit() </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X.BMI, logit_model.predict(), color<span class="op">=</span><span class="st">"blue"</span>, label<span class="op">=</span><span class="st">"Fitted Line"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(X.BMI, y, alpha<span class="op">=</span><span class="fl">.3</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Data"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'BMI'</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Probability of Hypertension'</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Optimization terminated successfully.
-         Current function value: 0.515543
-         Iterations 6</code></pre>
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-Problem-Setup_files/figure-html/cell-3-output-2.png" width="589" height="429" class="figure-img"></p>
+<p><img src="01-Problem-Setup_files/figure-html/cell-2-output-2.png" width="470" height="470" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Instead of boxplots, we plotted the data just using points, with “Hypertension” having a probability of 1 and “No Hypertension” having a probability of 0. We see that we have a fitted line in blue for every value of BMI, which represents our machine learning model <span class="math inline">\(f(BMI)\)</span>. This model is called <strong>Logistic Regression</strong>.</p>
-<p>The first thing we want to investigate about this model is how well it performs in terms of Classification. Just using <span class="math inline">\(BMI\)</span> as a variable, what is the Accuracy of <span class="math inline">\(f(BMI)\)</span> classifying whether a person has <span class="math inline">\(Hypertension\)</span>? Notice that first <span class="math inline">\(f(BMI)\)</span> gives us continuous probability values, such as given a BMI of 30, there is a 20% chance the person has Hypertension. We need a discrete cutoff of this model to decide whether the person has Hypertension.</p>
-<p>A reasonable cutoff to start is 50%: if the probability of having Hypertension is &gt;=50%, then classify that person having Hypertension. Same for &lt; 50%. This is called the <strong>Decision Boundary</strong>.</p>
-<div id="051bd80c" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(X.BMI, logit_model.predict(), color<span class="op">=</span><span class="st">"blue"</span>, label<span class="op">=</span><span class="st">"Fitted Line"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.scatter(X.BMI, y, alpha<span class="op">=</span><span class="fl">.3</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Data"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'BMI'</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Probability of Hypertension'</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.axhline(y<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Prediction Cutoff'</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We see that the <span class="math inline">\(MeanBloodPressure\)</span> is fairly symmetrically distributed. A person has normal blood pressure if their <span class="math inline">\(MeanBloodPressure\)</span> is between values of 70 and ~90, which we have shown in the dotted vertical lines. There seems to be more people with elevated blood pressure, as there are more counts above 80 than below 80.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Mean Arterial Pressure</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hypotension</td>
+<td>&lt;70</td>
+</tr>
+<tr class="even">
+<td>Normal</td>
+<td>70-92</td>
+</tr>
+<tr class="odd">
+<td>Stage 1 Hypertension</td>
+<td>92-96</td>
+</tr>
+<tr class="even">
+<td>Stage 2 Hypertension</td>
+<td>&gt;96</td>
+</tr>
+</tbody>
+</table>
+<p>Usually, a symmetric, continuous distribution for the response variable is a great way to start the machine learning modeling process, as a lot of models assume a symmetric, continuous distribution for the model to perform well.</p>
+<p>If the response distribution is strongly skewed, then we may want to perform mathematical transformations fix it.</p>
+<p>If the response distribution has multiple peaks (multi-modal), we may want to perform mathematical transformations, or consider reformulate the problem as a (multi-class) classification problem, if the interpretation makes sense.</p>
+</section>
+<section id="splitting-the-data" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="splitting-the-data"><span class="header-section-number">2.2.2</span> Splitting the data</h3>
+<p>Our dataset has 7832 data points:</p>
+<div id="3158650f" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(nhanes.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(7832, 77)</code></pre>
+</div>
+</div>
+<p>In Machine Learning, we need to carefully <em>allocate</em> how we want to use our data. In the machine learning model development process, we reserve some of the data, called the <strong>Training Set</strong> to allow the model learn from the data, and reserve the rest of the data, called the <strong>Testing Set</strong> to allow the model to be tested on new, unseen data.</p>
+<p>A logistical and psychological challenge of Machine Learning is to not have the model know anything about the Testing Set as you develop it. This is because as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is why we have a separate, unseen testing set to see if the model will generalize its performance.</p>
+<p>In the previous section, we looked at the response data of the entire dataset, because if we don’t have a lot of data and if the distribution has multiple peaks, we may consider splitting data more carefully.</p>
+<p>Below, we split the entire data randomlly into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:</p>
+<ul>
+<li><p>Time series data</p></li>
+<li><p>Spatial data</p></li>
+<li><p>The response data is small has multiple peaks</p></li>
+</ul>
+<p>but random splitting will suffice for this example.</p>
+<div id="49b8f96d" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nhanes_train, nhanes_test <span class="op">=</span> train_test_split(nhanes, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And let’s look at the number of data points after splitting:</p>
+<div id="de5c080b" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Training size:"</span>, nhanes_train.shape)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Testing size:"</span>, nhanes_test.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training size: (6265, 77)
+Testing size: (1567, 77)</code></pre>
+</div>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="exploratory-data-analysis"><span class="header-section-number">2.2.3</span> Exploratory Data Analysis</h3>
+<p>Now, using <em>only</em> the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from visual discernment to entirely quantitative methods, and we will be more comprehensive later in this course, but we will start with Exploratory Data Analysis.</p>
+<p>Let’s look at the relationship between <span class="math inline">\(MeanBloodPressure\)</span> and potential predictor <span class="math inline">\(BMI\)</span>. We add a smooth line fit to the scatterplot, because it shows the average trend between these two variables. The black dotted lines are the ranges of healthy mean blood pressure from our response histogram.</p>
+<div id="951c1a6d" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.2</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">90</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="dv">10</span>, <span class="dv">50</span>])</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-Problem-Setup_files/figure-html/cell-4-output-1.png" width="589" height="429" class="figure-img"></p>
+<p><img src="01-Problem-Setup_files/figure-html/cell-6-output-1.png" width="602" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Given this decision boundary, what is the accuracy?</p>
-<div id="db7f4ad0" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prediction_cut <span class="op">=</span> [<span class="dv">1</span> <span class="cf">if</span> x <span class="op">&gt;=</span> <span class="fl">.5</span> <span class="cf">else</span> <span class="dv">0</span> <span class="cf">for</span> x <span class="kw">in</span> logit_model.predict()]</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Accuracy = '</span>, accuracy_score(y, prediction_cut)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Accuracy =  0.762300186838281</code></pre>
+<p>Okay, great, it looks like when someone’s BMI is higher, then it is more likely they have higher mean blood pressure.</p>
+<p>Let’s look at <span class="math inline">\(Age\)</span>:</p>
+<div id="01df3853" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"Age"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.2</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">90</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-7-output-1.png" width="593" height="429" class="figure-img"></p>
+</figure>
 </div>
 </div>
-<p>Okay, that’s a starting point!</p>
-<p>We can break down classification accuracy to four additional results:</p>
-<div id="550b72cb" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tn, fp, fn, tp <span class="op">=</span> confusion_matrix(y, prediction_cut).ravel().tolist()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"True Positive:"</span>, tp, <span class="st">"</span><span class="ch">\n</span><span class="st">False Positive: "</span>, fp, <span class="st">"</span><span class="ch">\n</span><span class="st">True Negative: "</span>, tn, <span class="st">"</span><span class="ch">\n</span><span class="st">False Negative:"</span>, fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>True Positive: 109 
-False Positive:  137 
-True Negative:  7235 
-False Negative: 2153</code></pre>
+</div>
+<p>We see a similar trend. How about <span class="math inline">\(Gender\)</span>?</p>
+<div id="9d1ffb5b" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.boxplot(x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, data<span class="op">=</span>nhanes)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">90</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-8-output-1.png" width="593" height="429" class="figure-img"></p>
+</figure>
 </div>
 </div>
-<p>define tp, fp, tn, fn</p>
-<p>define confusion matrix</p>
-<div id="fd3148ad" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y, prediction_cut) </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Confusion Matrix : </span><span class="ch">\n</span><span class="st">"</span>, cm) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Confusion Matrix : 
- [[7235  137]
- [2153  109]]</code></pre>
+</div>
+<p>Males tend to have a higher <span class="math inline">\(MeanBloodPressure\)</span>. Let’s look at one more, <span class="math inline">\(DirectChol\)</span>:</p>
+<div id="5c3d9f4a" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"DirectChol"</span>, data<span class="op">=</span>nhanes, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">70</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">90</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-9-output-1.png" width="593" height="429" class="figure-img"></p>
+</figure>
 </div>
 </div>
-<section id="summary-of-example" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="summary-of-example"><span class="header-section-number">2.1.1</span> Summary of Example</h3>
-<p>So what have we done so far? / Preview of what is to come:</p>
-<ol type="1">
-<li><p>Selected a predictor and binary outcome, and visualized it</p>
+</div>
+<p>This has a more nonlinear trend to it.</p>
+<p>Given our (very brief) Exploratory Data Analysis, let’s pick a few predictors that seem promising: <span class="math inline">\(BMI\)</span>, <span class="math inline">\(Age\)</span>, <span class="math inline">\(Gender\)</span>.</p>
+</section>
+<section id="correlations-and-interactions" class="level3" data-number="2.2.4">
+<h3 data-number="2.2.4" class="anchored" data-anchor-id="correlations-and-interactions"><span class="header-section-number">2.2.4</span> Correlations and Interactions</h3>
+<p>Besides looking at the single predictors vs.&nbsp;the response, we also need to how the predictors relate to each other:</p>
 <ul>
-<li>Eventually we will look at a continuous outcome, multiple predictors, and how to select multiple predictors</li>
-</ul></li>
-<li><p>Fit it to a logistic regression model, which is a classification model</p>
+<li><p>Some predictors may be highly <strong>correlated</strong> with each other, so adding them to the model doesn’t give the model more information to work with.</p></li>
+<li><p>It is possible that multiple predictors can have an synergestic effect on the outcome; their effect on the outcome occurs jointly - this is called an <strong>Interaction</strong>.</p></li>
+</ul>
+<p>In the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are <em>not</em> mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y <em>together</em> affect Z (the outcome).</p>
+<section id="exercise-correlations" class="level4" data-number="2.2.4.1">
+<h4 data-number="2.2.4.1" class="anchored" data-anchor-id="exercise-correlations"><span class="header-section-number">2.2.4.1</span> Exercise: Correlations</h4>
+<div id="0449e7d5" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"Age"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="dv">10</span>, <span class="dv">50</span>])</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-10-output-1.png" width="593" height="429" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-interactions" class="level4" data-number="2.2.4.2">
+<h4 data-number="2.2.4.2" class="anchored" data-anchor-id="exercise-interactions"><span class="header-section-number">2.2.4.2</span> Exercise: Interactions</h4>
+<div id="ba2b0dba" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lmplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, data<span class="op">=</span>nhanes, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>})</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlim<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">50</span>)) </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-11-output-2.png" width="559" height="470" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="picking-a-model-linear-regression" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="picking-a-model-linear-regression"><span class="header-section-number">2.3</span> Picking a model: Linear Regression</h2>
+<p>We will explore a whole range of models in this course to try in our predictive model, but one of the most fundamental model that has been robust and connects to nearly all Machine Learning models is <strong>Linear Regression</strong>. A common strategy is to start with a simple model such as Linear Regression and build out complexity from it. So we gotta see this in action.</p>
+<p>Given our decided predictors, the model will look like this:</p>
+<p><span class="math display">\[
+MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cdot Gender
+\]</span></p>
+<p>where the unknown variables <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, <span class="math inline">\(\beta_3\)</span>, called <strong>parameters</strong>, will be learned in the model training process.</p>
+<p>We specify this form:</p>
+<div id="630bfdff" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ Age + BMI + Gender"</span>, nhanes_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And fit the model:</p>
+<div id="554f5d89" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> linear_model</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_reg.fit(X_train, y_train)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(linear_reg.intercept_)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(linear_reg.coef_)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[62.7177058]
+[[0.         0.23590657 0.36493118 3.3580882 ]]</code></pre>
+</div>
+</div>
+</section>
+<section id="picking-a-model-decision-tree-regression" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="picking-a-model-decision-tree-regression"><span class="header-section-number">2.4</span> Picking a model: Decision Tree Regression?</h2>
+<p>todo</p>
+</section>
+<section id="model-evaluation" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="model-evaluation"><span class="header-section-number">2.5</span> Model Evaluation</h2>
+<p>Now that we have fitted our model on the training set, we can see how it performs on the testing set. In our testing set, we already know all the values of the predictors and outcomes, so to simulate a realistic scenario, we feed the predictor to the model, let it make a prediction, and compare it to the true outcome.</p>
+<p>When we compare the predicted outcome vs.&nbsp;true outcome, we need to use a metric to compare the two quantities. Here are two popular metrics:</p>
 <ul>
-<li>Logistic regression is a type of linear model, which is the basis for most machine learning models</li>
-</ul></li>
-<li><p>We evaluated the model in terms of accuracy, true positive rate, true negative rate, false positive rate, false negative rate</p>
-<ul>
-<li>We evaluated the model on the same data that we built the model. Ideally, we want to evaluate the model on data it has never seen before. More on this next week.</li>
-</ul></li>
-</ol>
+<li><p>Mean Absolute Error (MAE): the average of the <em>absolute</em> difference between predicted vs.&nbsp;true outcome. This scale of this metric is the same as the outcome’s scale, which is easy to interpret.</p></li>
+<li><p>Mean Squared Error (MSE): the average of the <em>squared</em> difference between predicted vs.&nbsp;true outcome. The scale of this metric is harder to interpret, but it has very nice mathematical properties for the model fitting that it remains very popular.</p></li>
+</ul>
+<p>Let’s look at our MAE of our model on the test data:</p>
+<div id="575ceac2" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_absolute_error</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ Age + BMI + Gender"</span>, nhanes_test)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>mean_absolute_error(y_test_predicted, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>8.646477228125601</code></pre>
+</div>
+</div>
+<p>Okay, on average our model is off by 8.64 on the scale of <span class="math inline">\(MeanBloodPressure\)</span>.</p>
+<p>Let’s visualize this:</p>
+<div id="7f88389a" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test_predicted, y_test, alpha<span class="op">=</span><span class="fl">.5</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="dv">70</span>, <span class="dv">70</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Predicted MeanBloodPressure'</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True MeanBloodPressure'</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-Problem-Setup_files/figure-html/cell-15-output-1.png" width="593" height="429" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Before we race ahead….there’s a lot of new Python data structures that we are working with in this course. So let’s brush up on our data structures and how to make sense of the new ones coming our way!</p>
 </section>
-</section>
-<section id="review-of-data-structures" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="review-of-data-structures"><span class="header-section-number">2.2</span> Review of Data Structures</h2>
+<section id="review-of-data-structures" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="review-of-data-structures"><span class="header-section-number">2.6</span> Review of Data Structures</h2>
 <p>We will be seeing <em>a lot</em> of different data structures in this course beyond DataFrames, Series, and Lists. So let’s review how we think about learning new data structures to make our lives easier when we encounter new data structures.</p>
 <p>Let’s review the List data structure. For any data structure, we ask the following:</p>
 <ul>
@@ -429,8 +603,8 @@ False Negative: 2153</code></pre>
 <li><p><strong>Methods</strong> that can be used on the object: <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html">df.merge(other_df, on=“column_name”)</a></p></li>
 </ul>
 <p>Feel free to look at the <a href="https://docs.google.com/document/d/1IHD9_Edg3mbMY9lilAF0QWVjaKBK0eE0-hbo0fSywAA/edit?tab=t.0#heading=h.2bko76vfr8r6">cheatsheet on data structures from Intro to Python</a> to refresh yourself.</p>
-<section id="numpy" class="level3" data-number="2.2.1">
-<h3 data-number="2.2.1" class="anchored" data-anchor-id="numpy"><span class="header-section-number">2.2.1</span> NumPy</h3>
+<section id="numpy" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="numpy"><span class="header-section-number">2.6.1</span> NumPy</h3>
 <p>A new Data Structure we will work with in this course is NumPy’s ndarray (“n-dimensional array”) data structure. It is commonly referred as “<strong>NumPy Array</strong>”. It is very similar to a Dataframe, but has the following characteristics for building machine learning models:</p>
 <ul>
 <li><p>All elements are homogeneous and numeric.</p></li>
@@ -453,13 +627,13 @@ False Negative: 2153</code></pre>
 <p>For this course, we often load in a dataset in the Pandas Dataframe format, and then once we pick the our outcome and predictors, we will transform the Dataframe into an NumPy Array, such as this line of code we saw earlier: <code>y, X = model_matrix("Hypertension ~ BMI", nhanes)</code>. We specify our outcome, predictor, and Dataframe for the <code>model_matrix()</code> function, and the outputs are two NumPy Arrays, one for the outcome, and one for the predictors. Any downstream Machine Learning modeling work off the NumPy Arrays <code>y</code> and <code>X</code>.</p>
 <p>More introduction can be found on <a href="https://numpy.org/devdocs/user/absolute_beginners.html">NumPy’s tutorial guide</a>.</p>
 </section>
-<section id="what-is-this-data-structure" class="level3" data-number="2.2.2">
-<h3 data-number="2.2.2" class="anchored" data-anchor-id="what-is-this-data-structure"><span class="header-section-number">2.2.2</span> What is this data structure?</h3>
+<section id="what-is-this-data-structure" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="what-is-this-data-structure"><span class="header-section-number">2.6.2</span> What is this data structure?</h3>
 <p>If you are not sure about what your variable’s data structure, use the <code>type()</code> function, such as <code>type(mystery_data)</code> and it will tell you.</p>
 </section>
 </section>
-<section id="exercises" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.3</span> Exercises</h2>
+<section id="exercises" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.7</span> Exercises</h2>
 <p>Exercises for week 1 can be <a href="https://colab.research.google.com/drive/1FmxlZoFAlSJczejg5x0nL4eM6UzfmINH?usp=sharing">found here</a>.</p>
 
 
