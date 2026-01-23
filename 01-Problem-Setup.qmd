@@ -2,11 +2,25 @@
 
 *In the first week of class, we will look at Machine Learning from a end-to-end perspective to see what the course will be about! Then, we will get our hands on the NumPy package to prepare our data for our machine learning models for the rest of the course.*
 
+## Learning Objectives for today
+
+-   Describe the main use cases of a Machine Learning model.
+
+-   Describe the overarching workflow of Machine Learning:
+
+    -   Describe the importance of allocating the data into Training and Testing sets.
+
+    -   Describe some criteria for choosing predictors for a Machine Learning model.
+
+    -   Describe the process of evaluating a Machine Learning model.
+
+-   Describe the components of a Python Data Structure.
+
 ## An conceptual example
 
 Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's [Mean Blood Pressure](https://en.wikipedia.org/wiki/Mean_arterial_pressure) (also known as Mean Arterial Pressure), which is related to person's diastolic and systolic blood pressures.
 
-The Mean Arterial Pressure is our **Response Variable** or **Outcome** we wish to make predictions on, given **Predictor Variables** we have in the NHANES dataset. We have \~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.
+The Mean Blood Pressure is our **Response Variable** or **Outcome** we wish to make predictions on, given **Predictor Variables** we have in the NHANES dataset. We have \~70 predictors we can consider, some of which include: Age, BMI, Average Number of Hours Slept, Gender, Income, Highest Education, Martial Status, Mental health questionnaires, and so forth.
 
 Suppose that we decide to use the predictors $Age$ and $BMI$ for our machine learning model, and formulate it algebraically:
 
@@ -14,7 +28,7 @@ $$
 MeanBloodPressure=f(Age, BMI) 
 $$
 
-Where $f(Age, BMI)$ is a machine learning model that takes in the predictors $Age$, $BMI$, and make a prediction on one's $MeanBloodPressure$. The predictor's value is almost always known, and the response is not, which gives us our problem making sound predictions. The process of machine learning is figuring out the appropriate function $f()$. For example,
+where $f(Age, BMI)$ is a function that represents a machine learning model that takes in the predictors $Age$, $BMI$, and make a prediction on one's $MeanBloodPressure$. We use some of the data to build this machine learning model:
 
 $$
 MeanBloodPressure= 20 + 3 \cdot Age - .2 \cdot BMI
@@ -25,7 +39,7 @@ How did we arrive at this equation form and the numbers $20$, $3$, and $-.2$? Th
 Given this model, suppose are given a person's $Age$ to be 30 and $BMI$ to be 34. Then, we can make a prediction using this model:
 
 $$
-MeanBloodPressure=20 + 3 \cdot Age - .2 \cdot BMI = 103.2
+MeanBloodPressure=20 + 3 \cdot 30 - .2 \cdot 34 = 103.2
 $$
 
 To see how accurate our prediction is, we can compare our predicted response to the true response, if we have the data for that. That will give us feedback on how well our model is and let us make improvements to it.
@@ -41,7 +55,7 @@ A machine learning model, such as the one described above, has *two main uses:*
 
 2.  **Inference (Secondary in this course):** Which predictors are associated with the response, and how strong is the association?
 
-    -   Prediction model example: Suppose the model is described as $MeanBloodPressure = f(Age,BMI)=20 + 3 \cdot Age - .2 \cdot BMI$. Each variable has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $MeanBloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
+    -   Prediction model example: Using the linear model above as an example, each predictor has a relationship to the outcome: an increase of $Age$ by 1 will lead to an increase of $MeanBloodPressure$ by 3. This measures the strength of association between a variable and the outcome.
     -   Classification model example: What is the odds ratio of of $Age$ on $Hyptertension$? If the odds ratio of $Age$ on $Hyptertension$ is 2, then an increase of 1 in $Age$ increases the odds of $Hyptertension$ by 2.
 
 ## The conceptual example, in more depth
@@ -101,7 +115,7 @@ A logistical and psychological challenge of Machine Learning is to not have the 
 
 In the previous section, we looked at the response data of the entire dataset, because if we don't have a lot of data and if the distribution has multiple peaks, we may consider splitting data more carefully.
 
-Below, we split the entire data *randomlly* into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:
+Below, we split the entire data *randomly* into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing. There are other ways of splitting data to consider, in scenarios such as:
 
 -   Time series data
 
@@ -124,7 +138,7 @@ print("Testing size:", nhanes_test.shape)
 
 ### Exploratory Data Analysis
 
-Now, using *only* the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from Exploratory Data Analysis to entirely quantitative methods, and we will be more comprehensive later in this course.
+Now, using *only* the Training Set, we try to discern which variables might be good predictors of our response, as well as how they relate - is it linear, nonlinear, or something else? There are many ways to pick predictors for a model, ranging from Exploratory Data Analysis to quantitative methods, and we will be more comprehensive later in this course.
 
 Let's look at the relationship between $MeanBloodPressure$ and potential predictor $BMI$. We add a smooth line fit to the scatterplot, because it shows the average trend between these two variables. The black dotted lines are the ranges of healthy mean blood pressure from our response histogram.
 
@@ -173,33 +187,7 @@ This has a more nonlinear trend to it.
 
 Given our (very brief) Exploratory Data Analysis, let's pick a few predictors that seem promising: $BMI$, $Age$, $Gender$.
 
-### Correlations and Interactions
-
-Besides looking at the single predictors vs. the response, we also need to how the predictors relate to each other and with the response:
-
--   Some predictors may be highly **correlated** with each other, so adding them to the model doesn't give the model more information to work with.
-
--   It is possible that multiple predictors can have an synergestic effect on the outcome; their effect on the outcome occurs jointly - this is called an **Interaction**.
-
-In the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are *not* mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y *together* affect Z (the outcome).
-
-#### Exercise: Correlations
-
-```{python}
-plt.clf()
-ax = sns.regplot(y="Age", x="BMI", data=nhanes, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':"r"})
-ax.set_xlim([10, 50])
-plt.show()
-```
-
-#### Exercise: Interactions
-
-```{python}
-plt.clf()
-ax = sns.lmplot(y="MeanBloodPressure", x="BMI", hue="Gender", data=nhanes, lowess=True, scatter_kws={'alpha':0.1})
-ax.set(xlim=(10, 50)) 
-plt.show()
-```
+As we look at data with a huge number of predictors, we will have to find ways to automate this process called **feature selection**.
 
 ## Picking a model: Linear Regression
 
@@ -211,7 +199,7 @@ $$
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cdot Gender
 $$
 
-where the unknown variables $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, called **parameters** or coefficients, will be learned in the model training process.
+where the unknown variables $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, called **parameters** or **coefficients**, will be learned in the model training process.
 
 We specify this form:
 
@@ -230,9 +218,25 @@ print(linear_reg.coef_)
 
 ```
 
-## Picking a model: Decision Tree Regression?
+## Picking a model: Decision Tree 
 
-todo
+A different model is called a **Decision Tree**. It is composed of a set of hierarchical if/then statements based on the predictors that ends in a **node** that dictate what the response prediction should be. Below shows an example Decision Tree with three hierarchical if/then statements:
+
+```{python}
+from sklearn.tree import DecisionTreeRegressor
+from sklearn import tree
+
+decision_tree = DecisionTreeRegressor(max_depth=3)
+decision_tree = decision_tree.fit(X_train, y_train)
+
+
+tree.plot_tree(decision_tree, proportion=True)
+plt.show()
+```
+
+Here is how we would interpret the leftmost node:
+
+"If $Age$ is less than 17.5, and less than 12.5, and $BMI$ is less than 22.65, then predict 64.7 for $MeanBloodPressure$."
 
 ## Model Evaluation
 
@@ -244,17 +248,20 @@ When we compare the predicted outcome vs. true outcome, we need to use a metric 
 
 -   Mean Squared Error (MSE): the average of the *squared* difference between predicted vs. true outcome. The scale of this metric is harder to interpret, but it has very nice mathematical properties for the model fitting that it remains very popular.
 
-Let's look at our MAE of our model on the test data:
+We will consider other model evaluation metrics throughout the course, especially in situation when the dataset isn't big enough for a training and splitting set.
+
+Let's look at our MAE of our Linear Regression model on the test data:
 
 ```{python}
 from sklearn.metrics import mean_absolute_error
 y_test, X_test = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_test)
 y_test_predicted = linear_reg.predict(X_test)
 
-mean_absolute_error(y_test_predicted, y_test)
+test_err = round(mean_absolute_error(y_test_predicted, y_test), 2)
+test_err
 ```
 
-Okay, on average our model is off by 8.64 on the scale of $MeanBloodPressure$.
+Okay, on average our model is off by 8.65 on the scale of $MeanBloodPressure$.
 
 Let's visualize this:
 
@@ -264,16 +271,34 @@ plt.scatter(y_test_predicted, y_test, alpha=.5)
 plt.axline((70, 70), slope=1, color='r', linestyle='--')
 plt.xlabel('Predicted MeanBloodPressure')
 plt.ylabel('True MeanBloodPressure')
+plt.title('Linear Regression MAE:' + str(test_err))
 plt.show()
 ```
 
-How satisified are we? What can be improved here?
+Let's do the same for the Regression Tree model:
+
+```{python}
+y_test_predicted = decision_tree.predict(X_test)
+
+test_err = round(mean_absolute_error(y_test_predicted, y_test), 2)
+plt.clf()
+plt.scatter(y_test_predicted, y_test, alpha=.5)
+plt.axline((70, 70), slope=1, color='r', linestyle='--')
+plt.xlabel('Predicted MeanBloodPressure')
+plt.ylabel('True MeanBloodPressure')
+plt.title('Regression Tree MAE:' + str(test_err))
+plt.show()
+```
+
+The predictions look very discrete, because we only allowed the tree to be split into eight categories.
+
+In a full analysis, we would look at the performance of each model and ask what can be improved.
 
 ## Review of Data Structures
 
 We will be seeing *a lot* of different data structures in this course beyond DataFrames, Series, and Lists. So let's review how we think about learning new data structures to make our lives easier when we encounter new data structures.
 
-Let's review the List data structure. For any data structure, we ask the following:
+For any data structure, we ask the following:
 
 -   What does it contain (in terms of data)?
 
@@ -331,7 +356,9 @@ So, let's see some examples:
 
     -   `data.sum(axis=0)` sums over rows, `data.sum(axis=1)` sums over columns.
 
-For this course, we often load in a dataset in the Pandas Dataframe format, and then once we pick the our outcome and predictors, we will transform the Dataframe into an NumPy Array, such as this line of code we saw earlier: `y, X = model_matrix("Hypertension ~ BMI", nhanes)`. We specify our outcome, predictor, and Dataframe for the `model_matrix()` function, and the outputs are two NumPy Arrays, one for the outcome, and one for the predictors. Any downstream Machine Learning modeling work off the NumPy Arrays `y` and `X`.
+For this course, we often load in a dataset in the Pandas Dataframe format, and then once we pick the our outcome and predictors, we will transform the Dataframe into an NumPy Array, such as this line of code we saw earlier: `y_train, X_train = model_matrix("Hypertension ~ BMI", nhanes_train)`.
+
+We specify our outcome, predictor, and Dataframe for the `model_matrix()` function, and the outputs are two NumPy Arrays, one for the outcome, and one for the predictors. Any downstream Machine Learning modeling work off the NumPy Arrays `y_train` and `X_train`.
 
 More introduction can be found on [NumPy's tutorial guide](https://numpy.org/devdocs/user/absolute_beginners.html).
 
