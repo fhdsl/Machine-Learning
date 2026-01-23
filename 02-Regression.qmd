@@ -1,4 +1,4 @@
-# Regression
+# Regression (work in progress)
 
 *In the second week of class, we will look at linear regression in more depth, and examine the challenge of over-fitting.*
 
