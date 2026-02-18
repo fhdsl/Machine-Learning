@@ -51,21 +51,23 @@ This model is formed by making the the line of best fit determined by the minimu
 
 Another illustration:
 
-![Left panel: difference between response and predicted response (residual). Right panel: squared difference between predicted response and response. Image source: https://kenndanielso.github.io/mlrefined/blog_posts/8_Linear_regression/8_1_Least_squares_regression.html](https://kenndanielso.github.io/mlrefined/mlrefined_images/superlearn_images/Least_Squares.png){width="800"}
+![Image source: https://kenndanielso.github.io/mlrefined/blog_posts/8_Linear_regression/8_1_Least_squares_regression.html](https://kenndanielso.github.io/mlrefined/mlrefined_images/superlearn_images/Least_Squares.png){width="800"}
+
+Left panel: difference between response and predicted response (residual). Right panel: squared difference between predicted response and response.
 
 ## Assumptions of linear regression
 
 Any model that one uses has some assumptions about the data that allows the model to make good predictions. *Note that there are other types of assumptions if your modeling technique is focused on inference*.
 
-Here are common situations when the assumptions of linear regression are *not* held:
+Let's take a look what are the assumptions needed for a sound model, and what we can do to address it not upheld.
 
-### Non-Linearity of responder-predictor relationship
+### Linearity of responder-predictor relationship
 
 The linear regression model assumes that there is a straight line (linear) relationship between the predictors and the response. It doesn't ask for the straight line relationship to be perfect, but rather on average the cloud of points has a linear shape. If that is not true, then our prediction is going to be less accurate.
 
 To check for this relationship, we have to calculate the **residual**, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a **residual plot** of the predicted response vs. residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.
 
-If there's a trend in the data, that means there are non-linear associations in the data.
+If there's a trend in the data, that means there are non-linear associations between some of the predictors and the response.
 
 ```{python}
 residual = y_train - y_train_predicted
@@ -79,17 +81,23 @@ plt.show()
 
 We see there's a slight curve in our residual plot. We will look at ways to deal with this later in this lecture.
 
-### Outliers
+### No Outliers
 
--   An **outlier** is an obseravtion for which the response is far from the value predicted response. An observation has high **leverage** if it has an unusual predictor value. Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. Outliers and high leverage observations that cause changes to the regression model is called **influential**. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.
+An **outlier** is an obseravtion for which the response is far from the value predicted response (y-axis). An observation has high **leverage** if it has an unusual predictor value (x-axis). Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. When these observations cause significant changes to the regression model, they are called **influential**. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.
 
-    -   We can detect an influential point via computing the studentized residuals or cook's distance and decide whether it makes sense to remove it
+Some possible solutions:
 
-    -   We can use a different linear regression method, called Huber loss regerssion, that allows more tolerance for outliers.
+-   We can eyeball for for potential influential points by exploratory data analysis, and see how the model changes if we remove it. We may troubleshoot with the instruments that generated the data in the first place to diagnosis.
 
-### Collinearity of predictors
+-   We can detect an influential point via computing the studentized residuals or cook's distance and decide whether it makes sense to remove it.
 
-**Colinearity** is the situation when two or more predictors are closely linearly related to each other. If we put collinear predictors into our regression model, they start to serve as redundant information to our model and can degrade predictive performance.
+-   We can use a different linear regression method, called Huber loss regerssion, that allows more tolerance for outliers.
+
+### Predictors are not colinear
+
+**Colinearity** is the situation when two or more predictors are linearly related to each other. If we put collinear predictors into our regression model, they start to serve as redundant information to our model and can degrade predictive performance.
+
+Some possible solutions:
 
 -   We can detect collinearity to look at the correlation matrix between predictors. This works well for pairwise correlations.
 
@@ -123,7 +131,7 @@ ax.set_xlim([10, 50])
 plt.show()
 ```
 
-### Number of predictors more than the number of samples
+### Number of predictors is less than the number of samples
 
 Sometimes, in machine learning, we have more predictors than the number of samples. This is called a **high dimensional** problem. Our regression method will not work here and we need to find ways to reduce the number of predictors.
 
@@ -198,7 +206,7 @@ $$
 MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender 
 $$
 
-According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. However, this plot suggests that our original model isn't quite right: the additional predictor of Gender changes our prediction by more than a constant - it is dependent on $BMI$ also.
+According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. Visually, that would look like two parallel lines, with $\beta_2$ dictating the distance between parallel lines. However, this plot suggests that our original model isn't quite right: the additional predictor of Gender changes our prediction by more than a constant - it is dependent on $BMI$ also.
 
 When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an **Interaction**. To incorporate this into our model, we add an interaction term:
 
