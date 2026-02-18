@@ -226,10 +226,10 @@ window.Quarto = {
   </ul></li>
   <li><a href="#assumptions-of-linear-regression" id="toc-assumptions-of-linear-regression" class="nav-link" data-scroll-target="#assumptions-of-linear-regression"><span class="header-section-number">3.2</span> Assumptions of linear regression</a>
   <ul class="collapse">
-  <li><a href="#non-linearity-of-responder-predictor-relationship" id="toc-non-linearity-of-responder-predictor-relationship" class="nav-link" data-scroll-target="#non-linearity-of-responder-predictor-relationship"><span class="header-section-number">3.2.1</span> Non-Linearity of responder-predictor relationship</a></li>
-  <li><a href="#outliers" id="toc-outliers" class="nav-link" data-scroll-target="#outliers"><span class="header-section-number">3.2.2</span> Outliers</a></li>
-  <li><a href="#collinearity-of-predictors" id="toc-collinearity-of-predictors" class="nav-link" data-scroll-target="#collinearity-of-predictors"><span class="header-section-number">3.2.3</span> Collinearity of predictors</a></li>
-  <li><a href="#number-of-predictors-more-than-the-number-of-samples" id="toc-number-of-predictors-more-than-the-number-of-samples" class="nav-link" data-scroll-target="#number-of-predictors-more-than-the-number-of-samples"><span class="header-section-number">3.2.4</span> Number of predictors more than the number of samples</a></li>
+  <li><a href="#linearity-of-responder-predictor-relationship" id="toc-linearity-of-responder-predictor-relationship" class="nav-link" data-scroll-target="#linearity-of-responder-predictor-relationship"><span class="header-section-number">3.2.1</span> Linearity of responder-predictor relationship</a></li>
+  <li><a href="#no-outliers" id="toc-no-outliers" class="nav-link" data-scroll-target="#no-outliers"><span class="header-section-number">3.2.2</span> No Outliers</a></li>
+  <li><a href="#predictors-are-not-colinear" id="toc-predictors-are-not-colinear" class="nav-link" data-scroll-target="#predictors-are-not-colinear"><span class="header-section-number">3.2.3</span> Predictors are not colinear</a></li>
+  <li><a href="#number-of-predictors-is-less-than-the-number-of-samples" id="toc-number-of-predictors-is-less-than-the-number-of-samples" class="nav-link" data-scroll-target="#number-of-predictors-is-less-than-the-number-of-samples"><span class="header-section-number">3.2.4</span> Number of predictors is less than the number of samples</a></li>
   </ul></li>
   <li><a href="#extesnsions-of-the-linear-model" id="toc-extesnsions-of-the-linear-model" class="nav-link" data-scroll-target="#extesnsions-of-the-linear-model"><span class="header-section-number">3.3</span> Extesnsions of the Linear Model</a>
   <ul class="collapse">
@@ -279,7 +279,7 @@ window.Quarto = {
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 \]</span></p>
 <p>Our model would look like the following like the red line from our Training data:</p>
-<div id="094368f1" class="cell" data-execution_count="1">
+<div id="83a0ed68" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -319,21 +319,22 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://kenndanielso.github.io/mlrefined/mlrefined_images/superlearn_images/Least_Squares.png" class="img-fluid figure-img" width="800"></p>
-<figcaption>Left panel: difference between response and predicted response (residual). Right panel: squared difference between predicted response and response. Image source: https://kenndanielso.github.io/mlrefined/blog_posts/8_Linear_regression/8_1_Least_squares_regression.html</figcaption>
+<figcaption>Image source: https://kenndanielso.github.io/mlrefined/blog_posts/8_Linear_regression/8_1_Least_squares_regression.html</figcaption>
 </figure>
 </div>
+<p>Left panel: difference between response and predicted response (residual). Right panel: squared difference between predicted response and response.</p>
 </section>
 </section>
 <section id="assumptions-of-linear-regression" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="assumptions-of-linear-regression"><span class="header-section-number">3.2</span> Assumptions of linear regression</h2>
 <p>Any model that one uses has some assumptions about the data that allows the model to make good predictions. <em>Note that there are other types of assumptions if your modeling technique is focused on inference</em>.</p>
-<p>Here are common situations when the assumptions of linear regression are <em>not</em> held:</p>
-<section id="non-linearity-of-responder-predictor-relationship" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="non-linearity-of-responder-predictor-relationship"><span class="header-section-number">3.2.1</span> Non-Linearity of responder-predictor relationship</h3>
+<p>Let’s take a look what are the assumptions needed for a sound model, and what we can do to address it not upheld.</p>
+<section id="linearity-of-responder-predictor-relationship" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="linearity-of-responder-predictor-relationship"><span class="header-section-number">3.2.1</span> Linearity of responder-predictor relationship</h3>
 <p>The linear regression model assumes that there is a straight line (linear) relationship between the predictors and the response. It doesn’t ask for the straight line relationship to be perfect, but rather on average the cloud of points has a linear shape. If that is not true, then our prediction is going to be less accurate.</p>
 <p>To check for this relationship, we have to calculate the <strong>residual</strong>, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a <strong>residual plot</strong> of the predicted response vs.&nbsp;residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.</p>
-<p>If there’s a trend in the data, that means there are non-linear associations in the data.</p>
-<div id="8eee3422" class="cell" data-execution_count="2">
+<p>If there’s a trend in the data, that means there are non-linear associations between some of the predictors and the response.</p>
+<div id="b5b3f4b4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> y_train <span class="op">-</span> y_train_predicted</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
@@ -351,25 +352,26 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 <p>We see there’s a slight curve in our residual plot. We will look at ways to deal with this later in this lecture.</p>
 </section>
-<section id="outliers" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="outliers"><span class="header-section-number">3.2.2</span> Outliers</h3>
+<section id="no-outliers" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="no-outliers"><span class="header-section-number">3.2.2</span> No Outliers</h3>
+<p>An <strong>outlier</strong> is an obseravtion for which the response is far from the value predicted response (y-axis). An observation has high <strong>leverage</strong> if it has an unusual predictor value (x-axis). Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. When these observations cause significant changes to the regression model, they are called <strong>influential</strong>. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.</p>
+<p>Some possible solutions:</p>
 <ul>
-<li><p>An <strong>outlier</strong> is an obseravtion for which the response is far from the value predicted response. An observation has high <strong>leverage</strong> if it has an unusual predictor value. Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. Outliers and high leverage observations that cause changes to the regression model is called <strong>influential</strong>. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.</p>
-<ul>
-<li><p>We can detect an influential point via computing the studentized residuals or cook’s distance and decide whether it makes sense to remove it</p></li>
+<li><p>We can eyeball for for potential influential points by exploratory data analysis, and see how the model changes if we remove it. We may troubleshoot with the instruments that generated the data in the first place to diagnosis.</p></li>
+<li><p>We can detect an influential point via computing the studentized residuals or cook’s distance and decide whether it makes sense to remove it.</p></li>
 <li><p>We can use a different linear regression method, called Huber loss regerssion, that allows more tolerance for outliers.</p></li>
-</ul></li>
 </ul>
 </section>
-<section id="collinearity-of-predictors" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="collinearity-of-predictors"><span class="header-section-number">3.2.3</span> Collinearity of predictors</h3>
-<p><strong>Colinearity</strong> is the situation when two or more predictors are closely linearly related to each other. If we put collinear predictors into our regression model, they start to serve as redundant information to our model and can degrade predictive performance.</p>
+<section id="predictors-are-not-colinear" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="predictors-are-not-colinear"><span class="header-section-number">3.2.3</span> Predictors are not colinear</h3>
+<p><strong>Colinearity</strong> is the situation when two or more predictors are linearly related to each other. If we put collinear predictors into our regression model, they start to serve as redundant information to our model and can degrade predictive performance.</p>
+<p>Some possible solutions:</p>
 <ul>
 <li><p>We can detect collinearity to look at the correlation matrix between predictors. This works well for pairwise correlations.</p></li>
 <li><p>When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn’t necessarily recommend which variables to remove.</p></li>
 </ul>
 <p>Suppose that we are consider the predictors of our training set:</p>
-<div id="fdcfd006" class="cell" data-execution_count="3">
+<div id="8b45ee08" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#some cleanup</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>obj_columns <span class="op">=</span> nhanes_train.select_dtypes([<span class="st">'object'</span>]).columns</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>nhanes_train[obj_columns] <span class="op">=</span> nhanes_train[obj_columns].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x.astype(<span class="st">'category'</span>))</span>
@@ -392,7 +394,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 <p>Let’s look at a pair of predictors up close:</p>
-<div id="1ff21108" class="cell" data-execution_count="4">
+<div id="e4e38047" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"Age"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="dv">10</span>, <span class="dv">50</span>])</span>
@@ -406,8 +408,8 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 </section>
-<section id="number-of-predictors-more-than-the-number-of-samples" class="level3" data-number="3.2.4">
-<h3 data-number="3.2.4" class="anchored" data-anchor-id="number-of-predictors-more-than-the-number-of-samples"><span class="header-section-number">3.2.4</span> Number of predictors more than the number of samples</h3>
+<section id="number-of-predictors-is-less-than-the-number-of-samples" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="number-of-predictors-is-less-than-the-number-of-samples"><span class="header-section-number">3.2.4</span> Number of predictors is less than the number of samples</h3>
 <p>Sometimes, in machine learning, we have more predictors than the number of samples. This is called a <strong>high dimensional</strong> problem. Our regression method will not work here and we need to find ways to reduce the number of predictors.</p>
 <p>We recommend evaluate the assumptions of your linear regression model on the training set before evaluating it on the test set.</p>
 </section>
@@ -425,7 +427,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 \]</span></p>
 <p>This is <em>still</em> a linear model – we have added a new predictor that gives us a quadratic shape. We use the <a href="https://matthewwardrop.github.io/formulaic/latest/guides/splines/#poly"><code>poly()</code> function</a> to generate our polynomial predictor.</p>
-<div id="de4f57cf" class="cell" data-execution_count="5">
+<div id="5a381e37" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(Age, degree=2, raw=True)"</span>, nhanes_train)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
@@ -447,7 +449,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 </div>
 </div>
 <p>Let’s look at our Residual Plot:</p>
-<div id="9392d63e" class="cell" data-execution_count="6">
+<div id="769ebd41" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> y_train <span class="op">-</span> y_train_predicted</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
@@ -470,7 +472,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="interactions"><span class="header-section-number">3.3.2</span> Interactions</h3>
 <p>Suppose we think that <span class="math inline">\(BMI\)</span> and <span class="math inline">\(Gender\)</span> may be good predictors of <span class="math inline">\(MeanBloodPressure\)</span>:</p>
 <p>Let’s explore the relationship between <span class="math inline">\(MeanBloodPressure\)</span> and <span class="math inline">\(BMI\)</span> separately for values of <span class="math inline">\(Gender\)</span>.</p>
-<div id="02994f3b" class="cell" data-execution_count="7">
+<div id="a50c4411" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lmplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">False</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>})</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlim<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">50</span>)) </span>
@@ -490,13 +492,13 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 <p><span class="math display">\[
 MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender
 \]</span></p>
-<p>According to our model, the relationship between <span class="math inline">\(BMI\)</span> and <span class="math inline">\(MeanBloodPressure\)</span> is a linear line with slope <span class="math inline">\(\beta_1\)</span>, and the additional predictor of <span class="math inline">\(Gender\)</span> will change our prediction by only a constant, <span class="math inline">\(\beta_2\)</span>. However, this plot suggests that our original model isn’t quite right: the additional predictor of Gender changes our prediction by more than a constant - it is dependent on <span class="math inline">\(BMI\)</span> also.</p>
+<p>According to our model, the relationship between <span class="math inline">\(BMI\)</span> and <span class="math inline">\(MeanBloodPressure\)</span> is a linear line with slope <span class="math inline">\(\beta_1\)</span>, and the additional predictor of <span class="math inline">\(Gender\)</span> will change our prediction by only a constant, <span class="math inline">\(\beta_2\)</span>. Visually, that would look like two parallel lines, with <span class="math inline">\(\beta_2\)</span> dictating the distance between parallel lines. However, this plot suggests that our original model isn’t quite right: the additional predictor of Gender changes our prediction by more than a constant - it is dependent on <span class="math inline">\(BMI\)</span> also.</p>
 <p>When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an <strong>Interaction</strong>. To incorporate this into our model, we add an interaction term:</p>
 <p><span class="math display">\[
 MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender
 \]</span></p>
 <p>Let’s see what happens:</p>
-<div id="c06d21fd" class="cell" data-execution_count="8">
+<div id="db136dc1" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + Gender + BMI*Gender"</span>, nhanes_train)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_reg.fit(X_train, y_train)</span>
@@ -525,7 +527,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 
 <p><span class="math display">\[
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 \]</span></p>
-<div id="20011399" class="cell" data-execution_count="9">
+<div id="986b800b" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -587,7 +589,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <li>It contains more predictors, which can be a result of using higher-order polynomials.</li>
 </ul>
 <p>Let’s look at what happens if we increase the complexity of the model by fitting it with a more smooth function. We use a polynomial function of order 2.</p>
-<div id="1d4300d6" class="cell" data-execution_count="10">
+<div id="b7e34df9" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"BloodPressure ~ BMI + poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">")"</span>, nhanes_tiny)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -636,7 +638,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 <p>We see that both Training and Testing error both decreased slightly!</p>
 <p>What happens if we keep increasing the model complexity?</p>
-<div id="a28de1fc" class="cell" data-execution_count="11">
+<div id="6ce76857" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p_degree <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">10</span>]:</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  y, X <span class="op">=</span> model_matrix(<span class="st">"BloodPressure ~ BMI + poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">")"</span>, nhanes_tiny)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -694,7 +696,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 <p>Let’s summarize it:</p>
-<div id="284753cd" class="cell" data-execution_count="12">
+<div id="20f10d29" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> []</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> []</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>polynomials <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">10</span>))</span>
@@ -765,7 +767,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 <p><span class="math inline">\(\beta_0\)</span> is a parameter describing the intercept of the line, and <span class="math inline">\(\beta_1\)</span> is a parameter describing the slope of the line.</p>
 <p>Suppose that from fitting the model on the Training Set, <span class="math inline">\(\beta_1=2\)</span>. That means increasing <span class="math inline">\(BMI\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 2. This measures the strength of association between a variable and the outcome.</p>
 <p>Let’s see this in practice:</p>
-<div id="5e0574db" class="cell" data-execution_count="13">
+<div id="b4cf6066" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"BloodPressure ~ BMI"</span>, nhanes_tiny)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
@@ -802,7 +804,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Time:</td>
-<td>00:46:08</td>
+<td>20:48:00</td>
 <td data-quarto-table-cell-role="th">Log-Likelihood:</td>
 <td>-520.69</td>
 </tr>
