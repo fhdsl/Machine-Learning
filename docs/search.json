@@ -50,6 +50,16 @@
     ]
   },
   {
+    "objectID": "01-Problem-Setup.html#learning-objectives-for-today",
+    "href": "01-Problem-Setup.html#learning-objectives-for-today",
+    "title": "2  The Whole Game",
+    "section": "",
+    "text": "Describe the main use cases of a Machine Learning model.\nDescribe the overarching workflow of Machine Learning:\n\nDescribe the importance of allocating the data into Training and Testing sets.\nDescribe some criteria for choosing predictors for a Machine Learning model.\nDescribe the process of evaluating a Machine Learning model.\n\nDescribe the components of a Python Data Structure.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Whole Game</span>"
+    ]
+  },
+  {
     "objectID": "01-Problem-Setup.html#an-conceptual-example",
     "href": "01-Problem-Setup.html#an-conceptual-example",
     "title": "2  The Whole Game",
@@ -80,11 +90,11 @@
     ]
   },
   {
-    "objectID": "01-Problem-Setup.html#picking-a-model-decision-tree-regression",
-    "href": "01-Problem-Setup.html#picking-a-model-decision-tree-regression",
+    "objectID": "01-Problem-Setup.html#picking-a-model-decision-tree",
+    "href": "01-Problem-Setup.html#picking-a-model-decision-tree",
     "title": "2  The Whole Game",
-    "section": "2.5 Picking a model: Decision Tree Regression",
-    "text": "2.5 Picking a model: Decision Tree Regression\n\nfrom sklearn.tree import DecisionTreeRegressor\nfrom sklearn import tree\n\ndecision_tree = DecisionTreeRegressor(max_depth=2)\ndecision_tree = decision_tree.fit(X_train, y_train)\n\n\ntree.plot_tree(decision_tree, proportion=True)\nplt.show()",
+    "section": "2.5 Picking a model: Decision Tree",
+    "text": "2.5 Picking a model: Decision Tree\nA different model is called a Decision Tree. It is composed of a set of hierarchical if/then statements based on the predictors that ends in a node that dictate what the response prediction should be. Below shows an example Decision Tree with three hierarchical if/then statements:\n\nfrom sklearn.tree import DecisionTreeRegressor\nfrom sklearn import tree\n\ndecision_tree = DecisionTreeRegressor(max_depth=3)\ndecision_tree = decision_tree.fit(X_train, y_train)\n\n\ntree.plot_tree(decision_tree, proportion=True)\nplt.show()\n\n\n\n\n\n\n\n\nHere is how we would interpret the leftmost node:\n“If \\(Age\\) is less than 17.5, and less than 12.5, and \\(BMI\\) is less than 22.65, then predict 64.7 for \\(MeanBloodPressure\\).”",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Whole Game</span>"
     ]
@@ -94,7 +104,7 @@
     "href": "01-Problem-Setup.html#model-evaluation",
     "title": "2  The Whole Game",
     "section": "2.6 Model Evaluation",
-    "text": "2.6 Model Evaluation\nNow that we have fitted our model on the training set, we can see how it performs on the testing set. In our testing set, we already know all the values of the predictors and outcomes, so to simulate a realistic scenario, we feed the predictor to the model, let it make a prediction, and compare it to the true outcome.\nWhen we compare the predicted outcome vs. true outcome, we need to use a metric to compare the two quantities. Here are two popular metrics:\n\nMean Absolute Error (MAE): the average of the absolute difference between predicted vs. true outcome. This scale of this metric is the same as the outcome’s scale, which is easy to interpret.\nMean Squared Error (MSE): the average of the squared difference between predicted vs. true outcome. The scale of this metric is harder to interpret, but it has very nice mathematical properties for the model fitting that it remains very popular.\n\nWe will consider other model evaluation metrics throughout the course, especially in situation when the dataset isn’t big enough for a training and splitting set.\nLet’s look at our MAE of our Linear Regression model on the test data:\n\nfrom sklearn.metrics import mean_absolute_error\ny_test, X_test = model_matrix(\"MeanBloodPressure ~ Age + BMI + Gender\", nhanes_test)\ny_test_predicted = linear_reg.predict(X_test)\n\ntest_err = round(mean_absolute_error(y_test_predicted, y_test), 2)\ntest_err\n\n8.65\n\n\nOkay, on average our model is off by 8.65 on the scale of \\(MeanBloodPressure\\).\nLet’s visualize this:\n\nplt.clf()\nplt.scatter(y_test_predicted, y_test, alpha=.5)\nplt.axline((70, 70), slope=1, color='r', linestyle='--')\nplt.xlabel('Predicted MeanBloodPressure')\nplt.ylabel('True MeanBloodPressure')\nplt.title('Linear Regression MAE:' + str(test_err))\nplt.show()\n\n\n\n\n\n\n\n\nLet’s do the same for the Regression Tree model:\n\ny_test_predicted = decision_tree.predict(X_test)\n\ntest_err = round(mean_absolute_error(y_test_predicted, y_test), 2)\nplt.clf()\nplt.scatter(y_test_predicted, y_test, alpha=.5)\nplt.axline((70, 70), slope=1, color='r', linestyle='--')\nplt.xlabel('Predicted MeanBloodPressure')\nplt.ylabel('True MeanBloodPressure')\nplt.title('Regression Tree MAE:' + str(test_err))\nplt.show()\n\n\n\n\n\n\n\n\nThe predictions look very discrete, because we only allowed the tree to be split into four categories.\nIn a full analysis, we would look at the performance of each model and ask what can be improved.",
+    "text": "2.6 Model Evaluation\nNow that we have fitted our model on the training set, we can see how it performs on the testing set. In our testing set, we already know all the values of the predictors and outcomes, so to simulate a realistic scenario, we feed the predictor to the model, let it make a prediction, and compare it to the true outcome.\nWhen we compare the predicted outcome vs. true outcome, we need to use a metric to compare the two quantities. Here are two popular metrics:\n\nMean Absolute Error (MAE): the average of the absolute difference between predicted vs. true outcome. This scale of this metric is the same as the outcome’s scale, which is easy to interpret.\nMean Squared Error (MSE): the average of the squared difference between predicted vs. true outcome. The scale of this metric is harder to interpret, but it has very nice mathematical properties for the model fitting that it remains very popular.\n\nWe will consider other model evaluation metrics throughout the course, especially in situation when the dataset isn’t big enough for a training and splitting set.\nLet’s look at our MAE of our Linear Regression model on the test data:\n\nfrom sklearn.metrics import mean_absolute_error\ny_test, X_test = model_matrix(\"MeanBloodPressure ~ Age + BMI + Gender\", nhanes_test)\ny_test_predicted = linear_reg.predict(X_test)\n\ntest_err = round(mean_absolute_error(y_test_predicted, y_test), 2)\ntest_err\n\n8.65\n\n\nOkay, on average our model is off by 8.65 on the scale of \\(MeanBloodPressure\\).\nLet’s visualize this:\n\nplt.clf()\nplt.scatter(y_test_predicted, y_test, alpha=.5)\nplt.axline((70, 70), slope=1, color='r', linestyle='--')\nplt.xlabel('Predicted MeanBloodPressure')\nplt.ylabel('True MeanBloodPressure')\nplt.title('Linear Regression MAE:' + str(test_err))\nplt.show()\n\n\n\n\n\n\n\n\nLet’s do the same for the Regression Tree model:\n\ny_test_predicted = decision_tree.predict(X_test)\n\ntest_err = round(mean_absolute_error(y_test_predicted, y_test), 2)\nplt.clf()\nplt.scatter(y_test_predicted, y_test, alpha=.5)\nplt.axline((70, 70), slope=1, color='r', linestyle='--')\nplt.xlabel('Predicted MeanBloodPressure')\nplt.ylabel('True MeanBloodPressure')\nplt.title('Regression Tree MAE:' + str(test_err))\nplt.show()\n\n\n\n\n\n\n\n\nThe predictions look very discrete, because we only allowed the tree to be split into eight categories.\nIn a full analysis, we would look at the performance of each model and ask what can be improved.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Whole Game</span>"
     ]
@@ -122,61 +132,81 @@
   {
     "objectID": "02-Regression.html",
     "href": "02-Regression.html",
-    "title": "3  Regression",
+    "title": "3  Regression (work in progress)",
     "section": "",
     "text": "3.1 Linear Regression in depth\nLast week, we were exposed to the Linear Regression model. Today we will take it apart and look at it carefully.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
     ]
   },
   {
-    "objectID": "02-Regression.html#population-and-sample",
-    "href": "02-Regression.html#population-and-sample",
-    "title": "3  Regression",
+    "objectID": "02-Regression.html#linear-regression-in-depth",
+    "href": "02-Regression.html#linear-regression-in-depth",
+    "title": "3  Regression (work in progress)",
     "section": "",
-    "text": "Classification and Prediction: We use the trained model to classify or predict the outcome using predictors from the Test Set. We look at the Testing Error to evaluate the model.\nInference: We examine the function \\(f()\\)’s trained values, which are called parameters. Because these parameters are derived from the Training Set, they are an estimated quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.",
+    "text": "3.1.1 One predictor\nSuppose we just use one predictor, \\(Age\\) to predict our outcome \\(MeanBloodPressure\\).\n\\[\nMeanBloodPressure= \\beta_0 + \\beta_1 \\cdot Age\n\\]\nOur model would look like the following like the red line from our Training data:\n\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nimport matplotlib.pyplot as plt\nfrom formulaic import model_matrix\nimport statsmodels.api as sm\n\nnhanes = pd.read_csv(\"classroom_data/NHANES.csv\")\nnhanes.drop_duplicates(inplace=True)\nnhanes['MeanBloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 \nnhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)\n\nplt.clf()\nax = sns.regplot(y=\"MeanBloodPressure\", x=\"BMI\", data=nhanes_train, lowess=False, scatter_kws={'alpha':0.2}, line_kws={'color':\"r\"})\nax.set_xlim([10, 50])\nplt.show()\n\n\n\n\n\n\n\n\nThis model is formed by making the the line of best fit determined by the minimum of the sum of squared difference between the observed response (in blue points) and predicted response (in red line). The process of this line fitting is also known as least squares.\nWe then use the testing data to see how well the model performs.\n\n\n3.1.2 Assumptions of linear regression\nAny model that one uses has some assumptions about the data that allows the model to make good predictions. Note that there are other types of assumptions if your modeling technique is focused on inference.\n\nLinearity of responder-predictor relationship\nOutliers\nCollinearity of predictors\nPredictors less than the number of samples\n\n\n\n3.1.3",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
+    ]
+  },
+  {
+    "objectID": "02-Regression.html#overfitting",
+    "href": "02-Regression.html#overfitting",
+    "title": "3  Regression (work in progress)",
+    "section": "3.2 Overfitting",
+    "text": "3.2 Overfitting\n\n3.2.1 Population and Sample\nThe way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:\nPopulation: The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.\nSample: A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.\nIn Machine Learning problems, we often like to take two, non-overlapping samples from the population: the Training Set, and the Test Set. We train our model using the Training Set, which gives us a function \\(f()\\) that relates the predictors to the outcome. Then, for 2 main use cases:\n\nClassification and Prediction: We use the trained model to classify or predict the outcome using predictors from the Test Set. We look at the Testing Error to evaluate the model.\nInference: We examine the function \\(f()\\)’s trained values, which are called parameters. Because these parameters are derived from the Training Set, they are an estimated quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.\n\nIf the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here https://www.nature.com/collections/qghhqm/pointsofsignificance.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
     ]
   },
   {
     "objectID": "02-Regression.html#generalizability-of-a-model",
     "href": "02-Regression.html#generalizability-of-a-model",
-    "title": "3  Regression",
+    "title": "3  Regression (work in progress)",
     "section": "3.3 Generalizability of a model",
     "text": "3.3 Generalizability of a model\nWhen we look how the model performs in Classification and Prediction on the training and test data, we are asking how generalizable a model is. Usually we want our model to perform well on unseen, testing data that also represent the population.\nWe saw that in the first exercise, the Training and Testing Error looked different - why?\n\nThere is always going to be some variation, because Training and Test are samples from the population, as we discussed above.\nThe model was trained on the Training Set, so the prediction is going to naturally perform better than data it has never seen before on the Testing Set.\n\nHow do we interpret the difference between Training Error and Testing Error?\n\n\nTo see how generalizable a model is, let’s look at a problem in prediction, not classification. The underlying principles of model generalizability applies to both prediction and classification, but it is generally easier to visualize this concept in prediction models.\n\n3.3.1 Underfitting and Overfitting\nLet’s take a look at our model in this context:\n\\[\nMeanBloodPressure= \\beta_0 + \\beta_1 \\cdot Age\n\\]\n\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import (confusion_matrix, accuracy_score)\nimport matplotlib.pyplot as plt\nfrom formulaic import model_matrix\nimport statsmodels.api as sm\n\nnhanes = pd.read_csv(\"classroom_data/NHANES.csv\")\nnhanes.drop_duplicates()\n\nnhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 \nnhanes['Hypertension'] = (nhanes['BPDiaAve'] &gt; 80) | (nhanes['BPSysAve'] &gt; 130)\n\nnhanes_tiny = nhanes.sample(n=300, random_state=1)\n\ny, X = model_matrix(\"BloodPressure ~ BMI\", nhanes_tiny)\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\nmodel = sm.OLS(y_train, X_train)\nlinear_model = model.fit()\n\nplt.clf()\nfig, (ax1, ax2) = plt.subplots(2, layout='constrained')\n\nax1.plot(X_train.BMI, linear_model.predict(X_train), label=\"fitted line\")\nax1.scatter(X_train.BMI, y_train, alpha=.5, color=\"brown\", label=\"Training set\")\nax1.set(xlabel='BMI', ylabel='Blood Pressure')\nax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))\nax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))\ntrain_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)\nax1.set_title('Training Error: ' + str(round(train_err, 2)))\n\nax2.plot(X_test.BMI, linear_model.predict(X_test), label=\"fitted line\")\nax2.scatter(X_test.BMI, y_test, alpha=.5, color=\"brown\", label=\"Testing set\")\nax2.set(xlabel='BMI', ylabel='Blood Pressure')\nax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))\nax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))\ntest_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)\nax2.set_title('Testing Error: ' + str(round(test_err, 2)))\n\nplt.show()\n\n&lt;Figure size 672x480 with 0 Axes&gt;\n\n\n\n\n\n\n\n\n\nWe see that Training Error &lt; Testing Error.\nIt turns out that the relationship between Training Error and Testing Error is connected to the Model Complexity.\nA model is more complex relative to another model if:\n\nIt contains more predictors\nThe relationship between a predictor and response is fit via a higher order polynomial or smooth function\n\nLet’s look at what happens if we increase the complexity of the model by fitting it with a more smooth function. We use a polynomial function of order 2.\n\np_degree = 2\ny, X = model_matrix(\"BloodPressure ~ BMI + poly(BMI, degree=\" + str(p_degree) + \")\", nhanes_tiny)\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\n\nX_train_BMI = X_train.BMI\nX_test_BMI = X_test.BMI\nX_train.drop('BMI', axis=1, inplace=True)\nX_test.drop('BMI', axis=1, inplace=True)\n\nmodel = sm.OLS(y_train, X_train)\nlinear_model = model.fit()\n\nplt.clf()\nfig, (ax1, ax2) = plt.subplots(2, layout='constrained')\n\nax1.scatter(X_train_BMI, y_train, alpha=.5, color=\"brown\", label=\"Training set\")\nax1.scatter(X_train_BMI, linear_model.predict(), label=\"fitted line\")\n\nax1.set(xlabel='BMI', ylabel='Blood Pressure')\ntrain_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)\nax1.set_title('Training Error: ' + str(round(train_err, 2)))\nax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))\nax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))\n\nax2.scatter(X_test_BMI, y_test, alpha=.5, color=\"brown\", label=\"Testing set\")\nax2.scatter(X_test_BMI, linear_model.predict(X_test), label=\"fitted line\")\nax2.set(xlabel='BMI', ylabel='Blood Pressure')\ntest_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)\nax2.set_title('Testing Error: ' + str(round(test_err, 2)))\nax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))\nax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))\n\nfig.suptitle('Polynomial Degree: ' + str(p_degree))\nplt.show()\n\n&lt;Figure size 672x480 with 0 Axes&gt;\n\n\n\n\n\n\n\n\n\nWe see that both Training and Testing error both decreased slightly!\nWhat happens if we keep increasing the model complexity?\n\nfor p_degree in [4, 10]:\n  y, X = model_matrix(\"BloodPressure ~ BMI + poly(BMI, degree=\" + str(p_degree) + \")\", nhanes_tiny)\n  \n  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\n  \n  X_train_BMI = X_train.BMI\n  X_test_BMI = X_test.BMI\n  X_train.drop('BMI', axis=1, inplace=True)\n  X_test.drop('BMI', axis=1, inplace=True)\n  \n  model = sm.OLS(y_train, X_train)\n  linear_model = model.fit()\n  \n  plt.clf()\n  fig, (ax1, ax2) = plt.subplots(2, layout='constrained')\n  \n  ax1.scatter(X_train_BMI, y_train, alpha=.5, color=\"brown\", label=\"Training set\")\n  ax1.scatter(X_train_BMI, linear_model.predict(), label=\"fitted line\")\n  \n  ax1.set(xlabel='BMI', ylabel='Blood Pressure')\n  train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)\n  ax1.set_title('Training Error: ' + str(round(train_err, 2)))\n  ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))\n  ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))\n\n  ax2.scatter(X_test_BMI, y_test, alpha=.5, color=\"brown\", label=\"Testing set\")\n  ax2.scatter(X_test_BMI, linear_model.predict(X_test), label=\"fitted line\")\n  ax2.set(xlabel='BMI', ylabel='Blood Pressure')\n  test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)\n  ax2.set_title('Testing Error: ' + str(round(test_err, 2)))\n  ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))\n  ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))\n\n  fig.suptitle('Polynomial Degree: ' + str(p_degree))\n  plt.show()\n\n&lt;Figure size 672x480 with 0 Axes&gt;\n\n\n\n\n\n\n\n\n\n&lt;Figure size 672x480 with 0 Axes&gt;\n\n\n\n\n\n\n\n\n\nLet’s summarize it:\n\ntrain_err = []\ntest_err = []\npolynomials = list(range(1, 10))\n\nfor p_degree in polynomials:\n  if p_degree == 1:\n    y, X = model_matrix(\"BloodPressure ~ BMI\", nhanes_tiny)\n  else:\n    y, X = model_matrix(\"BloodPressure ~ poly(BMI, degree=\" + str(p_degree) + \")\", nhanes_tiny)\n  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\n  \n  model = sm.OLS(y_train, X_train)\n  linear_model = model.fit()\n\n  train_err.append(np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2))\n  test_err.append(np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2))\n  \nplt.clf()\nplt.plot(polynomials, train_err, color=\"blue\", label=\"Training Error\")\nplt.plot(polynomials, test_err, color=\"red\", label=\"Testing Error\")\nplt.xlabel('Polynomial Degree')\nplt.ylabel('Error')\nplt.legend()\nplt.show()  \n\n\n\n\n\n\n\n\nAs our Polynomial Degree increased, the following happened:\n\nIn the linear model, we see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of Underfitting, where our model failed to capture the complexity of the data in both the Training and Testing Set.\nAfter degree 6, we see that the Training Error is low, but the Testing Error is huge! This is an example of Overfitting, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set.\n\nWe want to find a model that is “just right” that doesn’t underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 5 or 6, with the minimal Testing Error.\nHere is another illustration of the phenomena, using synthetic controlled data:\nOn the left shows the Training Data in black dots. Then, three models are displayed: linear regression (orange line), two other models of increasing complexity in blue and green.\nOn the right shows the training error (grey curve), testing error (red curve), and where each of the three models on the left land in the error rate with their respective colors.\n\n\n\nSource: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.\n\n\nLastly, we recommend examining interactive tutorial: https://mlu-explain.github.io/bias-variance/\nHopefully you start to see the importance of examining the Testing Error instead of the Training Error to evaluate our model. A highly flexible data will overfit the model and make it seem like the Training Error is small, but it will not generalize to the Testing data, which will have Testing Error.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
     ]
   },
   {
-    "objectID": "02-Regression.html#inference",
-    "href": "02-Regression.html#inference",
-    "title": "3  Regression",
-    "section": "3.3 Inference",
-    "text": "3.3 Inference\nNow let’s examine the function \\(f()\\)’s trained values, which are called parameters.\n\n3.3.1 Linear Model\nFor the Linear Model, the model we first fitted was of the following form:\n\\[\nBloodPressure=\\beta_0 + \\beta_1 \\cdot BMI\n\\]\nwhich is an equation of a line.\n\\(\\beta_0\\) is a parameter describing the intercept of the line, and \\(\\beta_1\\) is a parameter describing the slope of the line.\nSuppose that from fitting the model on the Training Set, \\(\\beta_1=2\\). That means increasing \\(BMI\\) by 1 will lead to an increase of \\(BloodPressure\\) by 2. This measures the strength of association between a variable and the outcome.\nLet’s see this in practice:\n\ny, X = model_matrix(\"BloodPressure ~ BMI\", nhanes_tiny)\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\nlinear_model = sm.OLS(y_train, X_train).fit()\n\nlinear_model.summary()\n\n\nOLS Regression Results\n\n\nDep. Variable:\nBloodPressure\nR-squared:\n0.079\n\n\nModel:\nOLS\nAdj. R-squared:\n0.072\n\n\nMethod:\nLeast Squares\nF-statistic:\n11.00\n\n\nDate:\nWed, 07 Jan 2026\nProb (F-statistic):\n0.00118\n\n\nTime:\n01:14:13\nLog-Likelihood:\n-520.69\n\n\nNo. Observations:\n130\nAIC:\n1045.\n\n\nDf Residuals:\n128\nBIC:\n1051.\n\n\nDf Model:\n1\n\n\n\n\nCovariance Type:\nnonrobust\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nt\nP&gt;|t|\n[0.025\n0.975]\n\n\nIntercept\n69.1563\n4.805\n14.394\n0.000\n59.650\n78.663\n\n\nBMI\n0.5456\n0.164\n3.317\n0.001\n0.220\n0.871\n\n\n\n\n\n\n\n\nOmnibus:\n11.458\nDurbin-Watson:\n1.932\n\n\nProb(Omnibus):\n0.003\nJarque-Bera (JB):\n25.824\n\n\nSkew:\n-0.239\nProb(JB):\n2.47e-06\n\n\nKurtosis:\n5.131\nCond. No.\n120.\n\n\n\nNotes:[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\nBased on the output, \\(\\beta_0=69\\), \\(\\beta_1=.55\\). We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87).\n\n\n3.3.2 Logistic Regression\nLet’s do the same for our Logic Regression Classifier model, which has an equation of:\n\\[\n\\frac{p(Hypertension)}{1-p(Hypertension)}=e^{\\beta_0 + \\beta_1 \\cdot BMI}\n\\]\nOn the left hand side of the equationis the Odds of having Hypertension.\n\\(\\beta_0\\) is a parameter describing __, and \\(\\beta_1\\) is a parameter describing ___\n\ny, X = model_matrix(\"Hypertension ~ BMI\", nhanes_tiny)\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\nlogit_model = sm.Logit(y_train, X_train).fit()\n\nlogit_model.summary()\n\nOptimization terminated successfully.\n         Current function value: 0.485168\n         Iterations 6\n\n\n\nLogit Regression Results\n\n\nDep. Variable:\nHypertension\nNo. Observations:\n146\n\n\nModel:\nLogit\nDf Residuals:\n144\n\n\nMethod:\nMLE\nDf Model:\n1\n\n\nDate:\nWed, 07 Jan 2026\nPseudo R-squ.:\n0.09218\n\n\nTime:\n01:14:13\nLog-Likelihood:\n-70.835\n\n\nconverged:\nTrue\nLL-Null:\n-78.027\n\n\nCovariance Type:\nnonrobust\nLLR p-value:\n0.0001490\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nz\nP&gt;|z|\n[0.025\n0.975]\n\n\nIntercept\n-4.1013\n0.872\n-4.703\n0.000\n-5.810\n-2.392\n\n\nBMI\n0.1004\n0.029\n3.516\n0.000\n0.044\n0.156",
+    "objectID": "02-Regression.html#appendix-inference",
+    "href": "02-Regression.html#appendix-inference",
+    "title": "3  Regression (work in progress)",
+    "section": "3.4 Appendix: Inference",
+    "text": "3.4 Appendix: Inference\nNow let’s examine the function \\(f()\\)’s trained values, which are called parameters.\n\n3.4.1 Linear Model\nFor the Linear Model, the model we first fitted was of the following form:\n\\[\nBloodPressure=\\beta_0 + \\beta_1 \\cdot BMI\n\\]\nwhich is an equation of a line.\n\\(\\beta_0\\) is a parameter describing the intercept of the line, and \\(\\beta_1\\) is a parameter describing the slope of the line.\nSuppose that from fitting the model on the Training Set, \\(\\beta_1=2\\). That means increasing \\(BMI\\) by 1 will lead to an increase of \\(BloodPressure\\) by 2. This measures the strength of association between a variable and the outcome.\nLet’s see this in practice:\n\ny, X = model_matrix(\"BloodPressure ~ BMI\", nhanes_tiny)\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\nlinear_model = sm.OLS(y_train, X_train).fit()\n\nlinear_model.summary()\n\n\nOLS Regression Results\n\n\nDep. Variable:\nBloodPressure\nR-squared:\n0.079\n\n\nModel:\nOLS\nAdj. R-squared:\n0.072\n\n\nMethod:\nLeast Squares\nF-statistic:\n11.00\n\n\nDate:\nFri, 23 Jan 2026\nProb (F-statistic):\n0.00118\n\n\nTime:\n20:05:57\nLog-Likelihood:\n-520.69\n\n\nNo. Observations:\n130\nAIC:\n1045.\n\n\nDf Residuals:\n128\nBIC:\n1051.\n\n\nDf Model:\n1\n\n\n\n\nCovariance Type:\nnonrobust\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nt\nP&gt;|t|\n[0.025\n0.975]\n\n\nIntercept\n69.1563\n4.805\n14.394\n0.000\n59.650\n78.663\n\n\nBMI\n0.5456\n0.164\n3.317\n0.001\n0.220\n0.871\n\n\n\n\n\n\n\n\nOmnibus:\n11.458\nDurbin-Watson:\n1.932\n\n\nProb(Omnibus):\n0.003\nJarque-Bera (JB):\n25.824\n\n\nSkew:\n-0.239\nProb(JB):\n2.47e-06\n\n\nKurtosis:\n5.131\nCond. No.\n120.\n\n\n\nNotes:[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\nBased on the output, \\(\\beta_0=69\\), \\(\\beta_1=.55\\). We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87).",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
     ]
   },
   {
     "objectID": "02-Regression.html#appendix",
     "href": "02-Regression.html#appendix",
-    "title": "3  Regression",
+    "title": "3  Regression (work in progress)",
     "section": "3.5 Appendix",
     "text": "3.5 Appendix\nFlexibility vs. Interpretability of models\n\n\n\nSource: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
     ]
   },
   {
-    "objectID": "02-Regression.html#section",
-    "href": "02-Regression.html#section",
-    "title": "3  Regression",
+    "objectID": "02-Regression.html#section-1",
+    "href": "02-Regression.html#section-1",
+    "title": "3  Regression (work in progress)",
     "section": "3.6 ",
-    "text": "3.6",
+    "text": "3.6 \n\n3.6.0.1 Correlations and Interactions\nBesides looking at the single predictors vs. the response, we also need to how the predictors relate to each other and with the response:\n\nSome predictors may be highly correlated with each other, so adding them to the model doesn’t give the model more information to work with.\nIt is possible that multiple predictors can have an synergistic effect on the outcome; their effect on the outcome occurs jointly - this is called an Interaction.\n\nIn the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are not mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y together affect Z (the outcome).\n\n\n3.6.0.2 Exercise: Correlations\n\nplt.clf()\nax = sns.regplot(y=\"Age\", x=\"BMI\", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':\"r\"})\nax.set_xlim([10, 50])\nplt.show()\n\n\n\n\n\n\n\n\n\n\n3.6.0.3 Exercise: Interactions\n\nplt.clf()\nax = sns.lmplot(y=\"MeanBloodPressure\", x=\"BMI\", hue=\"Gender\", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1})\nax.set(xlim=(10, 50)) \nplt.show()\n\n&lt;Figure size 672x480 with 0 Axes&gt;",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
+    ]
+  },
+  {
+    "objectID": "02-Regression.html#section-2",
+    "href": "02-Regression.html#section-2",
+    "title": "3  Regression (work in progress)",
+    "section": "3.7 ",
+    "text": "3.7",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression (work in progress)</span>"
     ]
   },
   {
@@ -187,76 +217,6 @@
     "text": "Shannon, C. E. (1948). A Mathematical Theory of Communication. Bell System Technical Journal, 27(3), 379–423. https://ieeexplore.ieee.org/document/6773024\nTuring, A. M. (1950). Computing Machinery and Intelligence. Mind, 59(236), 433–460. https://mind.oxfordjournals.org/content/LIX/236/433\nTuring, A. M. (1936). On Computable Numbers, with an Application to the Entscheidungsproblem. Proceedings of the London Mathematical Society, s2-42(1), 230–265. https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf\nThompson, K. (1984). Reflections on Trusting Trust. Communications of the ACM, 27(8), 761–763. https://dl.acm.org/doi/10.1145/358198.358210\nGhemawat, S., Gobioff, H., & Leung, S.-T. (2003). The Google File System. In Proceedings of the Nineteenth ACM Symposium on Operating Systems Principles (pp. 29–43). https://research.google.com/archive/gfs-sosp2003.pdf",
     "crumbs": [
       "References"
-    ]
-  },
-  {
-    "objectID": "01-Problem-Setup.html#learning-objectives-for-today",
-    "href": "01-Problem-Setup.html#learning-objectives-for-today",
-    "title": "2  The Whole Game",
-    "section": "",
-    "text": "Describe the main use cases of a Machine Learning model.\nDescribe the overarching workflow of Machine Learning:\n\nDescribe the importance of allocating the data into Training and Testing sets.\nDescribe some criteria for choosing predictors for a Machine Learning model.\nDescribe the process of evaluating a Machine Learning model.\n\nDescribe the components of a Python Data Structure.",
-    "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Whole Game</span>"
-    ]
-  },
-  {
-    "objectID": "02-Regression.html#linear-regression-in-depth",
-    "href": "02-Regression.html#linear-regression-in-depth",
-    "title": "3  Regression",
-    "section": "",
-    "text": "3.1.1 One predictor\nSuppose we just use one predictor, \\(Age\\) to predict our outcome \\(MeanBloodPressure\\).\n\\[\nMeanBloodPressure= \\beta_0 + \\beta_1 \\cdot Age\n\\]\nOur model would look like the following like the red line from our Training data:\n\nimport pandas as pd\nimport seaborn as sns\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nimport matplotlib.pyplot as plt\nfrom formulaic import model_matrix\nimport statsmodels.api as sm\n\nnhanes = pd.read_csv(\"classroom_data/NHANES.csv\")\nnhanes.drop_duplicates(inplace=True)\nnhanes['MeanBloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 \nnhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)\n\nplt.clf()\nax = sns.regplot(y=\"MeanBloodPressure\", x=\"BMI\", data=nhanes_train, lowess=False, scatter_kws={'alpha':0.2}, line_kws={'color':\"r\"})\nax.set_xlim([10, 50])\nplt.show()\n\n\n\n\n\n\n\n\nThis model is formed by making the the line of best fit determined by the minimum of the sum of squared difference between the observed response (in blue points) and predicted response (in red line). The process of this line fitting is also known as least squares.\nWe then use the testing data to see how well the model performs.\n\n\n3.1.2 Assumptions of linear regression\nAny model that one uses has some assumptions about the data that allows the model to make good predictions. Note that there are other types of assumptions if your modeling technique is focused on inference.\n\nLinearity of responder-predictor relationship\nOutliers\nCollinearity of predictors\nPredictors less than the number of samples\n\n\n\n3.1.3",
-    "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
-    ]
-  },
-  {
-    "objectID": "02-Regression.html#overfitting",
-    "href": "02-Regression.html#overfitting",
-    "title": "3  Regression",
-    "section": "3.2 Overfitting",
-    "text": "3.2 Overfitting\n\n3.2.1 Population and Sample\nThe way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:\nPopulation: The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.\nSample: A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.\nIn Machine Learning problems, we often like to take two, non-overlapping samples from the population: the Training Set, and the Test Set. We train our model using the Training Set, which gives us a function \\(f()\\) that relates the predictors to the outcome. Then, for 2 main use cases:\n\nClassification and Prediction: We use the trained model to classify or predict the outcome using predictors from the Test Set. We look at the Testing Error to evaluate the model.\nInference: We examine the function \\(f()\\)’s trained values, which are called parameters. Because these parameters are derived from the Training Set, they are an estimated quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.\n\nIf the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here https://www.nature.com/collections/qghhqm/pointsofsignificance.",
-    "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
-    ]
-  },
-  {
-    "objectID": "02-Regression.html#appendix-inference",
-    "href": "02-Regression.html#appendix-inference",
-    "title": "3  Regression",
-    "section": "3.4 Appendix: Inference",
-    "text": "3.4 Appendix: Inference\nNow let’s examine the function \\(f()\\)’s trained values, which are called parameters.\n\n3.4.1 Linear Model\nFor the Linear Model, the model we first fitted was of the following form:\n\\[\nBloodPressure=\\beta_0 + \\beta_1 \\cdot BMI\n\\]\nwhich is an equation of a line.\n\\(\\beta_0\\) is a parameter describing the intercept of the line, and \\(\\beta_1\\) is a parameter describing the slope of the line.\nSuppose that from fitting the model on the Training Set, \\(\\beta_1=2\\). That means increasing \\(BMI\\) by 1 will lead to an increase of \\(BloodPressure\\) by 2. This measures the strength of association between a variable and the outcome.\nLet’s see this in practice:\n\ny, X = model_matrix(\"BloodPressure ~ BMI\", nhanes_tiny)\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)\nlinear_model = sm.OLS(y_train, X_train).fit()\n\nlinear_model.summary()\n\n\nOLS Regression Results\n\n\nDep. Variable:\nBloodPressure\nR-squared:\n0.079\n\n\nModel:\nOLS\nAdj. R-squared:\n0.072\n\n\nMethod:\nLeast Squares\nF-statistic:\n11.00\n\n\nDate:\nWed, 21 Jan 2026\nProb (F-statistic):\n0.00118\n\n\nTime:\n15:25:31\nLog-Likelihood:\n-520.69\n\n\nNo. Observations:\n130\nAIC:\n1045.\n\n\nDf Residuals:\n128\nBIC:\n1051.\n\n\nDf Model:\n1\n\n\n\n\nCovariance Type:\nnonrobust\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nt\nP&gt;|t|\n[0.025\n0.975]\n\n\nIntercept\n69.1563\n4.805\n14.394\n0.000\n59.650\n78.663\n\n\nBMI\n0.5456\n0.164\n3.317\n0.001\n0.220\n0.871\n\n\n\n\n\n\n\n\nOmnibus:\n11.458\nDurbin-Watson:\n1.932\n\n\nProb(Omnibus):\n0.003\nJarque-Bera (JB):\n25.824\n\n\nSkew:\n-0.239\nProb(JB):\n2.47e-06\n\n\nKurtosis:\n5.131\nCond. No.\n120.\n\n\n\nNotes:[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\nBased on the output, \\(\\beta_0=69\\), \\(\\beta_1=.55\\). We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87).",
-    "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
-    ]
-  },
-  {
-    "objectID": "02-Regression.html#section-1",
-    "href": "02-Regression.html#section-1",
-    "title": "3  Regression",
-    "section": "3.6 ",
-    "text": "3.6 \n\n3.6.0.1 Correlations and Interactions\nBesides looking at the single predictors vs. the response, we also need to how the predictors relate to each other and with the response:\n\nSome predictors may be highly correlated with each other, so adding them to the model doesn’t give the model more information to work with.\nIt is possible that multiple predictors can have an synergistic effect on the outcome; their effect on the outcome occurs jointly - this is called an Interaction.\n\nIn the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are not mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y together affect Z (the outcome).\n\n\n3.6.0.2 Exercise: Correlations\n\nplt.clf()\nax = sns.regplot(y=\"Age\", x=\"BMI\", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':\"r\"})\nax.set_xlim([10, 50])\nplt.show()\n\n\n\n\n\n\n\n\n\n\n3.6.0.3 Exercise: Interactions\n\nplt.clf()\nax = sns.lmplot(y=\"MeanBloodPressure\", x=\"BMI\", hue=\"Gender\", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1})\nax.set(xlim=(10, 50)) \nplt.show()\n\n&lt;Figure size 672x480 with 0 Axes&gt;",
-    "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
-    ]
-  },
-  {
-    "objectID": "02-Regression.html#section-2",
-    "href": "02-Regression.html#section-2",
-    "title": "3  Regression",
-    "section": "3.7 ",
-    "text": "3.7",
-    "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regression</span>"
-    ]
-  },
-  {
-    "objectID": "01-Problem-Setup.html#picking-a-model-decision-tree",
-    "href": "01-Problem-Setup.html#picking-a-model-decision-tree",
-    "title": "2  The Whole Game",
-    "section": "2.5 Picking a model: Decision Tree",
-    "text": "2.5 Picking a model: Decision Tree\nA different model is called a Decision Tree. It is composed of a set of hierarchical if/then statements based on the predictors that ends in a node that dictate what the response prediction should be. Below shows an example Decision Tree with three hierarchical if/then statements:\n\nfrom sklearn.tree import DecisionTreeRegressor\nfrom sklearn import tree\n\ndecision_tree = DecisionTreeRegressor(max_depth=3)\ndecision_tree = decision_tree.fit(X_train, y_train)\n\n\ntree.plot_tree(decision_tree, proportion=True)\nplt.show()\n\n\n\n\n\n\n\n\nHere is how we would interpret the leftmost node:\n“If \\(Age\\) is less than 17.5, and less than 12.5, and \\(BMI\\) is less than 22.65, then predict 64.7 for \\(MeanBloodPressure\\).”",
-    "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Whole Game</span>"
     ]
   }
 ]
