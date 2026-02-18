@@ -455,7 +455,7 @@ Let's see this in practice:
 ```{python}
 import statsmodels.api as sm
 
-y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
+y, X = model_matrix("MeanBloodPressure ~ BMI", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 linear_model = sm.OLS(y_train, X_train).fit()
