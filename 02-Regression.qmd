@@ -23,7 +23,6 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
-import statsmodels.api as sm
 from sklearn import linear_model
 
 
@@ -91,7 +90,7 @@ Some possible solutions:
 
 -   We can detect an influential point via computing the studentized residuals or cook's distance and decide whether it makes sense to remove it.
 
--   We can use a different linear regression method, called Huber loss regerssion, that allows more tolerance for outliers.
+-   We can use a different linear regression method, called Huber loss regression, that allows more tolerance for outliers.
 
 ### Predictors are not colinear
 
@@ -142,6 +141,10 @@ We recommend evaluate the assumptions of your linear regression model on the tra
 ### Polynomial Regression
 
 Let's go back to revisit the non-linearity of responder-predictor relationship. To deal with the slight curve in the residual plot, we can extend our model to accommodate non-linear relationships via **Polynomial Regression**.
+
+Here is what polynomial regression is capable, visually:
+
+![Source: https://madrury.github.io/jekyll/update/statistics/2017/08/04/basis-expansions.html](http://madrury.github.io/img/polynomial-various-degrees.png){width="700"}
 
 Recall our original equation:
 
@@ -206,7 +209,7 @@ $$
 MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender 
 $$
 
-According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. Visually, that would look like two parallel lines, with $\beta_2$ dictating the distance between parallel lines. However, this plot suggests that our original model isn't quite right: the additional predictor of Gender changes our prediction by more than a constant - it is dependent on $BMI$ also.
+According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. Visually, that would look like two parallel lines, with $\beta_2$ dictating the distance between parallel lines. However, this plot suggests that our original model isn't quite right: the additional predictor of $Gender$ changes our prediction by more than a constant - it is dependent on $BMI$ also.
 
 When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an **Interaction**. To incorporate this into our model, we add an interaction term:
 
@@ -234,35 +237,24 @@ Which creates unique, non-parallel lines depending on the value of $Gender$.
 
 ## Overfitting
 
-Let's take a look at our model again:
+Last week, we discussed as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called **Overfitting**, and why we constructed the **training** and **testing** datasets to identify this phenomena.
+
+Let's look about overfitting in more detail: there can be different magnitudes of overfitting. The more flexible models we employ, the higher risk there will be overfitting, because these models will identify patterns too specific to the training data and not generalize to the test data. For instance, linear regression is a fairly inflexible approach, because it just uses a straight line to model the data. However, if we use polynomial regression, especially for higher degree polynomials, the model becomes more flexible, with a higher risk of overfitting.
+
+Let's take a look at our first model again:
 
 $$
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 $$
 
 ```{python}
-import pandas as pd
-import seaborn as sns
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import (confusion_matrix, accuracy_score)
-import matplotlib.pyplot as plt
-from formulaic import model_matrix
-import statsmodels.api as sm
-
-nhanes = pd.read_csv("classroom_data/NHANES.csv")
-nhanes.drop_duplicates()
-
-nhanes['BloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
-nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
-
+#Use a small part of the data to illlustrate overfitting.
 nhanes_tiny = nhanes.sample(n=300, random_state=1)
 
 y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-model = sm.OLS(y_train, X_train)
-linear_model = model.fit()
+linear_model = sm.OLS(y_train, X_train).fit()
 
 plt.clf()
 fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
@@ -288,13 +280,7 @@ plt.show()
 
 We see that Training Error \< Testing Error.
 
-It turns out that the relationship between Training Error and Testing Error is connected to the **Model Complexity.**
-
-A model is more complex relative to another model if:
-
--   It contains more predictors, which can be a result of using higher-order polynomials.
-
-Let's look at what happens if we increase the complexity of the model by fitting it with a more smooth function. We use a polynomial function of order 2.
+Let's look at what happens if we increase the flexibility of the model by fitting it with degree 2 polynomial:
 
 ```{python}
 p_degree = 2
@@ -411,11 +397,15 @@ plt.show()
 
 As our Polynomial Degree increased, the following happened:
 
--   In the linear model, we see that the Training Error is fairly high, and the Testing Error is even higher. This is an example of **Underfitting**, where our model failed to capture the complexity of the data in both the Training and Testing Set.
+-   In the linear model, we see that the Training Error is fairly high, and the Testing Error is even higher. This makes sense, as the model does not generalize as well to the testing set.
 
--   After degree 6, we see that the Training Error is low, but the Testing Error is huge! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set.
+-   As the degrees increased, both training and testing error decreased slightly.
+
+-   After degree 6, we see that the Training Error continued to decrease, but the Testing Error blew up! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.
 
 We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 5 or 6, with the minimal Testing Error.
+
+### Another example
 
 Here is another illustration of the phenomena, using synthetic controlled data:
 
@@ -430,6 +420,8 @@ Lastly, we recommend examining interactive tutorial: [https://mlu-explain.github
 Hopefully you start to see the importance of examining the Testing Error instead of the Training Error to evaluate our model. A highly flexible data will overfit the model and make it seem like the Training Error is small, but it will not generalize to the Testing data, which will have Testing Error.
 
 ## Appendix: Inference
+
+For this course, we focus on prediction from our machine learning models. These models have an equally important usage in statistical inference. This appendix gives a quick overview of what that is about.
 
 ### Population and Sample
 
@@ -460,6 +452,8 @@ Suppose that from fitting the model on the Training Set, $\beta_1=2$. That means
 Let's see this in practice:
 
 ```{python}
+import statsmodels.api as sm
+
 y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
@@ -468,7 +462,7 @@ linear_model = sm.OLS(y_train, X_train).fit()
 linear_model.summary()
 ```
 
-Based on the output, $\beta_0=69$, $\beta_1=.55$. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87).
+Based on the output, $\beta_0=69$, $\beta_1=.55$. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87). Notice that we used a different package called `statsmodels` to look the model inference.
 
 #### 
 
