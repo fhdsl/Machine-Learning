@@ -312,10 +312,10 @@ ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBlood
 ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
 ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
 ax2.set(xlabel='BMI', ylabel='Blood Pressure')
-test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)
+test_err = np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2)
 ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
 ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
-ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
 fig.suptitle('Polynomial Degree: ' + str(p_degree))
 plt.show()
