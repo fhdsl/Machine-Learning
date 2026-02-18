@@ -1,10 +1,10 @@
-# Regression (work in progress)
+# Regression 
 
 *In the second week of class, we will look at linear regression in more depth, and examine the challenge of over-fitting.*
 
 ## Linear Regression in depth
 
-Last week, we were exposed to the Linear Regression model. Today we will take it apart and look at it carefully.
+Last week, we were exposed to the Linear Regression model. Today we will take it apart and look at it carefully to see how it works and what are the needed assumptions to use this model.
 
 ### One predictor
 
@@ -24,70 +24,209 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
 import statsmodels.api as sm
+from sklearn import linear_model
+
 
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
 nhanes.drop_duplicates(inplace=True)
 nhanes['MeanBloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
 nhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)
 
+y_train, X_train = model_matrix("MeanBloodPressure ~ Age", nhanes_train)
+linear_reg = linear_model.LinearRegression()
+linear_reg = linear_reg.fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+
 plt.clf()
-ax = sns.regplot(y="MeanBloodPressure", x="BMI", data=nhanes_train, lowess=False, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+plt.scatter(X_train.Age, y_train, alpha=.2)
+plt.plot(X_train.Age, y_train_predicted, color="red")
+plt.xlabel('Age')
+plt.ylabel('Mean Blood Pressure')
+plt.show()
+
+
+```
+
+This model is formed by making the the line of best fit determined by the minimum of the sum of squared difference between the observed response (in blue points) and predicted response (in red line). Using the termology from last week, we say that we fit a line where the Mean Squared Error (MSE) is minimized.
+
+Another illustration:
+
+![Left panel: difference between response and predicted response (residual). Right panel: squared difference between predicted response and response. Image source: https://kenndanielso.github.io/mlrefined/blog_posts/8_Linear_regression/8_1_Least_squares_regression.html](https://kenndanielso.github.io/mlrefined/mlrefined_images/superlearn_images/Least_Squares.png){width="800"}
+
+## Assumptions of linear regression
+
+Any model that one uses has some assumptions about the data that allows the model to make good predictions. *Note that there are other types of assumptions if your modeling technique is focused on inference*.
+
+Here are common situations when the assumptions of linear regression are *not* held:
+
+### Non-Linearity of responder-predictor relationship
+
+The linear regression model assumes that there is a straight line (linear) relationship between the predictors and the response. It doesn't ask for the straight line relationship to be perfect, but rather on average the cloud of points has a linear shape. If that is not true, then our prediction is going to be less accurate.
+
+To check for this relationship, we have to calculate the **residual**, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a **residual plot** of the predicted response vs. residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.
+
+If there's a trend in the data, that means there are non-linear associations in the data.
+
+```{python}
+residual = y_train - y_train_predicted
+
+plt.clf()
+plt.scatter(y_train_predicted, residual, alpha=.2)
+plt.xlabel('Predicted response')
+plt.ylabel('Residual')
+plt.show()
+```
+
+We see there's a slight curve in our residual plot. We will look at ways to deal with this later in this lecture.
+
+### Outliers
+
+-   An **outlier** is an obseravtion for which the response is far from the value predicted response. An observation has high **leverage** if it has an unusual predictor value. Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. Outliers and high leverage observations that cause changes to the regression model is called **influential**. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.
+
+    -   We can detect an influential point via computing the studentized residuals or cook's distance and decide whether it makes sense to remove it
+
+    -   We can use a different linear regression method, called Huber loss regerssion, that allows more tolerance for outliers.
+
+### Collinearity of predictors
+
+**Colinearity** is the situation when two or more predictors are closely linearly related to each other. If we put collinear predictors into our regression model, they start to serve as redundant information to our model and can degrade predictive performance.
+
+-   We can detect collinearity to look at the correlation matrix between predictors. This works well for pairwise correlations.
+
+-   When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn't necessarily recommend which variables to remove.
+
+Suppose that we are consider the predictors of our training set:
+
+```{python}
+
+#some cleanup
+obj_columns = nhanes_train.select_dtypes(['object']).columns
+nhanes_train[obj_columns] = nhanes_train[obj_columns].apply(lambda x: x.astype('category'))
+
+cat_columns = nhanes_train.select_dtypes(['category']).columns
+nhanes_train[cat_columns] = nhanes_train[cat_columns].apply(lambda x: x.cat.codes)
+
+#create correlation matrix
+corr_matrix = nhanes_train.corr()
+
+plt.clf()
+sns.heatmap(corr_matrix, cmap='coolwarm')
+plt.show()
+```
+
+Let's look at a pair of predictors up close:
+
+```{python}
+plt.clf()
+ax = sns.regplot(y="Age", x="BMI", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':"r"})
 ax.set_xlim([10, 50])
 plt.show()
 ```
 
-This model is formed by making the the line of best fit determined by the minimum of the sum of squared difference between the observed response (in blue points) and predicted response (in red line). The process of this line fitting is also known as **least squares**.
+### Number of predictors more than the number of samples
 
-We then use the testing data to see how well the model performs.
+Sometimes, in machine learning, we have more predictors than the number of samples. This is called a **high dimensional** problem. Our regression method will not work here and we need to find ways to reduce the number of predictors.
 
-### Assumptions of linear regression
+We recommend evaluate the assumptions of your linear regression model on the training set before evaluating it on the test set.
 
-Any model that one uses has some assumptions about the data that allows the model to make good predictions. *Note that there are other types of assumptions if your modeling technique is focused on inference*.
+## Extesnsions of the Linear Model
 
--   Linearity of responder-predictor relationship
+### Polynomial Regression
 
--   Outliers
+Let's go back to revisit the non-linearity of responder-predictor relationship. To deal with the slight curve in the residual plot, we can extend our model to accommodate non-linear relationships via **Polynomial Regression**.
 
--   Collinearity of predictors
+Recall our original equation:
 
--   Predictors less than the number of samples
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot Age 
+$$ We can include transformed versions of the predictors to have other shapes, such as a quadratic shape:
 
-### 
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2 
+$$
+
+This is *still* a linear model -- we have added a new predictor that gives us a quadratic shape. We use the [`poly()` function](https://matthewwardrop.github.io/formulaic/latest/guides/splines/#poly) to generate our polynomial predictor.
+
+```{python}
+y_train, X_train = model_matrix("MeanBloodPressure ~ poly(Age, degree=2, raw=True)", nhanes_train)
+
+linear_reg = linear_model.LinearRegression()
+linear_reg = linear_reg.fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+
+plt.clf()
+plt.scatter(X_train[X_train.columns[1]], y_train, alpha=.2)
+plt.scatter(X_train[X_train.columns[1]], y_train_predicted, color="red")
+plt.xlabel('Age')
+plt.ylabel('Mean Blood Pressure')
+plt.show()
+
+```
+
+Let's look at our Residual Plot:
+
+```{python}
+residual = y_train - y_train_predicted
+
+plt.clf()
+plt.scatter(y_train_predicted, residual, alpha=.2)
+plt.xlabel('Predicted response')
+plt.ylabel('Residual')
+plt.show()
+```
+
+Okay, looks better! Less of a curved trend in the residual plot.
+
+In general, it is rather unusual to see the polynomial term grow beyond 4, as they become more overly flexible and take on more strange shapes. We will take a look at the consequence of this in a moment.
+
+### Interactions
+
+Suppose we think that $BMI$ and $Gender$ may be good predictors of $MeanBloodPressure$:
+
+Let's explore the relationship between $MeanBloodPressure$ and $BMI$ separately for values of $Gender$.
+
+```{python}
+plt.clf()
+ax = sns.lmplot(y="MeanBloodPressure", x="BMI", hue="Gender", data=nhanes_train, lowess=False, scatter_kws={'alpha':0.1})
+ax.set(xlim=(10, 50)) 
+plt.show()
+```
+
+The only model we know that relates all of these variables is:
+
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender 
+$$
+
+According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. However, this plot suggests that our original model isn't quite right: the additional predictor of Gender changes our prediction by more than a constant - it is dependent on $BMI$ also.
+
+When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an **Interaction**. To incorporate this into our model, we add an interaction term:
+
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender 
+$$
+
+Let's see what happens:
+
+```{python}
+y_train, X_train = model_matrix("MeanBloodPressure ~ BMI + Gender + BMI*Gender", nhanes_train)
+linear_reg = linear_model.LinearRegression()
+linear_reg = linear_reg.fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+
+plt.clf()
+plt.scatter(X_train.BMI, y_train, alpha=.2)
+plt.scatter(X_train.BMI, y_train_predicted, color="red")
+plt.xlabel('BMI')
+plt.ylabel('Mean Blood Pressure')
+plt.show()
+```
+
+Which creates unique, non-parallel lines depending on the value of $Gender$.
 
 ## Overfitting
 
-### Population and Sample
-
-The way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:
-
-**Population:** The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.
-
-**Sample:** A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.
-
-In Machine Learning problems, we often like to take two, non-overlapping samples from the population: the **Training Set**, and the **Test Set**. We **train** our model using the Training Set, which gives us a function $f()$ that relates the predictors to the outcome. Then, for 2 main use cases:
-
-1.  **Classification and Prediction:** We use the trained model to classify or predict the outcome using predictors from the Test Set. We look at the Testing Error to evaluate the model.
-2.  **Inference**: We examine the function $f()$'s trained values, which are called **parameters**. Because these parameters are derived from the **Training Set**, they are an *estimated* quantity from a sample, similar to other summary statistics like the mean of a sample. Therefore, to say anything about the true population, we have to use statistical tools such as p-values and confidence intervals.
-
-If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here <https://www.nature.com/collections/qghhqm/pointsofsignificance.>
-
-## Generalizability of a model
-
-When we look how the model performs in Classification and Prediction on the training and test data, we are asking how **generalizable** a model is. Usually we want our model to perform well on unseen, testing data that also represent the population.
-
-We saw that in the first exercise, the Training and Testing Error looked different - why?
-
--   There is always going to be some variation, because Training and Test are samples from the population, as we discussed above.
-
--   The model was trained on the Training Set, so the prediction is going to naturally perform better than data it has never seen before on the Testing Set.
-
-    -   How do we interpret the difference between Training Error and Testing Error?
-
-To see how generalizable a model is, let's look at a problem in **prediction**, not classification. The underlying principles of **model generalizability** applies to both prediction and classification, but it is generally easier to visualize this concept in prediction models.
-
-### Underfitting and Overfitting
-
-Let's take a look at our model in this context:
+Let's take a look at our model again:
 
 $$
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
@@ -145,9 +284,7 @@ It turns out that the relationship between Training Error and Testing Error is c
 
 A model is more complex relative to another model if:
 
--   It contains more predictors
-
--   The relationship between a predictor and response is fit via a higher order polynomial or smooth function
+-   It contains more predictors, which can be a result of using higher-order polynomials.
 
 Let's look at what happens if we increase the complexity of the model by fitting it with a more smooth function. We use a polynomial function of order 2.
 
@@ -286,9 +423,19 @@ Hopefully you start to see the importance of examining the Testing Error instead
 
 ## Appendix: Inference
 
-Now let's examine the function $f()$'s trained values, which are called **parameters**.
+### Population and Sample
 
-### Linear Model
+The way we formulate machine learning model is based on some fundamental concepts in inferential statistics. We will refresh this quickly in the context of our problem. Recall the following definitions:
+
+**Population:** The entire collection of individual units that a researcher is interested to study. For NHANES, this could be the entire US population.
+
+**Sample:** A smaller collection of individual units that the researcher has selected to study. For NHANES, this could be a random sampling of the US population.
+
+If the concepts of population, sample, estimation, p-value, and confidence interval is new to you, we recommend do a bit of reading here <https://www.nature.com/collections/qghhqm/pointsofsignificance.>
+
+### Parameter inference
+
+Now let's examine the function $f()$'s trained values, which are called **parameters**.
 
 For the Linear Model, the model we first fitted was of the following form:
 
@@ -315,40 +462,6 @@ linear_model.summary()
 
 Based on the output, $\beta_0=69$, $\beta_1=.55$. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87).
 
-## Appendix
-
-Flexibility vs. Interpretability of models
-
-![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor](images/flexibility_vs_interpretability.png){width="500"}
-
-## 
-
-#### Correlations and Interactions
-
-Besides looking at the single predictors vs. the response, we also need to how the predictors relate to each other and with the response:
-
--   Some predictors may be highly **correlated** with each other, so adding them to the model doesn't give the model more information to work with.
-
--   It is possible that multiple predictors can have an synergistic effect on the outcome; their effect on the outcome occurs jointly - this is called an **Interaction**.
-
-In the homework exercise you will do some data visualization work to see if can find some patterns of correlations and interactions in the data. Note that these trends are *not* mutually exclusive: Correlation is about how predictors X and Y relate to each other; Interaction is about how predictors X and Y *together* affect Z (the outcome).
-
-#### Exercise: Correlations
-
-```{python}
-plt.clf()
-ax = sns.regplot(y="Age", x="BMI", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':"r"})
-ax.set_xlim([10, 50])
-plt.show()
-```
-
-#### Exercise: Interactions
-
-```{python}
-plt.clf()
-ax = sns.lmplot(y="MeanBloodPressure", x="BMI", hue="Gender", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.1})
-ax.set(xlim=(10, 50)) 
-plt.show()
-```
+#### 
 
 ## 
