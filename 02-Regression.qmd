@@ -249,9 +249,9 @@ $$
 
 ```{python}
 #Use a small part of the data to illlustrate overfitting.
-nhanes_tiny = nhanes.sample(n=300, random_state=1)
+nhanes_tiny = nhanes.sample(n=300, random_state=2)
 
-y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
+y, X = model_matrix("MeanBloodPressure ~ BMI", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 linear_model = sm.OLS(y_train, X_train).fit()
@@ -261,18 +261,18 @@ fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
 
 ax1.plot(X_train.BMI, linear_model.predict(X_train), label="fitted line")
 ax1.scatter(X_train.BMI, y_train, alpha=.5, color="brown", label="Training set")
-ax1.set(xlabel='BMI', ylabel='Blood Pressure')
+ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
 ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
-ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
-train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)
+ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+train_err = np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2)
 ax1.set_title('Training Error: ' + str(round(train_err, 2)))
 
 ax2.plot(X_test.BMI, linear_model.predict(X_test), label="fitted line")
 ax2.scatter(X_test.BMI, y_test, alpha=.5, color="brown", label="Testing set")
-ax2.set(xlabel='BMI', ylabel='Blood Pressure')
+ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
 ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
-ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
-test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)
+ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+test_err = np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2)
 ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
 
 plt.show()
@@ -284,7 +284,7 @@ Let's look at what happens if we increase the flexibility of the model by fittin
 
 ```{python}
 p_degree = 2
-y, X = model_matrix("BloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+y, X = model_matrix("MeanBloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
@@ -302,11 +302,11 @@ fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
 ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
 ax1.scatter(X_train_BMI, linear_model.predict(), label="fitted line")
 
-ax1.set(xlabel='BMI', ylabel='Blood Pressure')
-train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)
+ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+train_err = np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2)
 ax1.set_title('Training Error: ' + str(round(train_err, 2)))
 ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
-ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
 ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
 ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
@@ -326,7 +326,7 @@ What happens if we keep increasing the model complexity?
 
 ```{python}
 for p_degree in [4, 10]:
-  y, X = model_matrix("BloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+  y, X = model_matrix("MeanBloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
   
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
   
@@ -344,19 +344,19 @@ for p_degree in [4, 10]:
   ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
   ax1.scatter(X_train_BMI, linear_model.predict(), label="fitted line")
   
-  ax1.set(xlabel='BMI', ylabel='Blood Pressure')
-  train_err = np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2)
+  ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+  train_err = np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2)
   ax1.set_title('Training Error: ' + str(round(train_err, 2)))
   ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
-  ax1.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+  ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
   ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
   ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
-  ax2.set(xlabel='BMI', ylabel='Blood Pressure')
-  test_err = np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2)
+  ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+  test_err = np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2)
   ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
   ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
-  ax2.set_ylim(np.min(nhanes_tiny.BloodPressure), np.max(nhanes_tiny.BloodPressure))
+  ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
   fig.suptitle('Polynomial Degree: ' + str(p_degree))
   plt.show()
@@ -372,16 +372,16 @@ polynomials = list(range(1, 10))
 
 for p_degree in polynomials:
   if p_degree == 1:
-    y, X = model_matrix("BloodPressure ~ BMI", nhanes_tiny)
+    y, X = model_matrix("MeanBloodPressure ~ BMI", nhanes_tiny)
   else:
-    y, X = model_matrix("BloodPressure ~ poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+    y, X = model_matrix("MeanBloodPressure ~ poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
   
   model = sm.OLS(y_train, X_train)
   linear_model = model.fit()
 
-  train_err.append(np.mean((linear_model.predict(X_train) - y_train.BloodPressure) ** 2))
-  test_err.append(np.mean((linear_model.predict(X_test) - y_test.BloodPressure) ** 2))
+  train_err.append(np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2))
+  test_err.append(np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2))
   
 plt.clf()
 plt.plot(polynomials, train_err, color="blue", label="Training Error")
@@ -401,9 +401,9 @@ As our Polynomial Degree increased, the following happened:
 
 -   As the degrees increased, both training and testing error decreased slightly.
 
--   After degree 6, we see that the Training Error continued to decrease, but the Testing Error blew up! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.
+-   After degree 4, we see that the Training Error continued to decrease, but the Testing Error blew up! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.
 
-We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 5 or 6, with the minimal Testing Error.
+We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 4, with the minimal Testing Error.
 
 ### Another example
 
