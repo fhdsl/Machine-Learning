@@ -218,7 +218,7 @@ print(linear_reg.coef_)
 
 ```
 
-## Picking a model: Decision Tree 
+## Picking a model: Decision Tree
 
 A different model is called a **Decision Tree**. It is composed of a set of hierarchical if/then statements based on the predictors that ends in a **node** that dictate what the response prediction should be. Below shows an example Decision Tree with three hierarchical if/then statements:
 

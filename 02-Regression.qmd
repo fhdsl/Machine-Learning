@@ -21,6 +21,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
 from sklearn import linear_model
@@ -137,7 +138,7 @@ Sometimes, in machine learning, we have more predictors than the number of sampl
 
 We recommend evaluate the assumptions of your linear regression model on the training set before evaluating it on the test set.
 
-## Extesnsions of the Linear Model
+## Extensions of the Linear Model
 
 ### Polynomial Regression
 
@@ -255,25 +256,28 @@ nhanes_tiny = nhanes.sample(n=300, random_state=2)
 y, X = model_matrix("MeanBloodPressure ~ BMI", nhanes_tiny)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-linear_model = sm.OLS(y_train, X_train).fit()
+
+linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+y_test_predicted = linear_reg.predict(X_test)
+train_err = mean_squared_error(y_train_predicted, y_train)
+test_err = mean_squared_error(y_test_predicted, y_test)
 
 plt.clf()
 fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
 
-ax1.plot(X_train.BMI, linear_model.predict(X_train), label="fitted line")
+ax1.plot(X_train.BMI, y_train_predicted, label="fitted line")
 ax1.scatter(X_train.BMI, y_train, alpha=.5, color="brown", label="Training set")
 ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
 ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
 ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
-train_err = np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2)
 ax1.set_title('Training Error: ' + str(round(train_err, 2)))
 
-ax2.plot(X_test.BMI, linear_model.predict(X_test), label="fitted line")
+ax2.plot(X_test.BMI, y_test_predicted, label="fitted line")
 ax2.scatter(X_test.BMI, y_test, alpha=.5, color="brown", label="Testing set")
 ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
 ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
 ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
-test_err = np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2)
 ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
 
 plt.show()
@@ -289,30 +293,25 @@ y, X = model_matrix("MeanBloodPressure ~ BMI + poly(BMI, degree=" + str(p_degree
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
-X_train_BMI = X_train.BMI
-X_test_BMI = X_test.BMI
-X_train.drop('BMI', axis=1, inplace=True)
-X_test.drop('BMI', axis=1, inplace=True)
-
-model = sm.OLS(y_train, X_train)
-linear_model = model.fit()
+linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+y_test_predicted = linear_reg.predict(X_test)
+train_err = mean_squared_error(y_train_predicted, y_train)
+test_err = mean_squared_error(y_test_predicted, y_test)
 
 plt.clf()
 fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
 
-ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
-ax1.scatter(X_train_BMI, linear_model.predict(), label="fitted line")
-
+ax1.scatter(X_train[X_train.columns[1]], y_train, alpha=.5, color="brown", label="Training set")
+ax1.scatter(X_train[X_train.columns[1]], y_train_predicted, label="fitted line")
 ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
-train_err = np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2)
 ax1.set_title('Training Error: ' + str(round(train_err, 2)))
 ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
 ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
-ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
-ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
+ax2.scatter(X_test[X_test.columns[1]], y_test, alpha=.5, color="brown", label="Testing set")
+ax2.scatter(X_test[X_test.columns[1]], y_test_predicted, label="fitted line")
 ax2.set(xlabel='BMI', ylabel='Blood Pressure')
-test_err = np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2)
 ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
 ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
 ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
@@ -331,30 +330,25 @@ for p_degree in [4, 10]:
   
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
   
-  X_train_BMI = X_train.BMI
-  X_test_BMI = X_test.BMI
-  X_train.drop('BMI', axis=1, inplace=True)
-  X_test.drop('BMI', axis=1, inplace=True)
-  
-  model = sm.OLS(y_train, X_train)
-  linear_model = model.fit()
+  linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+  y_train_predicted = linear_reg.predict(X_train)
+  y_test_predicted = linear_reg.predict(X_test)
+  train_err = mean_squared_error(y_train_predicted, y_train)
+  test_err = mean_squared_error(y_test_predicted, y_test)
   
   plt.clf()
   fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
   
   ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
-  ax1.scatter(X_train_BMI, linear_model.predict(), label="fitted line")
-  
+  ax1.scatter(X_train_BMI, y_train_predicted, label="fitted line")
   ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
-  train_err = np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2)
   ax1.set_title('Training Error: ' + str(round(train_err, 2)))
   ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
   ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
   ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
-  ax2.scatter(X_test_BMI, linear_model.predict(X_test), label="fitted line")
+  ax2.scatter(X_test_BMI, y_test_predicted, label="fitted line")
   ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
-  test_err = np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2)
   ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
   ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
   ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
@@ -378,11 +372,11 @@ for p_degree in polynomials:
     y, X = model_matrix("MeanBloodPressure ~ poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
   
-  model = sm.OLS(y_train, X_train)
-  linear_model = model.fit()
-
-  train_err.append(np.mean((linear_model.predict(X_train) - y_train.MeanBloodPressure) ** 2))
-  test_err.append(np.mean((linear_model.predict(X_test) - y_test.MeanBloodPressure) ** 2))
+  linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+  y_train_predicted = linear_reg.predict(X_train)
+  y_test_predicted = linear_reg.predict(X_test)
+  train_err.append(mean_squared_error(y_train_predicted, y_train))
+  test_err.append(mean_squared_error(y_test_predicted, y_test))
   
 plt.clf()
 plt.plot(polynomials, train_err, color="blue", label="Training Error")
