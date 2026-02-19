@@ -1,4 +1,4 @@
-# Regression 
+# Regression
 
 *In the second week of class, we will look at linear regression in more depth, and examine the challenge of over-fitting.*
 
@@ -191,51 +191,6 @@ plt.show()
 Okay, looks better! Less of a curved trend in the residual plot.
 
 In general, it is rather unusual to see the polynomial term grow beyond 4, as they become more overly flexible and take on more strange shapes. We will take a look at the consequence of this in a moment.
-
-### Interactions
-
-Suppose we think that $BMI$ and $Gender$ may be good predictors of $MeanBloodPressure$:
-
-Let's explore the relationship between $MeanBloodPressure$ and $BMI$ separately for values of $Gender$.
-
-```{python}
-plt.clf()
-ax = sns.lmplot(y="MeanBloodPressure", x="BMI", hue="Gender", data=nhanes_train, lowess=False, scatter_kws={'alpha':0.1})
-ax.set(xlim=(10, 50)) 
-plt.show()
-```
-
-The only model we know that relates all of these variables is:
-
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender 
-$$
-
-According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. Visually, that would look like two parallel lines, with $\beta_2$ dictating the distance between parallel lines. However, this plot suggests that our original model isn't quite right: the additional predictor of $Gender$ changes our prediction by more than a constant - it is dependent on $BMI$ also.
-
-When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an **Interaction**. To incorporate this into our model, we add an interaction term:
-
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender 
-$$
-
-Let's see what happens:
-
-```{python}
-y_train, X_train = model_matrix("MeanBloodPressure ~ BMI + Gender + BMI*Gender", nhanes_train)
-linear_reg = linear_model.LinearRegression()
-linear_reg = linear_reg.fit(X_train, y_train)
-y_train_predicted = linear_reg.predict(X_train)
-
-plt.clf()
-plt.scatter(X_train.BMI, y_train, alpha=.2)
-plt.scatter(X_train.BMI, y_train_predicted, color="red")
-plt.xlabel('BMI')
-plt.ylabel('Mean Blood Pressure')
-plt.show()
-```
-
-Which creates unique, non-parallel lines depending on the value of $Gender$.
 
 ## Overfitting
 
@@ -459,6 +414,51 @@ linear_model.summary()
 
 Based on the output, $\beta_0=69$, $\beta_1=.55$. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87). Notice that we used a different package called `statsmodels` to look the model inference.
 
-#### 
+## Appendix: Interactions
+
+Here is another way to extend the Linear Model:
+
+Suppose we think that $BMI$ and $Gender$ may be good predictors of $MeanBloodPressure$:
+
+Let's explore the relationship between $MeanBloodPressure$ and $BMI$ separately for values of $Gender$.
+
+```{python}
+plt.clf()
+ax = sns.lmplot(y="MeanBloodPressure", x="BMI", hue="Gender", data=nhanes_train, lowess=False, scatter_kws={'alpha':0.1})
+ax.set(xlim=(10, 50)) 
+plt.show()
+```
+
+The only model we know that relates all of these variables is:
+
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender 
+$$
+
+According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. Visually, that would look like two parallel lines, with $\beta_2$ dictating the distance between parallel lines. However, this plot suggests that our original model isn't quite right: the additional predictor of $Gender$ changes our prediction by more than a constant - it is dependent on $BMI$ also.
+
+When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an **Interaction**. To incorporate this into our model, we add an interaction term:
+
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender 
+$$
+
+Let's see what happens:
+
+```{python}
+y_train, X_train = model_matrix("MeanBloodPressure ~ BMI + Gender + BMI*Gender", nhanes_train)
+linear_reg = linear_model.LinearRegression()
+linear_reg = linear_reg.fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+
+plt.clf()
+plt.scatter(X_train.BMI, y_train, alpha=.2)
+plt.scatter(X_train.BMI, y_train_predicted, color="red")
+plt.xlabel('BMI')
+plt.ylabel('Mean Blood Pressure')
+plt.show()
+```
+
+Which creates unique, non-parallel lines depending on the value of $Gender$.
 
 ## 
