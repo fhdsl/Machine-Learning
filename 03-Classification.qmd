@@ -1,0 +1,230 @@
+# Classification
+
+*In the third week of class, we will look at classification...*
+
+Discrminiation vs calibration
+
+Class distributions and priors
+
+```{python}
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+from sklearn import linear_model
+import statsmodels.api as sm
+
+nhanes = pd.read_csv("classroom_data/NHANES.csv")
+nhanes.drop_duplicates(inplace=True)
+nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
+
+nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
+
+#train test
+nhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)
+
+#class balance
+
+nhanes_train['bins'] = pd.cut(nhanes_train['BMI'], bins=20) 
+
+
+nhanes_train_binned = nhanes_train.groupby('bins')['Hypertension'].agg(['sum', 'count']).reset_index()
+nhanes_train_binned['p'] = nhanes_train_binned['sum'] / nhanes_train_binned['count']
+ 
+nhanes_train_binned['log_odds'] = np.log(nhanes_train_binned['p'] / (1 - nhanes_train_binned['p']))
+nhanes_train_binned['bin_midpoint'] = nhanes_train_binned['bins'].apply(lambda x: x.mid)
+
+#predictor vs probability
+plt.clf()
+plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
+plt.xlabel('BMI - Binned Midpoint')
+plt.ylabel('Empirical Hypertension Probability')
+plt.grid(True)
+plt.show()
+
+
+#predictor vs log odds
+plt.clf()
+plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['log_odds'], color='blue')
+plt.xlabel('BMI - Binned Midpoint')
+plt.ylabel('Empirical Hypertension Log Odds')
+plt.grid(True)
+plt.show()
+
+#wait, probability vs log odds?
+plt.clf()
+plt.scatter( nhanes_train_binned['log_odds'], nhanes_train_binned['p'], color='blue')
+plt.xlabel('Empirical Hypertension Log Odds')
+plt.ylabel('Empirical Hypertension Probability')
+plt.grid(True)
+plt.show()
+
+plt.clf()
+ax = sns.boxplot(y="Hypertension2", x="BMI", data=nhanes_train)
+ax.set_ylabel('')
+plt.show()
+
+
+```
+
+Now, let's build the model $P(Hypertension) = f(BMI)$ to make a prediction of $Hyptertension$ given $BMI$.
+
+$P(Hypertension)=\beta_0+\beta_1 \cdot BMI$ does not give us outputs between 0 and 1.
+
+$P(Hyptertension) = \frac{e^{\beta_0 + \beta_1X}}{1+e^{\beta_0 + \beta_1X}}$ does, however!
+
+Let's look at this visually to understand.
+
+```{python}
+y, X = model_matrix("Hypertension ~ BMI", nhanes)
+logit_model = sm.Logit(y, X).fit() 
+
+plt.clf()
+plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
+plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
+plt.xlabel('BMI')
+plt.ylabel('Probability of Hypertension')
+plt.legend()
+plt.show()
+```
+
+This gets us to modeling the probability of the outcome (such as given a BMI of 30, there is a 20% chance the person has Hypertension), but ultimately we want a classification of Hyptertension or not.
+
+A reasonable cutoff to start is 50%: if the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Same for \< 50%. This is called the **Decision Boundary**.
+
+```{python}
+plt.clf()
+plt.scatter(X.BMI, logit_model.predict(), color="blue", label="Fitted Line")
+plt.scatter(X.BMI, y, alpha=.3, color="brown", label="Data")
+plt.xlabel('BMI')
+plt.ylabel('Probability of Hypertension')
+plt.axhline(y=0.5, color='r', linestyle='--', label='Classification Cutoff')
+plt.legend();
+plt.show()
+```
+
+Given this decision boundary, what is the accuracy?
+
+```{python}
+
+prediction_cut = [1 if x >= .5 else 0 for x in logit_model.predict()]
+print('Accuracy = ', accuracy_score(y, prediction_cut)) 
+```
+
+Okay, that's a starting point!
+
+We can break down classification accuracy to four additional results:
+
+```{python}
+tn, fp, fn, tp = confusion_matrix(y, prediction_cut).ravel().tolist()
+print("True Positive:", tp, "\nFalse Positive: ", fp, "\nTrue Negative: ", tn, "\nFalse Negative:", fn)
+```
+
+define tp, fp, tn, fn
+
+define confusion matrix
+
+```{python}
+cm = confusion_matrix(y, prediction_cut) 
+print("Confusion Matrix : \n", cm) 
+```
+
+## Assumptions of logistic regression
+
+### Linearity of log odds - predictor relationship
+
+We can rewrite $P(Hyptertension) = \frac{e^{\beta_0 + \beta_1X}}{1+e^{\beta_0 + \beta_1X}}$ as $log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$
+
+where the left hand side is called the **log odds** or the **logit**.
+
+```{python}
+
+```
+
+### Predictors are not colinear
+
+### No outliers
+
+### Number of predictors is less than the number of samples
+
+## Appendix: Inference for Logistic Regression
+
+Let's do the same for our Logic Regression Classifier model, which has an equation of:
+
+$$
+\frac{p(Hypertension)}{1-p(Hypertension)}=e^{\beta_0 + \beta_1 \cdot BMI}
+$$
+
+On the left hand side of the equationis the **Odds** of having Hypertension.
+
+$\beta_0$ is a parameter describing \_\_, and $\beta_1$ is a parameter describing \_\_\_
+
+```{python}
+y, X = model_matrix("Hypertension ~ BMI", nhanes_tiny)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+logit_model = sm.Logit(y_train, X_train).fit()
+
+logit_model.summary()
+```
+
+## 
+
+```{python}
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 1. Example data (replace with your own data)
+data = {'X': np.random.rand(100) * 100, 'y': np.random.randint(0, 2, 100)}
+df = pd.DataFrame(data)
+
+# To check the linearity assumption visually for an individual predictor, 
+# a common method involves grouping the continuous predictor into bins 
+# and calculating the empirical log-odds for each bin.
+
+# Bin the predictor
+df['bins'] = pd.cut(df['X'], bins=10) 
+
+# Calculate proportion of '1's (p) and then empirical log-odds (ln(p/(1-p))) in each bin
+# Avoid bins where p is 0 or 1 to prevent undefined log-odds
+binned_data = df.groupby('bins')['y'].agg(['sum', 'count']).reset_index()
+binned_data['p'] = binned_data['sum'] / binned_data['count']
+# Filter out bins with 0 or 1 probability if needed for a "perfect" plot
+binned_data = binned_data[(binned_data['p'] > 0) & (binned_data['p'] < 1)] 
+binned_data['log_odds'] = np.log(binned_data['p'] / (1 - binned_data['p']))
+binned_data['bin_midpoint'] = binned_data['bins'].apply(lambda x: x.mid)
+
+# 2. Plotting the empirical log-odds
+plt.figure(figsize=(8, 5))
+plt.scatter(binned_data['bin_midpoint'], binned_data['log_odds'], color='blue')
+plt.xlabel('Predictor (X) - Binned Midpoint')
+plt.ylabel('Empirical Log Odds')
+plt.title('Empirical Log Odds vs. Predictor')
+plt.grid(True)
+plt.show()
+
+# 3. Alternatively, plotting predicted log odds from a model for the linearity assumption check
+
+# Add a constant to the predictor variable
+X = sm.add_constant(df['X'])
+# Fit a logistic regression model
+model = sm.Logit(df['y'], X).fit(disp=0) # disp=0 suppresses fit output
+
+# Get predicted values in log-odds format (default type for Logit model predict)
+predicted_log_odds = model.predict(X)
+
+# Plot predicted log odds (which should form a linear relationship if the model is correctly specified)
+plt.figure(figsize=(8, 5))
+plt.scatter(df['X'], predicted_log_odds, color='red', alpha=0.5)
+plt.xlabel('Predictor (X)')
+plt.ylabel('Predicted Log Odds (from model)')
+plt.title('Model Predicted Log Odds vs. Predictor')
+plt.grid(True)
+plt.show()
+
+```

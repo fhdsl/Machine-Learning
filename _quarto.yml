@@ -17,6 +17,7 @@ book:
     - index.qmd
     - 01-Problem-Setup.qmd
     - 02-Regression.qmd
+    - 03-Classification.qmd
     - conclusion.qmd
     - references.qmd
   
