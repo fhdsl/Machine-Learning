@@ -48,7 +48,7 @@ plt.show()
 
 ```
 
-This model is formed by making the the line of best fit determined by the minimum of the sum of squared difference between the observed response (in blue points) and predicted response (in red line). Using the termology from last week, we say that we fit a line where the Mean Squared Error (MSE) is minimized.
+This model is formed by making the the line of best fit determined by the minimum of the sum of squared difference between the observed response (in blue points) and predicted response (in red line). Using the terminology from last week, we say that we fit a line where the Mean Squared Error (MSE) is minimized.
 
 Another illustration:
 
