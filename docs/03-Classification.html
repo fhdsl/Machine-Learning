@@ -270,7 +270,7 @@ window.Quarto = {
 <p>So far, we have looked at making predictions in which the outcome is a continous value. Today, we will look at <strong>classification</strong>, in which our outcome is a categorical value. We first start with binary classification, in which there is only two possible outcomes, usually defined by <code>True</code> or <code>False</code> values. However, for many classification models, they predict the <em>probability</em> of whether an event happens or not, on a continuous scale from 0 to 1. Then, given the predicted probability, we say after a threshold, we classify the outcome as <code>True</code> or <code>False</code> values.</p>
 <p>Using the same data as before, we define someone is at risk for <span class="math inline">\(Hypertension\)</span> if their diastolic pressure is greater than 80 or their systolic pressure is greater than 130. Our goal is to classify whether someone is at high risk for <span class="math inline">\(Hypertension\)</span>.</p>
 <p>Let’s look at the distribution of Hypertension vs.&nbsp;No Hypertension:</p>
-<div id="5172bcf9" class="cell" data-execution_count="1">
+<div id="bc88c0af" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -300,12 +300,12 @@ window.Quarto = {
 </div>
 <p>We see that there is a lot more data for the No Hypertension group (88%) compared Hypertension group (22%), so this could be a potential <strong>class imbalance</strong> in our modeling. We will revisit the consequence of class imbalance later today.</p>
 <p>We then split our data in training and testing, as usual:</p>
-<div id="f240f309" class="cell" data-execution_count="2">
+<div id="a05549a9" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#train test</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nhanes_train, nhanes_test <span class="op">=</span> train_test_split(nhanes, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, we start looking at possible predictors that may be associated with our binary response. Let’s consider <span class="math inline">\(BMI\)</span> as a candidate predictor:</p>
-<div id="40f0715f" class="cell" data-execution_count="3">
+<div id="6122f6dd" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.boxplot(y<span class="op">=</span><span class="st">"Hypertension2"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes_train)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">''</span>)</span>
@@ -319,7 +319,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Great, there seems to be an association. However, recall that our classification model is going to be <em>making predictions of probabilit</em>y on a continuous scale of 0 to 1 before we classify it into two categories. Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability in our data exploration. To do so, we will need to <em>bin</em> our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin. We plot the midpoint binned BMI value vs.&nbsp;empirical Hypertension probability for 20 bins:</p>
-<div id="ac14feef" class="cell" data-execution_count="4">
+<div id="c55a5d02" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nhanes_train[<span class="st">'bins'</span>] <span class="op">=</span> pd.cut(nhanes_train[<span class="st">'BMI'</span>], bins<span class="op">=</span><span class="dv">20</span>) </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -363,7 +363,7 @@ window.Quarto = {
 <p>Our usual Linear Regression model <span class="math inline">\(P(Hypertension)=\beta_0+\beta_1 \cdot BMI\)</span> <em>does not</em> give us outputs between 0 and 1. To deal with this, we perform the <strong>Logistic Transformation:</strong></p>
 <p><span class="math display">\[P(Hyptertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}\]</span></p>
 <p>Therefore, the relationship between the X and Y axis is not going to be a straight line, but rather a non-linear, “S-shaped” one. Let’s fit this model and look at the model visually to understand.</p>
-<div id="3ff6cd7d" class="cell" data-execution_count="5">
+<div id="bea0e40d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"Hypertension ~ BMI"</span>, nhanes_train)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>logit_model <span class="op">=</span> LogisticRegression().fit(X_train, y_train)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -393,7 +393,7 @@ window.Quarto = {
 <p>It is hard to figure out visually when the data can fall on a logistic S-curve - one can imagine a red line stretched out more, etc. If we move the equation around so that the right hand side is linear:</p>
 <p><span class="math display">\[log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI\]</span></p>
 <p>The left hand side of the equation is called the <strong>Log-Odds</strong>. A Log-Odds of 0 indicate a 50:50 probability, positive values indicate a higher than 50% probability, and negative values indicate a lower than 50% probability.</p>
-<div id="664346ec" class="cell" data-execution_count="6">
+<div id="9be3afe5" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> logit_model.predict_proba(X_train)[:, <span class="dv">1</span>]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>log_odds <span class="op">=</span> np.log(p <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> p))</span>
@@ -418,7 +418,7 @@ window.Quarto = {
 <p>Remember that we still need to get from probability to classification. We will set a reasonable, interpretable cutoff of 50%: if the probability of having Hypertension is &gt;=50%, then classify that person having Hypertension. Otherwise, they do not have Hypertension This cutoff called the <strong>Decision Boundary</strong>.</p>
 <p>As an aside, we can also evaluate the model based on just the probability it predicted, and it actually contains more information than if we had set our decision boundary to make it a classifier. However, these metrics of evaluation, namely <a href="https://aml4td.org/chapters/cls-metrics.html#sec-cls-metrics-soft"><strong>Cross Entropy</strong> and <strong>Brier Scores</strong></a>, are harder to interpret, and are less commonly reported in biomedical research.</p>
 <p>Given this decision boundary, let’s examine evaluate the model on the test set, and look at its accuracy rate:</p>
-<div id="ae2cf736" class="cell" data-execution_count="7">
+<div id="fb4b41aa" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"Hypertension ~ BMI"</span>, nhanes_test)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Accuracy = '</span>, accuracy_score(y_test, logit_model.predict(X_test))) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -429,7 +429,7 @@ window.Quarto = {
 <p>Okay, that’s a starting point!</p>
 <p>However, we need to be mindful of the class imbalance we saw in the dataset at the beginning of the lesson. Recall we roughly have 88% of our data as No Hypertension. If we have a classifier that <em>always</em> predicted No Hypertension, then we achieve a 88% accuracy rate, but this model is not particularly novel and it raises questions of whether our model of 76% accuracy is novel.</p>
 <p>We can break down classification accuracy to four additional results, via a table called the <strong>Confusion Matrix</strong>:</p>
-<div id="5218355b" class="cell" data-execution_count="8">
+<div id="0ff57491" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, logit_model.predict(X_test))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>[<span class="st">"No Hypertension"</span>, <span class="st">"Hyptertension"</span>])</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
@@ -448,7 +448,7 @@ window.Quarto = {
 <p>Therefore, we do a pretty terrible job of predicting the Hypertension cases!</p>
 <p>What happened exactly? Let’s look back at the Training Data: it seems that from the plots that we are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range. This range wasn’t high enough for our decision boundary of 50% probability, so we missed out most of our Hypertension people.</p>
 <p>What can we do? We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be .2?</p>
-<div id="67b7b619" class="cell" data-execution_count="9">
+<div id="b9c094b1" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>new_pred <span class="op">=</span> [<span class="dv">1</span> <span class="cf">if</span> x <span class="op">&gt;=</span> <span class="fl">.2</span> <span class="cf">else</span> <span class="dv">0</span> <span class="cf">for</span> x <span class="kw">in</span> logit_model.predict_proba(X_test)[:, <span class="dv">1</span>]]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, new_pred)</span>
@@ -497,7 +497,7 @@ window.Quarto = {
 \]</span></p>
 <p>On the left hand side of the equationis the <strong>Odds</strong> of having Hypertension.</p>
 <p><span class="math inline">\(\beta_0\)</span> is a parameter describing __, and <span class="math inline">\(\beta_1\)</span> is a parameter describing ___</p>
-<div id="e7b170a9" class="cell" data-execution_count="10">
+<div id="e374e1ab" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>logit_model <span class="op">=</span> sm.Logit(y_train, X_train).fit()</span>
@@ -538,7 +538,7 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Time:</td>
-<td>21:51:22</td>
+<td>21:56:55</td>
 <td data-quarto-table-cell-role="th">Log-Likelihood:</td>
 <td>-3097.8</td>
 </tr>
@@ -594,497 +594,19 @@ window.Quarto = {
 </section>
 <section id="appendix-roc-curve" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="appendix-roc-curve"><span class="header-section-number">4.4</span> Appendix: ROC Curve</h2>
-<div id="029fbac0" class="cell" data-execution_count="11">
+<div id="681164ba" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> RocCurveDisplay</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve, roc_auc_score</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute ROC curve</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>fpr, tpr, thresholds <span class="op">=</span> roc_curve(y_test, logit_model.predict(X_test), drop_intermediate<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FPR: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"TPR: </span><span class="sc">{</span>tpr<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Thresholds: </span><span class="sc">{</span>thresholds<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>display <span class="op">=</span> RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>FPR: [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
- 0.00000000e+00 8.68055556e-04 8.68055556e-04 1.73611111e-03
- 1.73611111e-03 2.60416667e-03 2.60416667e-03 2.60416667e-03
- 3.47222222e-03 3.47222222e-03 4.34027778e-03 4.34027778e-03
- 5.20833333e-03 6.94444444e-03 7.81250000e-03 7.81250000e-03
- 7.81250000e-03 7.81250000e-03 8.68055556e-03 9.54861111e-03
- 1.04166667e-02 1.12847222e-02 1.21527778e-02 1.30208333e-02
- 1.38888889e-02 1.47569444e-02 1.47569444e-02 1.56250000e-02
- 1.64930556e-02 1.82291667e-02 1.90972222e-02 1.99652778e-02
- 2.08333333e-02 2.08333333e-02 2.25694444e-02 2.25694444e-02
- 2.25694444e-02 2.34375000e-02 2.34375000e-02 2.43055556e-02
- 2.51736111e-02 2.60416667e-02 2.60416667e-02 2.60416667e-02
- 2.69097222e-02 2.77777778e-02 2.77777778e-02 2.86458333e-02
- 2.95138889e-02 2.95138889e-02 2.95138889e-02 2.95138889e-02
- 3.03819444e-02 3.12500000e-02 3.12500000e-02 3.21180556e-02
- 3.29861111e-02 3.38541667e-02 3.47222222e-02 3.55902778e-02
- 3.64583333e-02 3.73263889e-02 3.81944444e-02 3.90625000e-02
- 3.90625000e-02 3.99305556e-02 3.99305556e-02 4.07986111e-02
- 4.16666667e-02 4.16666667e-02 4.25347222e-02 4.51388889e-02
- 4.60069444e-02 4.68750000e-02 4.86111111e-02 4.86111111e-02
- 4.86111111e-02 4.94791667e-02 5.03472222e-02 5.12152778e-02
- 5.20833333e-02 5.29513889e-02 5.29513889e-02 5.29513889e-02
- 5.38194444e-02 5.46875000e-02 5.55555556e-02 5.64236111e-02
- 5.72916667e-02 5.81597222e-02 5.81597222e-02 5.98958333e-02
- 6.07638889e-02 6.25000000e-02 6.25000000e-02 6.33680556e-02
- 6.59722222e-02 6.68402778e-02 6.77083333e-02 6.85763889e-02
- 6.85763889e-02 6.94444444e-02 7.03125000e-02 7.03125000e-02
- 7.11805556e-02 7.11805556e-02 7.11805556e-02 7.20486111e-02
- 7.20486111e-02 7.29166667e-02 7.29166667e-02 7.37847222e-02
- 7.46527778e-02 7.46527778e-02 7.46527778e-02 7.46527778e-02
- 7.55208333e-02 7.63888889e-02 7.72569444e-02 7.81250000e-02
- 7.81250000e-02 7.89930556e-02 7.89930556e-02 7.89930556e-02
- 7.98611111e-02 7.98611111e-02 7.98611111e-02 8.07291667e-02
- 8.24652778e-02 8.24652778e-02 8.33333333e-02 8.50694444e-02
- 8.50694444e-02 8.59375000e-02 8.68055556e-02 8.68055556e-02
- 8.68055556e-02 8.68055556e-02 8.68055556e-02 8.76736111e-02
- 8.85416667e-02 8.94097222e-02 8.94097222e-02 8.94097222e-02
- 8.94097222e-02 9.02777778e-02 9.11458333e-02 9.54861111e-02
- 9.63541667e-02 9.72222222e-02 9.80902778e-02 9.98263889e-02
- 1.00694444e-01 1.01562500e-01 1.02430556e-01 1.03298611e-01
- 1.04166667e-01 1.05902778e-01 1.06770833e-01 1.07638889e-01
- 1.08506944e-01 1.08506944e-01 1.09375000e-01 1.10243056e-01
- 1.11111111e-01 1.11111111e-01 1.14583333e-01 1.15451389e-01
- 1.16319444e-01 1.17187500e-01 1.18923611e-01 1.19791667e-01
- 1.19791667e-01 1.19791667e-01 1.20659722e-01 1.21527778e-01
- 1.21527778e-01 1.22395833e-01 1.23263889e-01 1.24131944e-01
- 1.25000000e-01 1.28472222e-01 1.28472222e-01 1.28472222e-01
- 1.28472222e-01 1.28472222e-01 1.29340278e-01 1.29340278e-01
- 1.31076389e-01 1.31076389e-01 1.31944444e-01 1.33680556e-01
- 1.34548611e-01 1.35416667e-01 1.36284722e-01 1.37152778e-01
- 1.38020833e-01 1.40625000e-01 1.41493056e-01 1.42361111e-01
- 1.42361111e-01 1.43229167e-01 1.44097222e-01 1.44965278e-01
- 1.45833333e-01 1.48437500e-01 1.49305556e-01 1.51041667e-01
- 1.51909722e-01 1.51909722e-01 1.51909722e-01 1.51909722e-01
- 1.52777778e-01 1.52777778e-01 1.53645833e-01 1.53645833e-01
- 1.55381944e-01 1.55381944e-01 1.57986111e-01 1.60590278e-01
- 1.61458333e-01 1.64062500e-01 1.64930556e-01 1.64930556e-01
- 1.65798611e-01 1.66666667e-01 1.72743056e-01 1.73611111e-01
- 1.73611111e-01 1.74479167e-01 1.74479167e-01 1.75347222e-01
- 1.76215278e-01 1.78819444e-01 1.78819444e-01 1.79687500e-01
- 1.83159722e-01 1.84027778e-01 1.84895833e-01 1.85763889e-01
- 1.86631944e-01 1.87500000e-01 1.87500000e-01 1.87500000e-01
- 1.88368056e-01 1.89236111e-01 1.90104167e-01 1.90972222e-01
- 1.91840278e-01 1.92708333e-01 1.92708333e-01 1.97048611e-01
- 1.97916667e-01 1.99652778e-01 2.00520833e-01 2.01388889e-01
- 2.02256944e-01 2.02256944e-01 2.04861111e-01 2.05729167e-01
- 2.06597222e-01 2.07465278e-01 2.07465278e-01 2.10069444e-01
- 2.13541667e-01 2.17881944e-01 2.19618056e-01 2.20486111e-01
- 2.21354167e-01 2.23090278e-01 2.23090278e-01 2.23958333e-01
- 2.24826389e-01 2.26562500e-01 2.26562500e-01 2.26562500e-01
- 2.27430556e-01 2.28298611e-01 2.29166667e-01 2.29166667e-01
- 2.30034722e-01 2.30902778e-01 2.34375000e-01 2.35243056e-01
- 2.36111111e-01 2.36111111e-01 2.36979167e-01 2.42187500e-01
- 2.43055556e-01 2.43923611e-01 2.44791667e-01 2.50868056e-01
- 2.50868056e-01 2.53472222e-01 2.54340278e-01 2.56076389e-01
- 2.56944444e-01 2.57812500e-01 2.57812500e-01 2.57812500e-01
- 2.60416667e-01 2.61284722e-01 2.63888889e-01 2.64756944e-01
- 2.66493056e-01 2.66493056e-01 2.69097222e-01 2.69965278e-01
- 2.70833333e-01 2.75173611e-01 2.76041667e-01 2.76909722e-01
- 2.78645833e-01 2.79513889e-01 2.79513889e-01 2.79513889e-01
- 2.80381944e-01 2.83854167e-01 2.84722222e-01 2.86458333e-01
- 2.86458333e-01 2.88194444e-01 2.89062500e-01 2.93402778e-01
- 2.95138889e-01 2.96006944e-01 2.97743056e-01 3.01215278e-01
- 3.02951389e-01 3.03819444e-01 3.04687500e-01 3.06423611e-01
- 3.07291667e-01 3.09027778e-01 3.11631944e-01 3.13368056e-01
- 3.15104167e-01 3.15972222e-01 3.16840278e-01 3.19444444e-01
- 3.19444444e-01 3.22916667e-01 3.29861111e-01 3.30729167e-01
- 3.32465278e-01 3.34201389e-01 3.35937500e-01 3.36805556e-01
- 3.37673611e-01 3.37673611e-01 3.38541667e-01 3.38541667e-01
- 3.41145833e-01 3.42013889e-01 3.42881944e-01 3.42881944e-01
- 3.45486111e-01 3.45486111e-01 3.47222222e-01 3.47222222e-01
- 3.51562500e-01 3.52430556e-01 3.53298611e-01 3.54166667e-01
- 3.55034722e-01 3.55902778e-01 3.56770833e-01 3.57638889e-01
- 3.58506944e-01 3.60243056e-01 3.63715278e-01 3.65451389e-01
- 3.65451389e-01 3.67187500e-01 3.68055556e-01 3.71527778e-01
- 3.72395833e-01 3.73263889e-01 3.74131944e-01 3.77604167e-01
- 3.78472222e-01 3.79340278e-01 3.79340278e-01 3.81076389e-01
- 3.82812500e-01 3.82812500e-01 3.83680556e-01 3.84548611e-01
- 3.85416667e-01 3.86284722e-01 3.88020833e-01 3.90625000e-01
- 3.91493056e-01 3.92361111e-01 3.93229167e-01 3.94097222e-01
- 3.97569444e-01 3.99305556e-01 4.00173611e-01 4.02777778e-01
- 4.03645833e-01 4.04513889e-01 4.05381944e-01 4.06250000e-01
- 4.07118056e-01 4.10590278e-01 4.11458333e-01 4.12326389e-01
- 4.14062500e-01 4.16666667e-01 4.21006944e-01 4.21875000e-01
- 4.22743056e-01 4.23611111e-01 4.24479167e-01 4.26215278e-01
- 4.27083333e-01 4.27083333e-01 4.29687500e-01 4.30555556e-01
- 4.31423611e-01 4.32291667e-01 4.32291667e-01 4.33159722e-01
- 4.38368056e-01 4.38368056e-01 4.39236111e-01 4.40104167e-01
- 4.43576389e-01 4.44444444e-01 4.45312500e-01 4.46180556e-01
- 4.47048611e-01 4.47048611e-01 4.47916667e-01 4.52256944e-01
- 4.52256944e-01 4.53125000e-01 4.53993056e-01 4.54861111e-01
- 4.58333333e-01 4.59201389e-01 4.60069444e-01 4.60937500e-01
- 4.61805556e-01 4.62673611e-01 4.66145833e-01 4.67013889e-01
- 4.68750000e-01 4.69618056e-01 4.71354167e-01 4.72222222e-01
- 4.73090278e-01 4.73958333e-01 4.75694444e-01 4.76562500e-01
- 4.77430556e-01 4.80034722e-01 4.81770833e-01 4.82638889e-01
- 4.83506944e-01 4.86111111e-01 4.86111111e-01 4.86979167e-01
- 4.93055556e-01 4.94791667e-01 4.95659722e-01 4.96527778e-01
- 4.96527778e-01 4.98263889e-01 4.99131944e-01 5.00868056e-01
- 5.06076389e-01 5.06076389e-01 5.06944444e-01 5.07812500e-01
- 5.08680556e-01 5.09548611e-01 5.13888889e-01 5.14756944e-01
- 5.15625000e-01 5.23437500e-01 5.24305556e-01 5.24305556e-01
- 5.26041667e-01 5.26041667e-01 5.27777778e-01 5.30381944e-01
- 5.31250000e-01 5.31250000e-01 5.32118056e-01 5.32986111e-01
- 5.32986111e-01 5.32986111e-01 5.33854167e-01 5.34722222e-01
- 5.38194444e-01 5.39062500e-01 5.39930556e-01 5.44270833e-01
- 5.44270833e-01 5.45138889e-01 5.47743056e-01 5.47743056e-01
- 5.48611111e-01 5.49479167e-01 5.50347222e-01 5.54687500e-01
- 5.55555556e-01 5.55555556e-01 5.59027778e-01 5.59895833e-01
- 5.62500000e-01 5.63368056e-01 5.65972222e-01 5.66840278e-01
- 5.66840278e-01 5.67708333e-01 5.71180556e-01 5.72048611e-01
- 5.72916667e-01 5.73784722e-01 5.74652778e-01 5.83333333e-01
- 5.83333333e-01 5.83333333e-01 5.88541667e-01 5.89409722e-01
- 5.90277778e-01 5.91145833e-01 5.92881944e-01 5.98090278e-01
- 5.98958333e-01 5.99826389e-01 6.00694444e-01 6.01562500e-01
- 6.02430556e-01 6.03298611e-01 6.04166667e-01 6.05902778e-01
- 6.06770833e-01 6.07638889e-01 6.08506944e-01 6.09375000e-01
- 6.11979167e-01 6.13715278e-01 6.18055556e-01 6.18923611e-01
- 6.19791667e-01 6.21527778e-01 6.23263889e-01 6.24131944e-01
- 6.25000000e-01 6.25000000e-01 6.25868056e-01 6.26736111e-01
- 6.30208333e-01 6.30208333e-01 6.31076389e-01 6.31944444e-01
- 6.32812500e-01 6.36284722e-01 6.37152778e-01 6.38020833e-01
- 6.41493056e-01 6.42361111e-01 6.43229167e-01 6.44097222e-01
- 6.48437500e-01 6.48437500e-01 6.52777778e-01 6.53645833e-01
- 6.54513889e-01 6.56250000e-01 6.56250000e-01 6.61458333e-01
- 6.62326389e-01 6.63194444e-01 6.65798611e-01 6.66666667e-01
- 6.68402778e-01 6.69270833e-01 6.72743056e-01 6.72743056e-01
- 6.77951389e-01 6.78819444e-01 6.80555556e-01 6.81423611e-01
- 6.82291667e-01 6.84027778e-01 6.84895833e-01 6.85763889e-01
- 6.86631944e-01 6.86631944e-01 6.87500000e-01 6.89236111e-01
- 6.91840278e-01 6.93576389e-01 6.93576389e-01 6.93576389e-01
- 6.95312500e-01 6.95312500e-01 6.96180556e-01 6.97048611e-01
- 6.98784722e-01 7.03125000e-01 7.03993056e-01 7.04861111e-01
- 7.05729167e-01 7.10069444e-01 7.10937500e-01 7.10937500e-01
- 7.11805556e-01 7.12673611e-01 7.15277778e-01 7.16145833e-01
- 7.17013889e-01 7.17881944e-01 7.18750000e-01 7.19618056e-01
- 7.20486111e-01 7.24826389e-01 7.27430556e-01 7.28298611e-01
- 7.29166667e-01 7.30034722e-01 7.30902778e-01 7.37847222e-01
- 7.42187500e-01 7.43923611e-01 7.44791667e-01 7.48263889e-01
- 7.49131944e-01 7.54340278e-01 7.54340278e-01 7.56076389e-01
- 7.56944444e-01 7.57812500e-01 7.58680556e-01 7.60416667e-01
- 7.62152778e-01 7.62152778e-01 7.63020833e-01 7.66493056e-01
- 7.66493056e-01 7.69965278e-01 7.70833333e-01 7.71701389e-01
- 7.73437500e-01 7.74305556e-01 7.74305556e-01 7.77777778e-01
- 7.78645833e-01 7.79513889e-01 7.82986111e-01 7.84722222e-01
- 7.89062500e-01 7.89930556e-01 7.90798611e-01 7.95138889e-01
- 7.96006944e-01 7.96006944e-01 7.96875000e-01 7.97743056e-01
- 8.01215278e-01 8.02083333e-01 8.02951389e-01 8.02951389e-01
- 8.07291667e-01 8.08159722e-01 8.10763889e-01 8.11631944e-01
- 8.13368056e-01 8.14236111e-01 8.15104167e-01 8.15972222e-01
- 8.18576389e-01 8.19444444e-01 8.20312500e-01 8.22048611e-01
- 8.22916667e-01 8.23784722e-01 8.25520833e-01 8.26388889e-01
- 8.27256944e-01 8.28125000e-01 8.28993056e-01 8.30729167e-01
- 8.33333333e-01 8.35069444e-01 8.35937500e-01 8.40277778e-01
- 8.41145833e-01 8.42013889e-01 8.42881944e-01 8.43750000e-01
- 8.44618056e-01 8.45486111e-01 8.47222222e-01 8.48090278e-01
- 8.49826389e-01 8.50694444e-01 8.51562500e-01 8.52430556e-01
- 8.57638889e-01 8.58506944e-01 8.60243056e-01 8.61111111e-01
- 8.61979167e-01 8.63715278e-01 8.64583333e-01 8.67187500e-01
- 8.68923611e-01 8.69791667e-01 8.70659722e-01 8.71527778e-01
- 8.72395833e-01 8.73263889e-01 8.75868056e-01 8.76736111e-01
- 8.79340278e-01 8.81076389e-01 8.81944444e-01 8.82812500e-01
- 8.83680556e-01 8.84548611e-01 8.85416667e-01 8.87152778e-01
- 8.90625000e-01 8.91493056e-01 8.92361111e-01 8.94097222e-01
- 8.94965278e-01 8.95833333e-01 8.96701389e-01 9.01041667e-01
- 9.01909722e-01 9.04513889e-01 9.06250000e-01 9.07118056e-01
- 9.07986111e-01 9.09722222e-01 9.10590278e-01 9.11458333e-01
- 9.12326389e-01 9.14930556e-01 9.15798611e-01 9.16666667e-01
- 9.18402778e-01 9.21006944e-01 9.21875000e-01 9.22743056e-01
- 9.25347222e-01 9.26215278e-01 9.27951389e-01 9.28819444e-01
- 9.29687500e-01 9.30555556e-01 9.32291667e-01 9.35763889e-01
- 9.36631944e-01 9.40972222e-01 9.41840278e-01 9.42708333e-01
- 9.44444444e-01 9.45312500e-01 9.47048611e-01 9.47916667e-01
- 9.49652778e-01 9.50520833e-01 9.51388889e-01 9.53125000e-01
- 9.56597222e-01 9.57465278e-01 9.59201389e-01 9.60069444e-01
- 9.62673611e-01 9.65277778e-01 9.66145833e-01 9.71354167e-01
- 9.73090278e-01 9.73958333e-01 9.77430556e-01 9.78298611e-01
- 9.79166667e-01 9.80034722e-01 9.80902778e-01 9.81770833e-01
- 9.84375000e-01 9.85243056e-01 9.86979167e-01 9.87847222e-01
- 9.88715278e-01 9.89583333e-01 9.90451389e-01 9.91319444e-01
- 9.92187500e-01 9.93055556e-01 9.93923611e-01 9.94791667e-01
- 9.95659722e-01 9.96527778e-01 9.97395833e-01 9.98263889e-01
- 9.99131944e-01 1.00000000e+00]
-TPR: [0.         0.00294118 0.00588235 0.00882353 0.01176471 0.01176471
- 0.01470588 0.01470588 0.01764706 0.01764706 0.02058824 0.02352941
- 0.02352941 0.02647059 0.02647059 0.02941176 0.02941176 0.02941176
- 0.02941176 0.03235294 0.03529412 0.03823529 0.03823529 0.03823529
- 0.04117647 0.04117647 0.04117647 0.04117647 0.04117647 0.04117647
- 0.04411765 0.04411765 0.04411765 0.04411765 0.04411765 0.04411765
- 0.04411765 0.04705882 0.04705882 0.05       0.05294118 0.05294118
- 0.05588235 0.05882353 0.05882353 0.05882353 0.06176471 0.06470588
- 0.06470588 0.06470588 0.07058824 0.07058824 0.07058824 0.07352941
- 0.07647059 0.07941176 0.07941176 0.07941176 0.08235294 0.08235294
- 0.08529412 0.08529412 0.08529412 0.08529412 0.08529412 0.08529412
- 0.08529412 0.08823529 0.09117647 0.09705882 0.1        0.10294118
- 0.10294118 0.10588235 0.10588235 0.10588235 0.10588235 0.10588235
- 0.10588235 0.10882353 0.11176471 0.11176471 0.11470588 0.11470588
- 0.11470588 0.11470588 0.11764706 0.12058824 0.12058824 0.12058824
- 0.12058824 0.12058824 0.12058824 0.12058824 0.12352941 0.12352941
- 0.12352941 0.12941176 0.13235294 0.13235294 0.13529412 0.13529412
- 0.13529412 0.13529412 0.13823529 0.13823529 0.14117647 0.14411765
- 0.14411765 0.14705882 0.15       0.15       0.15294118 0.15588235
- 0.15882353 0.15882353 0.15882353 0.16176471 0.16470588 0.16764706
- 0.16764706 0.16764706 0.16764706 0.16764706 0.17058824 0.17058824
- 0.17352941 0.17647059 0.17647059 0.17941176 0.18235294 0.18235294
- 0.18235294 0.18529412 0.18529412 0.19117647 0.19411765 0.19705882
- 0.19705882 0.2        0.20294118 0.20588235 0.21176471 0.21176471
- 0.21176471 0.21764706 0.22058824 0.22352941 0.22647059 0.22647059
- 0.22647059 0.22647059 0.22647059 0.22647059 0.22647059 0.22647059
- 0.22647059 0.22941176 0.22941176 0.22941176 0.22941176 0.23235294
- 0.23235294 0.23235294 0.23235294 0.23529412 0.23529412 0.23529412
- 0.23529412 0.23823529 0.23823529 0.23823529 0.23823529 0.23823529
- 0.23823529 0.23823529 0.24117647 0.24411765 0.24411765 0.24411765
- 0.24705882 0.24705882 0.25       0.25       0.25       0.25294118
- 0.25588235 0.25882353 0.26176471 0.26470588 0.26470588 0.26764706
- 0.27058824 0.27352941 0.27352941 0.27352941 0.27352941 0.27352941
- 0.27352941 0.27647059 0.27647059 0.27941176 0.27941176 0.27941176
- 0.28235294 0.28235294 0.28529412 0.28529412 0.28529412 0.28823529
- 0.28823529 0.28823529 0.28823529 0.29117647 0.29411765 0.29705882
- 0.3        0.30294118 0.30588235 0.30882353 0.30882353 0.31176471
- 0.31176471 0.31176471 0.31176471 0.31176471 0.31176471 0.31470588
- 0.31470588 0.31470588 0.32058824 0.32352941 0.32647059 0.32647059
- 0.32941176 0.32941176 0.33235294 0.33235294 0.33529412 0.33529412
- 0.33823529 0.33823529 0.33823529 0.33823529 0.33823529 0.33823529
- 0.34117647 0.34411765 0.34411765 0.34411765 0.34411765 0.34705882
- 0.35588235 0.35588235 0.35882353 0.35882353 0.35882353 0.36176471
- 0.36176471 0.36176471 0.36176471 0.36470588 0.36764706 0.37058824
- 0.37352941 0.37352941 0.37647059 0.37941176 0.38235294 0.39411765
- 0.4        0.4        0.4        0.4        0.40294118 0.40294118
- 0.40294118 0.40882353 0.41176471 0.41470588 0.41764706 0.41764706
- 0.41764706 0.42058824 0.42058824 0.42058824 0.42352941 0.42352941
- 0.42352941 0.42647059 0.42647059 0.42941176 0.44411765 0.44705882
- 0.44705882 0.45       0.45294118 0.45588235 0.45588235 0.45588235
- 0.45588235 0.45588235 0.46764706 0.47058824 0.47941176 0.47941176
- 0.48529412 0.48529412 0.48529412 0.48823529 0.48823529 0.48823529
- 0.48823529 0.48823529 0.48823529 0.48823529 0.48823529 0.48823529
- 0.49117647 0.49705882 0.5        0.50588235 0.50588235 0.50588235
- 0.50882353 0.51176471 0.51176471 0.52058824 0.52352941 0.52352941
- 0.52352941 0.53235294 0.53235294 0.53235294 0.53235294 0.53529412
- 0.53529412 0.53529412 0.53823529 0.53823529 0.53823529 0.53823529
- 0.53823529 0.55294118 0.55588235 0.55588235 0.55882353 0.55882353
- 0.55882353 0.55882353 0.55882353 0.55882353 0.55882353 0.56176471
- 0.56470588 0.56764706 0.57058824 0.57058824 0.57058824 0.57352941
- 0.57352941 0.57647059 0.57647059 0.57941176 0.58529412 0.58529412
- 0.58529412 0.58529412 0.58529412 0.59411765 0.59411765 0.59411765
- 0.59411765 0.59411765 0.59705882 0.59705882 0.6        0.61470588
- 0.61470588 0.61764706 0.61764706 0.61764706 0.61764706 0.62352941
- 0.62352941 0.62647059 0.62941176 0.62941176 0.63235294 0.63529412
- 0.63529412 0.63529412 0.63529412 0.63529412 0.63529412 0.64117647
- 0.64117647 0.64117647 0.64117647 0.64411765 0.64705882 0.64705882
- 0.64705882 0.65       0.65       0.65       0.65       0.65
- 0.65       0.65       0.65       0.65       0.65294118 0.65294118
- 0.66176471 0.66176471 0.66176471 0.66176471 0.66176471 0.66470588
- 0.66764706 0.67058824 0.67647059 0.67647059 0.68235294 0.68235294
- 0.68529412 0.68529412 0.68529412 0.68823529 0.68823529 0.68823529
- 0.69117647 0.69117647 0.69117647 0.69117647 0.69411765 0.69705882
- 0.69705882 0.71176471 0.71470588 0.71764706 0.71764706 0.71764706
- 0.71764706 0.71764706 0.71764706 0.71764706 0.71764706 0.71764706
- 0.72352941 0.72352941 0.72352941 0.72352941 0.72941176 0.72941176
- 0.72941176 0.72941176 0.73823529 0.73823529 0.73823529 0.74117647
- 0.74117647 0.74117647 0.74117647 0.74411765 0.74705882 0.74705882
- 0.74705882 0.74705882 0.74705882 0.74705882 0.75       0.75294118
- 0.75294118 0.75294118 0.75588235 0.75882353 0.75882353 0.75882353
- 0.75882353 0.75882353 0.75882353 0.75882353 0.76470588 0.76764706
- 0.76764706 0.77058824 0.77941176 0.78235294 0.78235294 0.78235294
- 0.78235294 0.78529412 0.78529412 0.78529412 0.78823529 0.79117647
- 0.79117647 0.79117647 0.79705882 0.79705882 0.79705882 0.8
- 0.80294118 0.80294118 0.80588235 0.81176471 0.81176471 0.81176471
- 0.81176471 0.81470588 0.81470588 0.81764706 0.82352941 0.82352941
- 0.82941176 0.82941176 0.83529412 0.83529412 0.83823529 0.83823529
- 0.83823529 0.83823529 0.83823529 0.83823529 0.83823529 0.84411765
- 0.84705882 0.85       0.85       0.85       0.85294118 0.85588235
- 0.85588235 0.85882353 0.85882353 0.85882353 0.86176471 0.86176471
- 0.86176471 0.86470588 0.86470588 0.87058824 0.87058824 0.87058824
- 0.87058824 0.87058824 0.87647059 0.87647059 0.87941176 0.87941176
- 0.87941176 0.87941176 0.88823529 0.88823529 0.88823529 0.89117647
- 0.89117647 0.89117647 0.89411765 0.89705882 0.89705882 0.89705882
- 0.89705882 0.90294118 0.90294118 0.90294118 0.90588235 0.90588235
- 0.90882353 0.90882353 0.91176471 0.91470588 0.91764706 0.91764706
- 0.91764706 0.91764706 0.92058824 0.92352941 0.92352941 0.92352941
- 0.92352941 0.92352941 0.92352941 0.92352941 0.92352941 0.92647059
- 0.92647059 0.92647059 0.92647059 0.92647059 0.92647059 0.92647059
- 0.92941176 0.93235294 0.93235294 0.93529412 0.93529412 0.93529412
- 0.93823529 0.93823529 0.94117647 0.94411765 0.94411765 0.94705882
- 0.95       0.95       0.95       0.95       0.95       0.95
- 0.95       0.95       0.95       0.95294118 0.95294118 0.95294118
- 0.95294118 0.95294118 0.95588235 0.95588235 0.95588235 0.95588235
- 0.95588235 0.95588235 0.95588235 0.95588235 0.95588235 0.95882353
- 0.96176471 0.96470588 0.96470588 0.96764706 0.96764706 0.96764706
- 0.96764706 0.96764706 0.97058824 0.97058824 0.97058824 0.97352941
- 0.97352941 0.97352941 0.97352941 0.97647059 0.97647059 0.97647059
- 0.97941176 0.97941176 0.97941176 0.97941176 0.97941176 0.98235294
- 0.98529412 0.98529412 0.98529412 0.98529412 0.98823529 0.98823529
- 0.98823529 0.98823529 0.98823529 0.98823529 0.98823529 0.99117647
- 0.99117647 0.99117647 0.99117647 0.99117647 0.99117647 0.99411765
- 0.99411765 0.99411765 0.99411765 0.99411765 0.99411765 0.99411765
- 0.99411765 0.99411765 0.99411765 0.99411765 0.99411765 0.99705882
- 0.99705882 0.99705882 0.99705882 0.99705882 0.99705882 0.99705882
- 0.99705882 0.99705882 0.99705882 0.99705882 0.99705882 0.99705882
- 0.99705882 0.99705882 0.99705882 0.99705882 0.99705882 0.99705882
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.
- 1.         1.         1.         1.         1.         1.        ]
-Thresholds: [       inf 0.80705186 0.75591068 0.74185095 0.72200746 0.70932878
- 0.6947626  0.68218493 0.68059335 0.67627509 0.65705511 0.62759261
- 0.58171716 0.58064648 0.56954001 0.56413995 0.56107307 0.56071195
- 0.56053136 0.55980887 0.55691636 0.55329533 0.55311412 0.54585491
- 0.54530964 0.54112574 0.5398512  0.53875832 0.52781077 0.51994791
- 0.51500546 0.51152563 0.51134245 0.50951046 0.50767821 0.50639551
- 0.50474621 0.49961454 0.49668212 0.49558252 0.49484947 0.49008533
- 0.48568925 0.48294278 0.48111236 0.48019733 0.47836769 0.4747102
- 0.47233426 0.47105542 0.46740374 0.46722124 0.46557918 0.46102193
- 0.46065762 0.45756272 0.45465287 0.45356246 0.45229088 0.4497496
- 0.44920538 0.44630494 0.44340815 0.44196119 0.43943138 0.43474161
- 0.43420122 0.43294092 0.43186134 0.43114199 0.43060266 0.42934487
- 0.42575627 0.42539783 0.42396487 0.42038812 0.41842443 0.4168197
- 0.41503872 0.41325997 0.41148348 0.41041868 0.40970929 0.409532
- 0.4086459  0.40528418 0.40298914 0.40281277 0.40140274 0.4012266
- 0.39946662 0.39735807 0.39560384 0.3938523  0.39227824 0.39210348
- 0.39123011 0.39035743 0.38931114 0.38704769 0.38687377 0.38496266
- 0.3847891  0.38444206 0.38409514 0.3821892  0.37994139 0.3782158
- 0.37546127 0.37391537 0.3713446  0.37117347 0.37031832 0.36963478
- 0.36878109 0.36861045 0.36809873 0.36690587 0.36622496 0.36486476
- 0.36452505 0.36367635 0.3628285  0.36215084 0.36113537 0.36062809
- 0.35944567 0.35843353 0.35775946 0.3565812  0.35607676 0.35574064
- 0.35439761 0.35372694 0.35355937 0.35272203 0.35255467 0.35105007
- 0.35071612 0.34838254 0.34705232 0.3465541  0.34605622 0.34572448
- 0.34522716 0.34439904 0.34274565 0.34109606 0.33994363 0.33945031
- 0.33862888 0.33780843 0.33617045 0.33600686 0.33518954 0.3345364
- 0.33339491 0.3329063  0.33258076 0.33014432 0.32982015 0.32965812
- 0.32949613 0.32917228 0.32868681 0.32804008 0.32723259 0.32642612
- 0.32610381 0.32562067 0.32481625 0.32401287 0.32353134 0.32321052
- 0.32305018 0.32288987 0.32160895 0.32001156 0.31985205 0.31969258
- 0.3185775  0.31841838 0.31778229 0.31682943 0.31587811 0.31524475
- 0.31477018 0.31461207 0.31445401 0.31366435 0.3130334  0.31224568
- 0.31208827 0.31098759 0.3106735  0.31051652 0.31004584 0.30988904
- 0.30941889 0.30894913 0.30816708 0.30738613 0.30707406 0.30676216
- 0.30660628 0.3061389  0.30582753 0.30536082 0.30442859 0.30427337
- 0.30380799 0.30272366 0.30225962 0.30195048 0.30164152 0.30133275
- 0.30117842 0.30056159 0.30009944 0.29994547 0.29963769 0.29917635
- 0.29856186 0.29810147 0.29733507 0.2965698  0.29641688 0.29626401
- 0.2959584  0.29565298 0.29504268 0.29397643 0.2936722  0.29352015
- 0.29260884 0.29215381 0.29200222 0.29048892 0.289734   0.28928161
- 0.28898025 0.28882964 0.28822766 0.28747625 0.2873261  0.28687595
- 0.28657609 0.28597692 0.28552804 0.28507958 0.28478084 0.28463154
- 0.28448229 0.28403482 0.28328999 0.28299238 0.28180386 0.2815072
- 0.28091446 0.28061837 0.2804704  0.28032248 0.28002677 0.27869846
- 0.27855111 0.27810935 0.27737403 0.27708023 0.27561416 0.27415289
- 0.27269646 0.27240576 0.27167984 0.27124488 0.27109998 0.27037626
- 0.27008711 0.26979815 0.26893245 0.26864428 0.2683563  0.26806852
- 0.26691934 0.26634592 0.26620269 0.2657733  0.26548728 0.26520146
- 0.26491583 0.26477309 0.26448776 0.26406013 0.26263792 0.26192866
- 0.26164531 0.26122065 0.26107919 0.25980832 0.25952646 0.2593856
- 0.25924479 0.25896331 0.25840097 0.25755894 0.25699859 0.25685863
- 0.2556012  0.25546173 0.25476516 0.254626   0.25420881 0.25365325
- 0.2530985  0.25282142 0.25268296 0.25212961 0.25143906 0.25116319
- 0.25074976 0.25006172 0.24896348 0.24868942 0.24827872 0.24773182
- 0.24745867 0.24732217 0.24691298 0.24595998 0.24568815 0.24555231
- 0.24487387 0.24460285 0.24433203 0.2441967  0.2435208  0.24325079
- 0.24284616 0.24271139 0.24190381 0.24123223 0.24096396 0.2408299
- 0.24069588 0.24056193 0.2400266  0.23922513 0.23789344 0.23762771
- 0.23736219 0.23669928 0.23656685 0.23643448 0.23577336 0.23564129
- 0.23524538 0.2343234  0.23392903 0.23353512 0.23314168 0.2327487
- 0.2326178  0.23235617 0.23209475 0.23196412 0.23131171 0.23118138
- 0.23092088 0.23066059 0.23027053 0.23001075 0.22962146 0.22910314
- 0.22897368 0.22884428 0.22871493 0.22845638 0.22806895 0.22742425
- 0.22652384 0.22613873 0.22549789 0.22524192 0.22498615 0.22485835
- 0.22473059 0.22460289 0.22422009 0.22383776 0.22358313 0.22345589
- 0.22320157 0.22307448 0.22294745 0.22269354 0.22243984 0.22231306
- 0.22205967 0.22167997 0.2215535  0.22142709 0.22104816 0.22092195
- 0.2202917  0.21978842 0.21966273 0.21916049 0.21903506 0.21890968
- 0.21865907 0.21853385 0.21778358 0.21740915 0.21728444 0.21691062
- 0.2160402  0.21579197 0.21566793 0.21517231 0.21504853 0.21480113
- 0.21393686 0.21369039 0.21356723 0.21282937 0.2123385  0.21209338
- 0.21160375 0.21135924 0.21111494 0.21087085 0.21038329 0.21026153
- 0.20989656 0.209775   0.2096535  0.20941065 0.20928931 0.20904677
- 0.20892557 0.20868335 0.20856231 0.20819951 0.2079579  0.20759587
- 0.2074753  0.20735478 0.20699353 0.20687322 0.20663275 0.20639248
- 0.20627243 0.20591258 0.20579273 0.20555319 0.20507473 0.20483581
- 0.20471642 0.20400121 0.20388219 0.20340663 0.20328786 0.20269482
- 0.20233962 0.20222132 0.20163061 0.20151262 0.20092345 0.20080578
- 0.20033558 0.20010079 0.19998347 0.19986621 0.19974899 0.1991637
- 0.19857969 0.19811342 0.19799697 0.19776425 0.19741555 0.19729942
- 0.19718334 0.19695133 0.19683541 0.19648794 0.1957944  0.19567899
- 0.19452772 0.19406866 0.1933816  0.19315299 0.19269639 0.19224062
- 0.1921268  0.19167205 0.19155849 0.19121813 0.19110477 0.19076502
- 0.19053877 0.19031273 0.18997406 0.18974853 0.18941063 0.18884848
- 0.18817558 0.18783983 0.18772802 0.18761625 0.18750454 0.18739288
- 0.1870582  0.18661267 0.18627907 0.18561324 0.18550244 0.18483876
- 0.18439732 0.18362677 0.1832973  0.18307791 0.18285872 0.18231164
- 0.18220238 0.18165683 0.18154787 0.18143896 0.1812213  0.18111255
- 0.18100384 0.18089519 0.1800278  0.17948733 0.17937939 0.1792715
- 0.17916366 0.17894813 0.17851768 0.17798076 0.17787353 0.1774451
- 0.17733812 0.17712432 0.17691071 0.17680399 0.17669731 0.17616469
- 0.17605832 0.175952   0.17573951 0.17489156 0.17468007 0.17457441
- 0.17436323 0.17373089 0.17362568 0.17352052 0.17341541 0.17299546
- 0.1728906  0.17268103 0.17257632 0.17236706 0.17205353 0.17184476
- 0.1716362  0.17153199 0.17132373 0.17111566 0.17049268 0.17028542
- 0.1699749  0.16966483 0.16945837 0.16884019 0.16842907 0.16812125
- 0.16791629 0.16781388 0.16760922 0.16740475 0.16709843 0.16699643
- 0.16648713 0.16638543 0.16618216 0.16567485 0.16537107 0.16486575
- 0.16436168 0.16426101 0.16416039 0.16405983 0.16395931 0.16335724
- 0.16325707 0.16305688 0.16285688 0.16275695 0.16265708 0.16255725
- 0.16235775 0.16225807 0.16185986 0.16146243 0.1613632  0.16126401
- 0.16116488 0.16106579 0.16076883 0.16037357 0.1598806  0.15978215
- 0.15968375 0.15938886 0.15929065 0.1590944  0.15899634 0.15880038
- 0.15840905 0.1580185  0.15792098 0.15743414 0.15733691 0.15704554
- 0.15694851 0.15646411 0.15636737 0.15588443 0.15559525 0.15549895
- 0.15511426 0.15453866 0.15358322 0.15263263 0.15253783 0.15168686
- 0.15140407 0.15074591 0.15065207 0.15046456 0.15027723 0.14980976
- 0.14971641 0.1490643  0.14887841 0.14878554 0.14859994 0.14795184
- 0.14712201 0.14703004 0.14647925 0.146113   0.14520071 0.14510974
- 0.14483712 0.14429315 0.1435705  0.14348038 0.14339031 0.14321031
- 0.14249218 0.14213424 0.14195556 0.14159874 0.14133163 0.14115378
- 0.14097613 0.14070999 0.13982591 0.13947358 0.13938562 0.1392977
- 0.13894648 0.13877116 0.1380717  0.13763605 0.13720155 0.13668167
- 0.13650875 0.13642236 0.13633601 0.13616346 0.13607725 0.13547508
- 0.13538924 0.13496072 0.13461873 0.13453335 0.13444801 0.13436272
- 0.13419228 0.13376696 0.13291976 0.13266648 0.13224526 0.1320771
- 0.13140623 0.13132258 0.13123897 0.13107189 0.13090499 0.13065497
- 0.13040536 0.12990736 0.12957626 0.12924588 0.12908096 0.12899856
- 0.12875165 0.12866944 0.12793152 0.12784975 0.12768635 0.12760471
- 0.12736008 0.12711584 0.12630462 0.1257394  0.12549783 0.12541739
- 0.12525665 0.12477549 0.12469545 0.12413641 0.12389748 0.12373841
- 0.12357952 0.12334151 0.12326226 0.1231039  0.12255099 0.12239341
- 0.12231469 0.12223601 0.12184326 0.12152984 0.12137339 0.12129523
- 0.12090508 0.12074933 0.12067152 0.11997315 0.11920128 0.11843371
- 0.11805154 0.11767043 0.11751828 0.1172145  0.11706287 0.11691141
- 0.11676011 0.11668453 0.11660899 0.11615664 0.11600619 0.11563082
- 0.11540611 0.11495781 0.11465979 0.11421402 0.11391769 0.11376977
- 0.11369587 0.11317977 0.11251921 0.11244602 0.11237288 0.11222671
- 0.11171643 0.1116437  0.11099099 0.11091867 0.11026967 0.10991055
- 0.10976719 0.109624   0.10955246 0.10940951 0.10883934 0.10848432
- 0.10813031 0.10742533 0.10714448 0.1067244  0.10651491 0.10609701
- 0.10602751 0.10581922 0.10561129 0.10547288 0.10505859 0.10485198
- 0.10464573 0.10443985 0.10396083 0.10389256 0.10361987 0.10327989
- 0.10226588 0.10213135 0.10192984 0.10166172 0.10159479 0.09842765
- 0.09713416 0.09687729 0.09668503 0.09585586 0.09478115 0.09409151]</code></pre>
-</div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>display <span class="op">=</span> RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03-Classification_files/figure-html/cell-12-output-2.png" width="445" height="431" class="figure-img"></p>
+<p><img src="03-Classification_files/figure-html/cell-12-output-1.png" width="445" height="431" class="figure-img"></p>
 </figure>
 </div>
 </div>
