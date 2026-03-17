@@ -217,6 +217,8 @@ On the left hand side of the equationis the **Odds** of having Hypertension.
 $\beta_0$ is a parameter describing \_\_, and $\beta_1$ is a parameter describing \_\_\_
 
 ```{python}
+import statsmodels.api as sm
+
 logit_model = sm.Logit(y_train, X_train).fit()
 
 logit_model.summary()
