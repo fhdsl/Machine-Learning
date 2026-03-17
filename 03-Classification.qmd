@@ -2,7 +2,7 @@
 
 *In the third week of class, we will look at classification...*
 
-So far, we have looked at making predictions in which the outcome is a continous value. Today, we will look at **classification**, in which our outcome is a categorical value. We first start with binary classification, in which there is only two possible outcomes, usually defined by `True` or `False` values. However, for many classification models, they predict the *probability* of whether an event happens or not, on a continuous scale from 0 to 1. Then, given the predicted probability, we say after a threshold, we classify the outcome as `True` or `False` values.
+So far, we have looked at making predictions in which the outcome is a continous value. Today, we will look at **classification**, in which our outcome is a categorical value. We first start with binary classification, in which there is only two possible outcomes, usually defined by `True` or `False` values. However, for many classification models, they predict the *probability* of whether an event happens or not, on a continuous scale from 0 to 1. Then, given the predicted probability, we draw a boundary to classify the outcome as `True` or `False` values.
 
 Using the same data as before, we define someone is at risk for $Hypertension$ if their diastolic pressure is greater than 80 or their systolic pressure is greater than 130. Our goal is to classify whether someone is at high risk for $Hypertension$.
 
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from formulaic import model_matrix
 from sklearn import linear_model
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import mean_squared_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
 nhanes.drop_duplicates(inplace=True)
@@ -36,7 +36,6 @@ We see that there is a lot more data for the No Hypertension group (88%) compare
 We then split our data in training and testing, as usual:
 
 ```{python}
-#train test
 nhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)
 ```
 
@@ -49,7 +48,7 @@ ax.set_ylabel('')
 plt.show()
 ```
 
-Great, there seems to be an association. However, recall that our classification model is going to be *making predictions of probabilit*y on a continuous scale of 0 to 1 before we classify it into two categories. Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability in our data exploration. To do so, we will need to *bin* our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin. We plot the midpoint binned BMI value vs. empirical Hypertension probability for 20 bins:
+Great, there seems to be an association. However, recall that our classification model is going to be *making predictions of probabilit*y *on a continuous scale of 0 to 1* before we classify it into two categories. Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability in our data exploration. To do so, we will need to *bin* our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin. We plot the midpoint binned BMI value vs. empirical Hypertension probability for 20 bins:
 
 ```{python}
 nhanes_train['bins'] = pd.cut(nhanes_train['BMI'], bins=20) 
@@ -83,11 +82,15 @@ Now, let's build the model $P(Hypertension) = f(BMI)$ to make a prediction of $H
 
 ### Logistic Transformation
 
-Our usual Linear Regression model $P(Hypertension)=\beta_0+\beta_1 \cdot BMI$ *does not* give us outputs between 0 and 1. To deal with this, we perform the **Logistic Transformation:**
+Our usual Linear Regression model
+
+$$P(Hypertension)=\beta_0+\beta_1 \cdot BMI$$
+
+*does not* give us outputs between 0 and 1. To deal with this, we perform the **Logistic Transformation:**
 
 $$P(Hyptertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
 
-Therefore, the relationship between the X and Y axis is not going to be a straight line, but rather a non-linear, "S-shaped" one. Let's fit this model and look at the model visually to understand.
+This forces the right hand side of the equation to be between 0 and 1, which is at the scale of probability. The relationship between the X and Y axis is not going to be a straight line, but rather a non-linear, "S-shaped" one. Let's fit this model and look at the model visually to understand.
 
 ```{python}
 y_train, X_train = model_matrix("Hypertension ~ BMI", nhanes_train)
@@ -96,8 +99,6 @@ logit_model = LogisticRegression().fit(X_train, y_train)
 plt.clf()
 plt.scatter(X_train.BMI, logit_model.predict_proba(X_train)[:, 1], color="red", label="Fitted Line")
 plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
-
-
 plt.xlabel('BMI')
 plt.ylabel('Probability of Hypertension')
 plt.ylim(0, 1)
@@ -129,9 +130,9 @@ Now we see why exactly our logistic regression model was limited to fit the rela
 
 ### Model Evaluation
 
-Remember that we still need to get from probability to classification. We will set a reasonable, interpretable cutoff of 50%: if the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Otherwise, they do not have Hypertension This cutoff called the **Decision Boundary**.
+Remember that we still need to get from probability to classification. We will set a reasonable, interpretable cutoff of 50%: if the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Otherwise, they do not have Hypertension. This cutoff called the **Decision Boundary**.
 
-As an aside, we can also evaluate the model based on just the probability it predicted, and it actually contains more information than if we had set our decision boundary to make it a classifier. However, these metrics of evaluation, namely [**Cross Entropy** and **Brier Scores**](https://aml4td.org/chapters/cls-metrics.html#sec-cls-metrics-soft), are harder to interpret, and are less commonly reported in biomedical research.
+As an aside, we can also evaluate the model based just on the probability it predicted, and it actually contains more information than if we had set our decision boundary and classified our response as a True/False dichomony. However, metrics of evaluation on probablities, namely [**Cross Entropy** and **Brier Scores**](https://aml4td.org/chapters/cls-metrics.html#sec-cls-metrics-soft), are harder to interpret, and are less commonly reported in biomedical research. We still stick with evaluation metrics for classification for this course.
 
 Given this decision boundary, let's examine evaluate the model on the test set, and look at its accuracy rate:
 
@@ -164,7 +165,7 @@ Therefore, we do a pretty terrible job of predicting the Hypertension cases!
 
 What happened exactly? Let's look back at the Training Data: it seems that from the plots that we are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range. This range wasn't high enough for our decision boundary of 50% probability, so we missed out most of our Hypertension people.
 
-What can we do? We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be .2?
+What can we do? There are lot's of things we can change about the model, but let's tinker around with the decision boundary for a moment. We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be .2?
 
 ```{python}
 
@@ -176,19 +177,40 @@ disp.plot()
 plt.show()
 ```
 
+Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TP}{TP+FN}$, which is 254/(254+86) = 74%
+
+Our **Specificity** (accuracy of No Hypertension events) is defined as: $\frac{TN}{TN+FP}$, which is 582/(582+570) = 51%.
+
+We have improved our sensitivity at the cost of our specificity! You can explore the range of tradeoffs from the decision boundary cutoff using the Receiver Operating Characteristic (ROC) curve in the Appendix.
+
+Let's pause here for model evaluation for now, and look back at the assumptions of logistic regression, as we did for linear regression.
+
 ## Assumptions of logistic regression
 
 ### Linearity of log odds - predictor relationship
 
-We can rewrite $P(Hyptertension) = \frac{e^{\beta_0 + \beta_1X}}{1+e^{\beta_0 + \beta_1X}}$ as $log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$
+Recall that our logistic regression model
 
-where the left hand side is called the **log odds** or the **logit**.
+$$P(Hyptertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
+
+can be rewritten as:
+
+$$log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$$
+
+where the left hand side is called the **log odds** or the **logit**. From exploratory data analysis, we need the log odds of the response to be in linear relationship with each predictor in logistic regression.
+
+In linear regression, we can check the linearity between response and multiple predictors by calculating the **residual** and compare it to the predicted response. There is a similar analysis in logistic regression: **residual** **deviance.**
 
 ```{python}
+model = sm.Logit(y_train, X_train)
+results = model.fit()
 
+plt.clf()
+plt.scatter(X_train.BMI, results.resid_dev)
+plt.xlabel('BMI')
+plt.ylabel('Residual Deviance')
+plt.show()
 ```
-
-Deviance: https://stackoverflow.com/questions/50975774/calculate-residual-deviance-from-scikit-learn-logistic-regression-model
 
 ### Predictors are not colinear
 
@@ -201,8 +223,6 @@ covered last week
 ### Number of predictors is less than the number of samples
 
 covered last week
-
-### interactions: H-statistic?
 
 ## Appendix: Inference for Logistic Regression
 

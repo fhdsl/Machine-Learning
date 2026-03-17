@@ -66,7 +66,7 @@ Let's take a look what are the assumptions needed for a sound model, and what we
 
 The linear regression model assumes that there is a straight line (linear) relationship between the predictors and the response. It doesn't ask for the straight line relationship to be perfect, but rather on average the cloud of points has a linear shape. If that is not true, then our prediction is going to be less accurate.
 
-To check for this relationship, we have to calculate the **residual**, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a **residual plot** of the predicted response vs. residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.
+We can check this relationship by seeing whether predictor is linear with the predicted response value, but this is cumbersome with multiple predictors. Rather, we typically calculate the **residual**, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a **residual plot** of the predicted response vs. residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.
 
 If there's a trend in the data, that means there are non-linear associations between some of the predictors and the response.
 
