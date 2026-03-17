@@ -288,7 +288,7 @@ window.Quarto = {
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 \]</span></p>
 <p>Our model would look like the following like the red line from our Training data:</p>
-<div id="0bfb746d" class="cell" data-execution_count="1">
+<div id="f3cbe4e1" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -344,7 +344,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <p>The linear regression model assumes that there is a straight line (linear) relationship between the predictors and the response. It doesn’t ask for the straight line relationship to be perfect, but rather on average the cloud of points has a linear shape. If that is not true, then our prediction is going to be less accurate.</p>
 <p>To check for this relationship, we have to calculate the <strong>residual</strong>, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a <strong>residual plot</strong> of the predicted response vs.&nbsp;residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.</p>
 <p>If there’s a trend in the data, that means there are non-linear associations between some of the predictors and the response.</p>
-<div id="09c034f3" class="cell" data-execution_count="2">
+<div id="51cc18c7" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> y_train <span class="op">-</span> y_train_predicted</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
@@ -381,7 +381,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <li><p>When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn’t necessarily recommend which variables to remove.</p></li>
 </ul>
 <p>Suppose that we are consider the predictors of our training set:</p>
-<div id="00f05229" class="cell" data-execution_count="3">
+<div id="014aee74" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#some cleanup</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>obj_columns <span class="op">=</span> nhanes_train.select_dtypes([<span class="st">'object'</span>]).columns</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>nhanes_train[obj_columns] <span class="op">=</span> nhanes_train[obj_columns].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x.astype(<span class="st">'category'</span>))</span>
@@ -404,7 +404,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 <p>Let’s look at a pair of predictors up close:</p>
-<div id="84b6d587" class="cell" data-execution_count="4">
+<div id="b5a88df6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"Age"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="dv">10</span>, <span class="dv">50</span>])</span>
@@ -444,7 +444,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 \]</span></p>
 <p>This is <em>still</em> a linear model – we have added a new predictor that gives us a quadratic shape. We use the <a href="https://matthewwardrop.github.io/formulaic/latest/guides/splines/#poly"><code>poly()</code> function</a> to generate our polynomial predictor.</p>
-<div id="e754d4e2" class="cell" data-execution_count="5">
+<div id="89e9b94f" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(Age, degree=2, raw=True)"</span>, nhanes_train)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
@@ -466,7 +466,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 </div>
 </div>
 <p>Let’s look at our Residual Plot:</p>
-<div id="16bcc042" class="cell" data-execution_count="6">
+<div id="e078403f" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> y_train <span class="op">-</span> y_train_predicted</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
@@ -494,7 +494,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 <p><span class="math display">\[
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 \]</span></p>
-<div id="176838e0" class="cell" data-execution_count="7">
+<div id="0cba035b" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Use a small part of the data to illlustrate overfitting.</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nhanes_tiny <span class="op">=</span> nhanes.sample(n<span class="op">=</span><span class="dv">300</span>, random_state<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -539,7 +539,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 <p>We see that Training Error &lt; Testing Error.</p>
 <p>Let’s look at what happens if we increase the flexibility of the model by fitting it with degree 2 polynomial:</p>
-<div id="9a18ca03" class="cell" data-execution_count="8">
+<div id="fad0829b" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">")"</span>, nhanes_tiny)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -583,7 +583,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 <p>We see that both Training and Testing error both decreased slightly!</p>
 <p>What happens if we keep increasing the model complexity?</p>
-<div id="4402d39c" class="cell" data-execution_count="9">
+<div id="4b5cce62" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p_degree <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">10</span>]:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">")"</span>, nhanes_tiny)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -636,7 +636,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 <p>Let’s summarize it:</p>
-<div id="afdca94c" class="cell" data-execution_count="10">
+<div id="cc71e526" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> []</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> []</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>polynomials <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">10</span>))</span>
@@ -712,7 +712,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 <p><span class="math inline">\(\beta_0\)</span> is a parameter describing the intercept of the line, and <span class="math inline">\(\beta_1\)</span> is a parameter describing the slope of the line.</p>
 <p>Suppose that from fitting the model on the Training Set, <span class="math inline">\(\beta_1=2\)</span>. That means increasing <span class="math inline">\(BMI\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 2. This measures the strength of association between a variable and the outcome.</p>
 <p>Let’s see this in practice:</p>
-<div id="8e2bff4e" class="cell" data-execution_count="11">
+<div id="e551d8d7" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI"</span>, nhanes_tiny)</span>
@@ -751,7 +751,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Time:</td>
-<td>21:51:15</td>
+<td>21:56:49</td>
 <td data-quarto-table-cell-role="th">Log-Likelihood:</td>
 <td>-502.67</td>
 </tr>
@@ -855,7 +855,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 <p>Here is another way to extend the Linear Model:</p>
 <p>Suppose we think that <span class="math inline">\(BMI\)</span> and <span class="math inline">\(Gender\)</span> may be good predictors of <span class="math inline">\(MeanBloodPressure\)</span>:</p>
 <p>Let’s explore the relationship between <span class="math inline">\(MeanBloodPressure\)</span> and <span class="math inline">\(BMI\)</span> separately for values of <span class="math inline">\(Gender\)</span>.</p>
-<div id="1a20f920" class="cell" data-execution_count="12">
+<div id="c1442227" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lmplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">False</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>})</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlim<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">50</span>)) </span>
@@ -881,7 +881,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender
 MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender
 \]</span></p>
 <p>Let’s see what happens:</p>
-<div id="8db27418" class="cell" data-execution_count="13">
+<div id="273cee3b" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + Gender + BMI*Gender"</span>, nhanes_train)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_reg.fit(X_train, y_train)</span>
