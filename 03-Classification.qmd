@@ -233,9 +233,6 @@ from sklearn.metrics import roc_curve, roc_auc_score
 
 # Compute ROC curve
 fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_intermediate=False)
-print(f"FPR: {fpr}")
-print(f"TPR: {tpr}")
-print(f"Thresholds: {thresholds}")
 
 display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
 plt.show()
