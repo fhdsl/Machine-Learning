@@ -294,15 +294,15 @@ for p_degree in [4, 10]:
   plt.clf()
   fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
   
-  ax1.scatter(X_train_BMI, y_train, alpha=.5, color="brown", label="Training set")
-  ax1.scatter(X_train_BMI, y_train_predicted, label="fitted line")
+  ax1.scatter(X_train[X_train.columns[1]], y_train, alpha=.5, color="brown", label="Training set")
+  ax1.scatter(X_train[X_train.columns[1]], y_train_predicted, label="fitted line")
   ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
   ax1.set_title('Training Error: ' + str(round(train_err, 2)))
   ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
   ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
 
-  ax2.scatter(X_test_BMI, y_test, alpha=.5, color="brown", label="Testing set")
-  ax2.scatter(X_test_BMI, y_test_predicted, label="fitted line")
+  ax2.scatter(X_test[X_test.columns[1]], y_test, alpha=.5, color="brown", label="Testing set")
+  ax2.scatter(X_test[X_test.columns[1]], y_test_predicted, label="fitted line")
   ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
   ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
   ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
@@ -340,8 +340,6 @@ plt.xlabel('Polynomial Degree')
 plt.ylabel('Error')
 plt.legend()
 plt.show()  
-  
-  
 
 ```
 

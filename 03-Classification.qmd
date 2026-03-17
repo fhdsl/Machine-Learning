@@ -49,7 +49,7 @@ ax.set_ylabel('')
 plt.show()
 ```
 
-Great, there seems to be an association. However, recall that our classification model is going to be making predictions of probability on a continuous scale of 0 to 1 before we classify it into two categories. Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability. To do so, we will need to *bin* our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin. We plot the midpoint binned BMI value vs. empirical Hypertension probability for 20 bins:
+Great, there seems to be an association. However, recall that our classification model is going to be *making predictions of probabilit*y on a continuous scale of 0 to 1 before we classify it into two categories. Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability in our data exploration. To do so, we will need to *bin* our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin. We plot the midpoint binned BMI value vs. empirical Hypertension probability for 20 bins:
 
 ```{python}
 nhanes_train['bins'] = pd.cut(nhanes_train['BMI'], bins=20) 
@@ -75,7 +75,7 @@ plt.show()
 
 ```
 
-Great, looks like we have a strong relationship, but it doesn't encompass the full spectrum of probabilities.
+Great, looks like we have a relationship, but it doesn't encompass the full spectrum of probabilities.
 
 ## Logistic Regression
 
@@ -143,7 +143,7 @@ print('Accuracy = ', accuracy_score(y_test, logit_model.predict(X_test)))
 
 Okay, that's a starting point!
 
-However, we need to be mindful of the class imbalance we saw in the dataset at the beginning of the lesson. Recall we roughly have 88% of our data as No Hypertension. If we have a classifier that *always* predicted No Hypertension, then we achieve a 88% accuracy rate, but this model is not particularly novel.
+However, we need to be mindful of the class imbalance we saw in the dataset at the beginning of the lesson. Recall we roughly have 88% of our data as No Hypertension. If we have a classifier that *always* predicted No Hypertension, then we achieve a 88% accuracy rate, but this model is not particularly novel and it raises questions of whether our model of 76% accuracy is novel.
 
 We can break down classification accuracy to four additional results, via a table called the **Confusion Matrix**:
 
@@ -156,9 +156,9 @@ plt.show()
 
 The top left hand corner is the number of True Negatives (1128), the top right hand corner is the number of False Positives (24), the bottom left corner is the number of False Negatives (325), and the bottom right corner is the number of True Positives (15).
 
-Our Sensitivity (accuracy of Hypertension events) is defined as: $\frac{TP}{TP+FN}$, which is 15/(15+325) = 4%
+Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TP}{TP+FN}$, which is 15/(15+325) = 4%
 
-Our Specificity (accuracy of No Hypertension events) is defined as: $\frac{TN}{TN+FP}$, which is 1128/(1128+24) = 98%.
+Our **Specificity** (accuracy of No Hypertension events) is defined as: $\frac{TN}{TN+FP}$, which is 1128/(1128+24) = 98%.
 
 Therefore, we do a pretty terrible job of predicting the Hypertension cases!
 
@@ -173,23 +173,6 @@ new_pred = [1 if x >= .2 else 0 for x in logit_model.predict_proba(X_test)[:, 1]
 cm = confusion_matrix(y_test, new_pred)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["No Hypertension", "Hyptertension"])
 disp.plot()
-plt.show()
-```
-
-ROC Curve
-
-```{python}
-
-from sklearn.metrics import RocCurveDisplay
-from sklearn.metrics import roc_curve, roc_auc_score
-
-# Compute ROC curve
-fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_intermediate=False, pos_label)
-print(f"FPR: {fpr}")
-print(f"TPR: {tpr}")
-print(f"Thresholds: {thresholds}")
-
-display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
 plt.show()
 ```
 
@@ -238,6 +221,23 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 logit_model = sm.Logit(y_train, X_train).fit()
 
 logit_model.summary()
+```
+
+## Appendix: ROC Curve
+
+```{python}
+
+from sklearn.metrics import RocCurveDisplay
+from sklearn.metrics import roc_curve, roc_auc_score
+
+# Compute ROC curve
+fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_intermediate=False, pos_label)
+print(f"FPR: {fpr}")
+print(f"TPR: {tpr}")
+print(f"Thresholds: {thresholds}")
+
+display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
+plt.show()
 ```
 
 ## 
