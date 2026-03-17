@@ -202,6 +202,8 @@ covered last week
 
 covered last week
 
+### interactions: H-statistic?
+
 ## Appendix: Inference for Logistic Regression
 
 Let's do the same for our Logic Regression Classifier model, which has an equation of:
@@ -215,9 +217,6 @@ On the left hand side of the equationis the **Odds** of having Hypertension.
 $\beta_0$ is a parameter describing \_\_, and $\beta_1$ is a parameter describing \_\_\_
 
 ```{python}
-y, X = model_matrix("Hypertension ~ BMI", nhanes_tiny)
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 logit_model = sm.Logit(y_train, X_train).fit()
 
 logit_model.summary()
@@ -239,71 +238,3 @@ print(f"Thresholds: {thresholds}")
 display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
 plt.show()
 ```
-
-## 
-
-```{python}
-import pandas as pd
-import statsmodels.api as sm
-import matplotlib.pyplot as plt
-import numpy as np
-
-# 1. Example data (replace with your own data)
-data = {'X': np.random.rand(100) * 100, 'y': np.random.randint(0, 2, 100)}
-df = pd.DataFrame(data)
-
-# To check the linearity assumption visually for an individual predictor, 
-# a common method involves grouping the continuous predictor into bins 
-# and calculating the empirical log-odds for each bin.
-
-# Bin the predictor
-df['bins'] = pd.cut(df['X'], bins=10) 
-
-# Calculate proportion of '1's (p) and then empirical log-odds (ln(p/(1-p))) in each bin
-# Avoid bins where p is 0 or 1 to prevent undefined log-odds
-binned_data = df.groupby('bins')['y'].agg(['sum', 'count']).reset_index()
-binned_data['p'] = binned_data['sum'] / binned_data['count']
-# Filter out bins with 0 or 1 probability if needed for a "perfect" plot
-binned_data = binned_data[(binned_data['p'] > 0) & (binned_data['p'] < 1)] 
-binned_data['log_odds'] = np.log(binned_data['p'] / (1 - binned_data['p']))
-binned_data['bin_midpoint'] = binned_data['bins'].apply(lambda x: x.mid)
-
-# 2. Plotting the empirical log-odds
-plt.figure(figsize=(8, 5))
-plt.scatter(binned_data['bin_midpoint'], binned_data['log_odds'], color='blue')
-plt.xlabel('Predictor (X) - Binned Midpoint')
-plt.ylabel('Empirical Log Odds')
-plt.title('Empirical Log Odds vs. Predictor')
-plt.grid(True)
-plt.show()
-
-# 3. Alternatively, plotting predicted log odds from a model for the linearity assumption check
-
-# Add a constant to the predictor variable
-X = sm.add_constant(df['X'])
-# Fit a logistic regression model
-model = sm.Logit(df['y'], X).fit(disp=0) # disp=0 suppresses fit output
-
-# Get predicted values in log-odds format (default type for Logit model predict)
-predicted_log_odds = model.predict(X)
-
-# Plot predicted log odds (which should form a linear relationship if the model is correctly specified)
-plt.figure(figsize=(8, 5))
-plt.scatter(df['X'], predicted_log_odds, color='red', alpha=0.5)
-plt.xlabel('Predictor (X)')
-plt.ylabel('Predicted Log Odds (from model)')
-plt.title('Model Predicted Log Odds vs. Predictor')
-plt.grid(True)
-plt.show()
-
-```
-
-interactions: H-statistic?
-
-Probability vs. categorical class predictions
-
-ie.
-
-Discrminiation vs calibration
-
-Class distributions and priors
