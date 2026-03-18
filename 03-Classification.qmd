@@ -202,6 +202,8 @@ where the left hand side is called the **log odds** or the **logit**. From explo
 In linear regression, we can check the linearity between response and multiple predictors by calculating the **residual** and compare it to the predicted response. There is a similar analysis in logistic regression: **residual** **deviance.**
 
 ```{python}
+import statsmodels.api as sm
+
 model = sm.Logit(y_train, X_train)
 results = model.fit()
 
@@ -237,7 +239,6 @@ On the left hand side of the equationis the **Odds** of having Hypertension.
 $\beta_0$ is a parameter describing \_\_, and $\beta_1$ is a parameter describing \_\_\_
 
 ```{python}
-import statsmodels.api as sm
 
 logit_model = sm.Logit(y_train, X_train).fit()
 
