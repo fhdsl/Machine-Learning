@@ -256,3 +256,7 @@ fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_inter
 display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
 plt.show()
 ```
+
+## Exercises
+
+Exercises for week 3 can be [found here](https://colab.research.google.com/drive/1iPEWrFRH48OiF0zz3HHVX8nfiNSlYIPM?usp=sharing).

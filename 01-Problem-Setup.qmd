@@ -253,7 +253,7 @@ We will consider other model evaluation metrics throughout the course, especiall
 Let's look at our MAE of our Linear Regression model on the test data:
 
 ```{python}
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 y_test, X_test = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_test)
 y_test_predicted = linear_reg.predict(X_test)
 
@@ -338,25 +338,25 @@ A new Data Structure we will work with in this course is NumPy's ndarray ("n-dim
 
 -   All elements are homogeneous and numeric.
 
--   There are no column or row names.
+-   It is less common to have column or row names.
 
 -   Mathematical operations are optimized to be fast.
 
 So, let's see some examples:
 
--   **Value**: the 2-dimensional numerical table. It actually can be any dimension, but we will just work with 1-dimensional (similar to a List) and 2-dimensional.
+-   **Value**: the 2-dimensional numerical table. It actually can be any dimension, but we will just work with 1-dimensional (similar to a List) and 2-dimensional tables.
 
 -   **Attributes** that store additional values:
 
     -   Two-dimensional subsetting, similar to lists: `data[:5, :3]` subsets for for the first 5 rows and first three columns. `data[:5, [0, 2, 3]]` subsets for the first 5 rows and 1st, 3rd, and 4th columns.
 
-    -   `data.shape` gives the shape of the NumPy Array. `data.ndim` will tell you the number of dimensions of the NumPy Array.
+    -   `data.shape` gives the shape of the NumPy Array.
 
 -   **Methods** that can be used on the object:
 
     -   `data.sum(axis=0)` sums over rows, `data.sum(axis=1)` sums over columns.
 
-For this course, we often load in a dataset in the Pandas Dataframe format, and then once we pick the our outcome and predictors, we will transform the Dataframe into an NumPy Array, such as this line of code we saw earlier: `y_train, X_train = model_matrix("Hypertension ~ BMI", nhanes_train)`.
+For this course, we often load in a dataset in the Pandas Dataframe format, and then once we pick the our outcome and predictors, we will transform the Dataframe into an NumPy Array, such as this line of code we saw earlier: `y_train, X_train = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_train)`
 
 We specify our outcome, predictor, and Dataframe for the `model_matrix()` function, and the outputs are two NumPy Arrays, one for the outcome, and one for the predictors. Any downstream Machine Learning modeling work off the NumPy Arrays `y_train` and `X_train`.
 

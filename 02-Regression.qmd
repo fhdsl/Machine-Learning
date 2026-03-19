@@ -459,4 +459,6 @@ plt.show()
 
 Which creates unique, non-parallel lines depending on the value of $Gender$.
 
-## 
+## Exercises
+
+Exercises for week 2 can be [found here](https://colab.research.google.com/drive/1woUGP4Ng-zBItT6sqIuogxAn8TOXRyvZ?usp=sharing).
