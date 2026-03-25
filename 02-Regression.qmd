@@ -107,7 +107,6 @@ Some possible solutions:
 Suppose that we are consider the predictors of our training set:
 
 ```{python}
-
 #some cleanup
 obj_columns = nhanes_train.select_dtypes(['object']).columns
 nhanes_train[obj_columns] = nhanes_train[obj_columns].apply(lambda x: x.astype('category'))

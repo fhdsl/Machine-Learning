@@ -1,0 +1,217 @@
+# High Dimensional Problems
+
+In our linear and logistic regression models, we have always made the assumption that the number of predictors is less than the number of samples. However, that is not always true in the **high-dimensional** **problems.** This is when the number of predictors is *greater* than the number of samples analyzed. How could this be? Consider the following examples:
+
+-   In molecular biology, high-throughput sequencing technologies can make thousands of measurements across a human genome at once, for a single sample. For instance, bulk RNA-seq can in theory measure 20,000 different gene expressions of a sample.
+
+-   In computer vision, if each sample is an image, then one can derive a vast amount of measurements from an image. Each pixel could be a single measurement, or some defined **feature** of the image, such as the presence of a face or a cat. One can imagine gathering thousands of measurements from a image.
+
+-   In Natural Language Processing (NLP), a document can be treated as a sample. A document consists of a large number of words, and one can derive measurements from single words, or a collection of words, such as themes or writing style. The number of measurements can be vast and large.
+
+In mathematical form, we say we have a high dimensional problem when $p$ , the number of predictors, is large relative to the number of samples:
+
+$$
+Y = \beta_0 + \beta_1 \cdot X_1 + ... + \beta_p \cdot X_p
+$$
+
+If we try to run linear or logistic regression in a high-dimensional problem, it will not work, due to the mathematical limits of these tools.
+
+What people typically do in light of a high-dimensional problem is to use a **dimensional reduction** method, to reduce the number of features *lower* than the number of samples in the analysis. We will explore two methods today: **regularization methods** and **principal components analysis**.
+
+## **Regularization** methods
+
+Regularization methods will let us fit all the predictors in a model, and in the process of creating the model, it will naturally encourage some of the parameter estimates to be zero. This is an example of dimension reduction. The resulting model will have less predictors than samples. The best known regularization techniques are called **ridge** **regression** and **lasso regression**. For this class, we will use lasso regression, and you can read in the appendix the difference between the two methods.
+
+Recall that in linear regression, we fit a line where the Mean Squared Error (MSE) is minimized. In regularization methods, the quantity we try to minimize for the model includes additional terms:
+
+$$
+minimize(MSE + \lambda \cdot Parameters)
+$$
+
+What is going on here?
+
+-   When $MSE$ is minimized, the model gives the shortest distance to the data points, just like we did in linear regression.
+
+-   When the $Parameters$ are minimized (such as $\beta_1, … \beta_p$), it reduces the magnitude of the parameters towards zero. This reduces the number of predictors being used in the final model, performing dimension reduction.
+
+-   The **tuning parameter** (sometimes called **hyperparameter**) $\lambda$ ("lambda") serves to control the balance between minimizing the $MSE$ vs. minimizing the $Parameters$. When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression. When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero. Selecting the appropriate $\lambda$ is important in the model training process, and we will see how to do that in the Cross-Validation section below.
+
+Let's see an example of the effect of $\lambda$ on model parameter weights $\beta$:
+
+```{python}
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_diabetes
+
+X, y = load_diabetes(return_X_y=True)
+X /= X.std(axis=0)
+
+alphas_lasso, coefs_lasso, _ = lasso_path(X, y, n_alphas=10, eps=5e-3)
+
+plt.clf()
+
+for coef_lasso in coefs_lasso:
+    plt.semilogx(alphas_lasso, coef_lasso)
+
+plt.xlabel("lambda")
+plt.ylabel("coefficients")
+plt.title("Lasso Paths")
+plt.axis("tight")
+plt.legend()
+
+plt.show()
+```
+
+As $\lambda$ increased on the x-axis, you can see the parameters, aka coefficients in colored lines move towards zero. We will need to find the optimal value of $\lambda$ for our model.
+
+Now, let's get to a real-world problem!
+
+## Example dataset
+
+Our example dataset for the high-dimensional setting centers around this question: Can we use RNA gene expression predict response to a cancer treatment? If so, then we can use RNA gene expression as a biomarker to predict how cancer patients may respond to various cancer treatments. We use data from the [Dependency Map Project](https://depmap.org/portal/), which has RNA gene expression profiles and cancer treatment responses on the largest collection of cancer cell line models.
+
+```{python}
+from sklearn.model_selection import train_test_split
+from formulaic import model_matrix
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.linear_model import LassoCV, lasso_path
+
+with open('classroom_data/GEFITINIB_Expression.pickle', 'rb') as handle:
+    gefitinib_expression = pickle.load(handle)
+    
+with open('classroom_data/DOCETAXEL_Expression.pickle', 'rb') as handle:
+    docetaxel_expression = pickle.load(handle)
+```
+
+Let's start looking at the cancer drug "Gefitinib", which is a targeted therapy for non-small cell lung cancer with EGFR mutation and high levels of EGFR expression. We might expect to find the the gene EGFR highly predictive of Gefitinib response.
+
+Let's look at the distribution of our response. The drug response is measured in terms of [Area Under the Curve](https://en.wikipedia.org/wiki/Area_under_the_curve_(pharmacokinetics)) (unrelated to the appendix of the ROC curve last week), and a lower value indicates that the drug is more effective against the cancer.
+
+```{python}
+plt.clf()
+g = sns.displot(x="GEFITINIB", data=gefitinib_expression)
+plt.show()
+
+#plt.clf()
+#g = sns.displot(x="DOCETAXEL", data=docetaxel_expression)
+#plt.show()
+```
+
+It is quite skewed, with just a few having low values.
+
+## Data Preparation
+
+Then, let's look at the dimensions of this Dataframe:
+
+```{python}
+gefitinib_expression.shape
+```
+
+We have way more potential predictors than samples even before we split into training and testing sets! This is definitely a high-dimensional problem.
+
+Now, let's split our data into training and testing:
+
+```{python}
+gefitinib_expression_train, gefitinib_expression_test = train_test_split(gefitinib_expression, test_size=0.2, random_state=42)
+```
+
+We create our `y_train` and `X_train` variables, and when we need to use all predictors, we indicate via the `.` symbol.
+
+```{python}
+y_train, X_train = model_matrix("GEFITINIB ~ .", gefitinib_expression_train)
+y_test, X_test = model_matrix("GEFITINIB ~ .", gefitinib_expression_test)
+```
+
+Before we fit the model, we have to do some data transformations. In linear and logistic regression, all the parameter estimates for the models are **scale equivariant**. That is, if we multiple a predictor by a constant $c$ and did not change anything else, the parameter estimate for that predictor will be scaled automatically $\frac{1}{c}$ in the model training process. However, in regularization methods, because we are minimizing the Mean Squared Error and the magnitude of the parameters, the parameter estimates may change substantially if the scale of a predictor changes.
+
+Therefore, the best practice is to first **standardize the predictors** before using regularization methods. We use the following code to ensure that each predictor has a mean of 0 and variance of 1:
+
+```{python}
+X_train_scaled = StandardScaler().fit_transform(X_train, y_train)
+X_test_scaled = StandardScaler().fit_transform(X_test, y_test)
+```
+
+With that data standardization, we are almost ready for lasso regression.
+
+## Cross-Validation
+
+When using regularization methods, we have to figure out the value of $\lambda$ ("lambda"), which dictates the balance between the Mean Squared Error and model parameters to be minimized. Similar to the parameters $\beta$s in the model, $\lambda$ has to be learned in the training process also. However, there is something different about learning $\lambda$:
+
+-   One needs to pick the value of $\lambda$ before the parameters $\beta$s are learned. They cannot be learned simultaneously.
+
+-   There is no guidance on how to pick $\lambda$: one has to try many values and see how the model performs. Whereas, for the $\beta$s, there is an algorithm (called "least squares") that is deterministic for the optimal $\beta$ value.
+
+A simple solution is to pick a value of $\lambda$ , fit the $\beta$s on the Training Set, then see what the model performance is on the Testing Set. Then, pick another value of $\lambda$, and repeat the process again. Choose the model best-performing $\lambda$.
+
+However, this makes us at higher risk for **Overfitting**. Recall that we should not have the model know anything about the Testing Set as we develop the model. We use the Test Set to make sure that the model did not pick up patterns only specific to the Training Set. The Test Set is to see how the model generalize to a dataset it has never seen. In the simple solution above, we run the risk of overfitting our model to the test set because we look at it many times to figure out the optimal $\lambda$ value.
+
+(This also brings up a deeper question of whether in our previous classes we have been overfitting to the Test Set when we try many different of predictors to see which one works best. In general, one should not make evaluations on the Test Set until one has a pretty high confidence model.)
+
+What can we do? We could create a third subset of data called the **Validation Set** in which we pick a value of $\lambda$ , fit the $\beta$s on the Training Set, then see what the model performance is on the Validation Set. Then, pick another value of $\lambda$, and repeat the process again. Choose the model best-performing $\lambda$. Then, when we are ready, evaluate the final model on the Test Set. That is a very reasonable approach, but costly to the number of samples we have to use in our model building.
+
+Here's a popular solution: Instead of creating a Validation Set, we stick to our Training and Testing Sets, but in our Training Set, we set up a **K-Fold Cross Validation** process. The Training Set is partitioned into $k$ small sets (called "**K folds**"). As an example, let's suppose $k=5$. Here is what happens next:
+
+-   A value of $\lambda$ is picked.
+
+-   The model is trained on the folds 2-5. Then, evaluate the model on the fold that was not used: the 1st fold.
+
+-   Permute to the next set of 4 folds: The model is trained on folds 1, 3, 4, 5, and is evaluated on the 2nd fold.
+
+-   Permute to the next set of 4 folds: The model is trained on folds 1, 2, 4, 5 and is evaluated on the 3rd fold. And so on.
+
+-   When finished, take the average of the evaluations: this is the average performance for the choice of $\lambda$.
+
+![Image source: https://scikit-learn.org/stable/modules/cross_validation.html](images/grid_search_cross_validation.png){width="500"}
+
+Within just the Training Set, we have partitioned it into smaller parts and resused it in an effective way that the training data never touches the evaluation data for each model. We create 5 models along the way, and we take the average of their performance as our overall performance. This is a super effiecient way to evaluate the model to figure out the optimal value of $\lambda$.
+
+## Lasso Regression
+
+Let's see how to implement cross validation in lasso regression:
+
+```{python}
+import time
+
+start_time = time.perf_counter()
+reg = LassoCV(cv=2, random_state=0).fit(X_train_scaled, np.ravel(y_train))
+
+end_time = time.perf_counter() 
+
+elapsed_time = end_time - start_time
+print(f"Elapsed time: {elapsed_time} seconds")
+```
+
+We expect that only a small subset of predictors end up being used for the lasso model. What are the genes that have non-zero coefficients?
+
+```{python}
+X_train.columns[np.nonzero(reg.coef_)]
+```
+
+Now, let's see how the model performs on the Test Set:
+
+```{python}
+y_test_predicted = reg.predict(X_test_scaled)
+test_err = mean_absolute_error(y_test_predicted, y_test)
+test_err
+```
+
+Let's look at the plot:
+
+```{python}
+plt.clf()
+plt.scatter(y_test_predicted, y_test, alpha=.5)
+plt.axline((.9, .9), slope=1, color='r', linestyle='--')
+plt.xlabel('Predicted AUC')
+plt.ylabel('True AUC')
+plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
+
+plt.show()
+```
+
+## Exercises
+
+Exercises for week 4 can be found here.
