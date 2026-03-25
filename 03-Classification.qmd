@@ -67,7 +67,7 @@ nhanes_train_binned = nhanes_train_binned.dropna()
 plt.clf()
 plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
 plt.xlabel('BMI - Binned Midpoint')
-plt.ylabel('Empirical Hypertension Probability')
+plt.ylabel('Proportion of people with Hypertension')
 plt.ylim(0, 1)
 plt.grid(True)
 plt.show()
@@ -88,7 +88,7 @@ $$P(Hypertension)=\beta_0+\beta_1 \cdot BMI$$
 
 *does not* give us outputs between 0 and 1. To deal with this, we perform the **Logistic Transformation:**
 
-$$P(Hyptertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
+$$P(Hypertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
 
 This forces the right hand side of the equation to be between 0 and 1, which is at the scale of probability. The relationship between the X and Y axis is not going to be a straight line, but rather a non-linear, "S-shaped" one. Let's fit this model and look at the model visually to understand.
 
@@ -100,7 +100,7 @@ plt.clf()
 plt.scatter(X_train.BMI, logit_model.predict_proba(X_train)[:, 1], color="red", label="Fitted Line")
 plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
 plt.xlabel('BMI')
-plt.ylabel('Probability of Hypertension')
+plt.ylabel('Proportion of people with Hypertension')
 plt.ylim(0, 1)
 plt.legend()
 plt.show()
@@ -146,7 +146,15 @@ Okay, that's a starting point!
 
 However, we need to be mindful of the class imbalance we saw in the dataset at the beginning of the lesson. Recall we roughly have 88% of our data as No Hypertension. If we have a classifier that *always* predicted No Hypertension, then we achieve a 88% accuracy rate, but this model is not particularly novel and it raises questions of whether our model of 76% accuracy is novel.
 
-We can break down classification accuracy to four additional results, via a table called the **Confusion Matrix**:
+Well, break down the accuracy by the Hypertension events and No Hypertension events: 
+
+Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TruePositives}{TruePostives+FalseNegatives}$, which is 15/(15+325) = 4%
+
+Our **Specificity** (accuracy of No Hypertension events) is defined as: $\frac{TrueNegatives}{TrueNegatives+FalsePositives}$, which is 1128/(1128+24) = 98%.
+
+Therefore, we do a pretty terrible job of predicting the Hypertension cases!
+
+We can describe the detailed numbers via a table called the **Confusion Matrix**:
 
 ```{python}
 cm = confusion_matrix(y_test, logit_model.predict(X_test))
@@ -157,11 +165,6 @@ plt.show()
 
 The top left hand corner is the number of True Negatives (1128), the top right hand corner is the number of False Positives (24), the bottom left corner is the number of False Negatives (325), and the bottom right corner is the number of True Positives (15).
 
-Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TP}{TP+FN}$, which is 15/(15+325) = 4%
-
-Our **Specificity** (accuracy of No Hypertension events) is defined as: $\frac{TN}{TN+FP}$, which is 1128/(1128+24) = 98%.
-
-Therefore, we do a pretty terrible job of predicting the Hypertension cases!
 
 What happened exactly? Let's look back at the Training Data: it seems that from the plots that we are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range. This range wasn't high enough for our decision boundary of 50% probability, so we missed out most of our Hypertension people.
 

@@ -4,6 +4,7 @@ import pickle
 
 drug = pd.read_csv("classroom_data/Drug_sensitivity_AUC_(Sanger_GDSC1)_subsetted.csv")
 expression = pd.read_csv("classroom_data/Expression_Public_25Q3_subsetted.csv")
+mutation = pd.read_csv("classroom_data/OmicsSomaticMutationsMatrixHotspot.csv")
 
 gefitinib = drug.loc[:, ["Unnamed: 0", "GEFITINIB (GDSC1:1010)"]]
 gefitinib = gefitinib.rename(columns={'GEFITINIB (GDSC1:1010)': 'GEFITINIB'})
@@ -14,7 +15,17 @@ gefitinib_expression = gefitinib_expression.dropna(subset=["GEFITINIB"])
 with open("classroom_data/GEFITINIB_Expression.pickle", 'wb') as file:
   pickle.dump(gefitinib_expression, file)
 
+mutation = mutation.drop(columns=["Unnamed: 0", 'SequencingID', 'ModelConditionID', 'IsDefaultEntryForModel', 'IsDefaultEntryForMC'])
+gefitinib_mutation = gefitinib.merge(mutation, left_on = "Unnamed: 0", right_on = "ModelID")
+gefitinib_mutation = gefitinib_mutation.dropna(subset=["GEFITINIB"])
+gefitinib_mutation = gefitinib_mutation.drop(columns=["Unnamed: 0", "ModelID"])
+with open("classroom_data/GEFITINIB_mutation.pickle", 'wb') as file:
+  pickle.dump(gefitinib_mutation, file)
 
+
+with open("classroom_data/GEFITINIB_Expression.pickle", 'wb') as file:
+  pickle.dump(gefitinib_expression, file)
+  
 docetaxel = drug.loc[:, ["Unnamed: 0", "DOCETAXEL (GDSC1:1007)"]]
 docetaxel = docetaxel.rename(columns={'DOCETAXEL (GDSC1:1007)': 'DOCETAXEL'})
 docetaxel_expression = docetaxel.merge(expression)
