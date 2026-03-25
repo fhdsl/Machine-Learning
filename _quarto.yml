@@ -18,6 +18,7 @@ book:
     - 01-Problem-Setup.qmd
     - 02-Regression.qmd
     - 03-Classification.qmd
+    - 04-High-dimesional-problems.qmd
     - conclusion.qmd
     - references.qmd
   
