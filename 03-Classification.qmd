@@ -108,7 +108,7 @@ plt.show()
 
 This shows that the logistic model was able to model some of the relationship between $BMI$ and $P(Hypertension)$, but the model predicts much higher $P(Hypertension)$ at high values of $BMI$.
 
-It is hard to figure out visually when the data can fall on a logistic S-curve - one can imagine a red line stretched out more, etc. If we move the equation around so that the right hand side is linear:
+Showing goodness of fit via this plot is rather difficult, because it is hard to figure out visually when the data can fall on a logistic S-curve - one can imagine a red line stretched out more, etc. If we move the equation around so that the right hand side is linear:
 
 $$log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$$
 
@@ -146,7 +146,7 @@ Okay, that's a starting point!
 
 However, we need to be mindful of the class imbalance we saw in the dataset at the beginning of the lesson. Recall we roughly have 88% of our data as No Hypertension. If we have a classifier that *always* predicted No Hypertension, then we achieve a 88% accuracy rate, but this model is not particularly novel and it raises questions of whether our model of 76% accuracy is novel.
 
-Well, break down the accuracy by the Hypertension events and No Hypertension events: 
+Well, break down the accuracy by the Hypertension events and No Hypertension events:
 
 Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TruePositives}{TruePostives+FalseNegatives}$, which is 15/(15+325) = 4%
 
@@ -164,7 +164,6 @@ plt.show()
 ```
 
 The top left hand corner is the number of True Negatives (1128), the top right hand corner is the number of False Positives (24), the bottom left corner is the number of False Negatives (325), and the bottom right corner is the number of True Positives (15).
-
 
 What happened exactly? Let's look back at the Training Data: it seems that from the plots that we are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range. This range wasn't high enough for our decision boundary of 50% probability, so we missed out most of our Hypertension people.
 
