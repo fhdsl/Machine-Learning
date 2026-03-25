@@ -44,6 +44,7 @@ import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_diabetes
+from sklearn.linear_model import LassoCV, lasso_path
 
 X, y = load_diabetes(return_X_y=True)
 X /= X.std(axis=0)
@@ -78,7 +79,6 @@ from formulaic import model_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-from sklearn.linear_model import LassoCV, lasso_path
 
 with open('classroom_data/GEFITINIB_Expression.pickle', 'rb') as handle:
     gefitinib_expression = pickle.load(handle)
