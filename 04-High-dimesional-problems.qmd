@@ -186,6 +186,14 @@ elapsed_time = end_time - start_time
 print(f"Elapsed time: {elapsed_time} seconds")
 ```
 
+What is the $\lambda$ learned in the cross validation?
+
+```{python}
+print(reg.alpha_)
+```
+
+(Notice in the code we refer to it as "alpha". This is due to the a different in variable naming by Scikit-Learn.)
+
 We expect that only a small subset of predictors end up being used for the lasso model. What are the genes that have non-zero coefficients?
 
 ```{python}
