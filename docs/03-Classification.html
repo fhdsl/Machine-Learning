@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./conclusion.html" rel="next">
+<link href="./04-High-dimesional-problems.html" rel="next">
 <link href="./02-Regression.html" rel="prev">
 <link href="./img/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js"></script>
@@ -206,8 +206,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./04-High-dimesional-problems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">High Dimensional Problems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -267,7 +273,7 @@ window.Quarto = {
 <p>So far, we have looked at making predictions in which the outcome is a continous value. Today, we will look at <strong>classification</strong>, in which our outcome is a categorical value. We first start with binary classification, in which there is only two possible outcomes, usually defined by <code>True</code> or <code>False</code> values. However, for many classification models, they predict the <em>probability</em> of whether an event happens or not, on a continuous scale from 0 to 1. Then, given the predicted probability, we draw a boundary to classify the outcome as <code>True</code> or <code>False</code> values.</p>
 <p>Using the same data as before, we define someone is at risk for <span class="math inline">\(Hypertension\)</span> if their diastolic pressure is greater than 80 or their systolic pressure is greater than 130. Our goal is to classify whether someone is at high risk for <span class="math inline">\(Hypertension\)</span>.</p>
 <p>Let’s look at the distribution of Hypertension vs.&nbsp;No Hypertension:</p>
-<div id="b2386588" class="cell" data-execution_count="1">
+<div id="88aad764" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -297,11 +303,11 @@ window.Quarto = {
 </div>
 <p>We see that there is a lot more data for the No Hypertension group (88%) compared Hypertension group (22%), so this could be a potential <strong>class imbalance</strong> in our modeling. We will revisit the consequence of class imbalance later today.</p>
 <p>We then split our data in training and testing, as usual:</p>
-<div id="9f40e357" class="cell" data-execution_count="2">
+<div id="a89afcf7" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nhanes_train, nhanes_test <span class="op">=</span> train_test_split(nhanes, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, we start looking at possible predictors that may be associated with our binary response. Let’s consider <span class="math inline">\(BMI\)</span> as a candidate predictor:</p>
-<div id="56183880" class="cell" data-execution_count="3">
+<div id="f2cdfcf4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.boxplot(y<span class="op">=</span><span class="st">"Hypertension2"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, data<span class="op">=</span>nhanes_train)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">''</span>)</span>
@@ -315,7 +321,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Great, there seems to be an association. However, recall that our classification model is going to be <em>making predictions of probabilit</em>y <em>on a continuous scale of 0 to 1</em> before we classify it into two categories. Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability in our data exploration. To do so, we will need to <em>bin</em> our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin. We plot the midpoint binned BMI value vs.&nbsp;empirical Hypertension probability for 20 bins:</p>
-<div id="db4192cd" class="cell" data-execution_count="4">
+<div id="b1abd129" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nhanes_train[<span class="st">'bins'</span>] <span class="op">=</span> pd.cut(nhanes_train[<span class="st">'BMI'</span>], bins<span class="op">=</span><span class="dv">20</span>) </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -361,7 +367,7 @@ window.Quarto = {
 <p><em>does not</em> give us outputs between 0 and 1. To deal with this, we perform the <strong>Logistic Transformation:</strong></p>
 <p><span class="math display">\[P(Hyptertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}\]</span></p>
 <p>This forces the right hand side of the equation to be between 0 and 1, which is at the scale of probability. The relationship between the X and Y axis is not going to be a straight line, but rather a non-linear, “S-shaped” one. Let’s fit this model and look at the model visually to understand.</p>
-<div id="b7254508" class="cell" data-execution_count="5">
+<div id="31fc5396" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"Hypertension ~ BMI"</span>, nhanes_train)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>logit_model <span class="op">=</span> LogisticRegression().fit(X_train, y_train)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -389,7 +395,7 @@ window.Quarto = {
 <p>It is hard to figure out visually when the data can fall on a logistic S-curve - one can imagine a red line stretched out more, etc. If we move the equation around so that the right hand side is linear:</p>
 <p><span class="math display">\[log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI\]</span></p>
 <p>The left hand side of the equation is called the <strong>Log-Odds</strong>. A Log-Odds of 0 indicate a 50:50 probability, positive values indicate a higher than 50% probability, and negative values indicate a lower than 50% probability.</p>
-<div id="4ab27ebb" class="cell" data-execution_count="6">
+<div id="1fe3aba7" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> logit_model.predict_proba(X_train)[:, <span class="dv">1</span>]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>log_odds <span class="op">=</span> np.log(p <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> p))</span>
@@ -414,7 +420,7 @@ window.Quarto = {
 <p>Remember that we still need to get from probability to classification. We will set a reasonable, interpretable cutoff of 50%: if the probability of having Hypertension is &gt;=50%, then classify that person having Hypertension. Otherwise, they do not have Hypertension. This cutoff called the <strong>Decision Boundary</strong>.</p>
 <p>As an aside, we can also evaluate the model based just on the probability it predicted, and it actually contains more information than if we had set our decision boundary and classified our response as a True/False dichomony. However, metrics of evaluation on probablities, namely <a href="https://aml4td.org/chapters/cls-metrics.html#sec-cls-metrics-soft"><strong>Cross Entropy</strong> and <strong>Brier Scores</strong></a>, are harder to interpret, and are less commonly reported in biomedical research. We still stick with evaluation metrics for classification for this course.</p>
 <p>Given this decision boundary, let’s examine evaluate the model on the test set, and look at its accuracy rate:</p>
-<div id="81ce21a3" class="cell" data-execution_count="7">
+<div id="ae464681" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"Hypertension ~ BMI"</span>, nhanes_test)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Accuracy = '</span>, accuracy_score(y_test, logit_model.predict(X_test))) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -425,7 +431,7 @@ window.Quarto = {
 <p>Okay, that’s a starting point!</p>
 <p>However, we need to be mindful of the class imbalance we saw in the dataset at the beginning of the lesson. Recall we roughly have 88% of our data as No Hypertension. If we have a classifier that <em>always</em> predicted No Hypertension, then we achieve a 88% accuracy rate, but this model is not particularly novel and it raises questions of whether our model of 76% accuracy is novel.</p>
 <p>We can break down classification accuracy to four additional results, via a table called the <strong>Confusion Matrix</strong>:</p>
-<div id="1ca15e14" class="cell" data-execution_count="8">
+<div id="58c539d1" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, logit_model.predict(X_test))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>[<span class="st">"No Hypertension"</span>, <span class="st">"Hyptertension"</span>])</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
@@ -444,7 +450,7 @@ window.Quarto = {
 <p>Therefore, we do a pretty terrible job of predicting the Hypertension cases!</p>
 <p>What happened exactly? Let’s look back at the Training Data: it seems that from the plots that we are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range. This range wasn’t high enough for our decision boundary of 50% probability, so we missed out most of our Hypertension people.</p>
 <p>What can we do? There are lot’s of things we can change about the model, but let’s tinker around with the decision boundary for a moment. We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be .2?</p>
-<div id="34dd22e4" class="cell" data-execution_count="9">
+<div id="e703e394" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>new_pred <span class="op">=</span> [<span class="dv">1</span> <span class="cf">if</span> x <span class="op">&gt;=</span> <span class="fl">.2</span> <span class="cf">else</span> <span class="dv">0</span> <span class="cf">for</span> x <span class="kw">in</span> logit_model.predict_proba(X_test)[:, <span class="dv">1</span>]]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, new_pred)</span>
@@ -476,7 +482,7 @@ window.Quarto = {
 <p><span class="math display">\[log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI\]</span></p>
 <p>where the left hand side is called the <strong>log odds</strong> or the <strong>logit</strong>. From exploratory data analysis, we need the log odds of the response to be in linear relationship with each predictor in logistic regression. We examined that in our example today. When have many predictors, that is harder to do.</p>
 <p>Recall back in linear regression, we can check the linearity between response and multiple predictors by calculating the <strong>residual</strong> and compare it to the predicted response. There is a similar analysis in logistic regression: <strong>residual</strong> <strong>deviance.</strong> We plot the residual deviance against the predicted probability. Note that we have to use the <code>statsmodels</code> package here, as its model calculates residual deviance for us, whereas <code>sklearn</code> does not.</p>
-<div id="9d3511f6" class="cell" data-execution_count="10">
+<div id="ea5b9534" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> sm.Logit(y_train, X_train)</span>
@@ -510,7 +516,7 @@ window.Quarto = {
 <p><span class="math display">\[log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI\]</span></p>
 <p><span class="math inline">\(\beta_0\)</span> is a parameter describing the log-odds of having <span class="math inline">\(Hypertension\)</span>, and <span class="math inline">\(\beta_1\)</span> is a parameter describing the increase of log odds of having <span class="math inline">\(Hyptertension\)</span> per unit change of <span class="math inline">\(BMI\)</span>. Recall that a Log-Odds of 0 indicate a 50:50 probability, positive values indicate a higher than 50% probability, and negative values indicate a lower than 50% probability. We can apply hypothesis testing to all of our parameters.</p>
 <p>To examine the parameters carefully for hypothesis testing, we have to use the <code>statsmodels</code> package instead of <code>sklearn</code>.</p>
-<div id="663e10e0" class="cell" data-execution_count="11">
+<div id="616eec98" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>logit_model <span class="op">=</span> sm.Logit(y_train, X_train).fit()</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>logit_model.summary()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -542,13 +548,13 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Date:</td>
-<td>Thu, 19 Mar 2026</td>
+<td>Wed, 25 Mar 2026</td>
 <td data-quarto-table-cell-role="th">Pseudo R-squ.:</td>
 <td>0.04995</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Time:</td>
-<td>23:08:53</td>
+<td>19:49:11</td>
 <td data-quarto-table-cell-role="th">Log-Likelihood:</td>
 <td>-3097.8</td>
 </tr>
@@ -613,7 +619,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Let’s see what our ROC (and AUC value) looks like with our data:</p>
-<div id="80dc1993" class="cell" data-execution_count="12">
+<div id="a1413829" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> RocCurveDisplay</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve, roc_auc_score</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1071,8 +1077,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./conclusion.html" class="pagination-link" aria-label="Conclusion">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./04-High-dimesional-problems.html" class="pagination-link" aria-label="High Dimensional Problems">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">High Dimensional Problems</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
