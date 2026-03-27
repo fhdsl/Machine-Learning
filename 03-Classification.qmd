@@ -130,13 +130,13 @@ plt.show()
 
 Now we see why exactly our logistic regression model was limited to fit the relationship between predictor and response, as we have reformulated the problem closer to a linear regression problem. We could improve the model by using polynomial terms.
 
-When working with multiple predictors, these plots can be a starting point to select for predictors, but in the multi-dimensional setting these visusliazations are nof sufficient to determine the model fit. We will need to look at residual plots in the diagnosis, which we will revisit later.
+When working with multiple predictors, these plots can be a starting point to select for predictors, but in the multi-dimensional setting these visualizations are not sufficient to determine the model fit. We will need to look at residual plots in the diagnosis, which we will revisit later.
 
 ### Model Evaluation
 
 Remember that we still need to get from probability to classification. We will set a reasonable, interpretable cutoff of 50%: if the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Otherwise, they do not have Hypertension. This cutoff called the **Decision Boundary**.
 
-As an aside, we can also evaluate the model based just on the probability it predicted, and it actually contains more information than if we had set our decision boundary and classified our response as a True/False dichomony. However, metrics of evaluation on probablities, namely [**Cross Entropy** and **Brier Scores**](https://aml4td.org/chapters/cls-metrics.html#sec-cls-metrics-soft), are harder to interpret, and are less commonly reported in biomedical research. We still stick with evaluation metrics for classification for this course.
+As an aside, we can also evaluate the model based just on the probability it predicted, and it actually contains more information than if we had set our decision boundary and classified our response as a True/False dichotomy. However, metrics of evaluation on probabilities, namely [**Cross Entropy** and **Brier Scores**](https://aml4td.org/chapters/cls-metrics.html#sec-cls-metrics-soft), are harder to interpret, and are less commonly reported in biomedical research. We still stick with evaluation metrics for classification for this course.
 
 Given this decision boundary, let's examine evaluate the model on the test set, and look at its accuracy rate:
 
@@ -271,8 +271,8 @@ $\beta_0$ is a parameter describing the log-odds of having $Hypertension$, and $
 To examine the parameters carefully for hypothesis testing, we have to use the `statsmodels` package instead of `sklearn`.
 
 ```{python}
-logit_model = sm.Logit(y_train, X_train).fit()
-logit_model.summary()
+logit_model_sm = sm.Logit(y_train, X_train).fit()
+logit_model_sm.summary()
 ```
 
 ## Appendix: ROC Curve
