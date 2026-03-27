@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from formulaic import model_matrix
 from sklearn import linear_model
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.metrics import mean_squared_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 
 nhanes = pd.read_csv("classroom_data/NHANES.csv")
@@ -94,6 +94,8 @@ This forces the right hand side of the equation to be between 0 and 1, which is 
 
 ```{python}
 y_train, X_train = model_matrix("Hypertension ~ BMI", nhanes_train)
+y_test, X_test = model_matrix("Hypertension ~ BMI", nhanes_test)
+
 logit_model = LogisticRegression().fit(X_train, y_train)
 
 plt.clf()
@@ -126,7 +128,9 @@ plt.legend()
 plt.show()
 ```
 
-Now we see why exactly our logistic regression model was limited to fit the relationship between predictor and response, as we have reformulated the problem closer to a linear regression problem. We could improve the model by using polynomial terms. We will revisit this later.
+Now we see why exactly our logistic regression model was limited to fit the relationship between predictor and response, as we have reformulated the problem closer to a linear regression problem. We could improve the model by using polynomial terms.
+
+When working with multiple predictors, these plots can be a starting point to select for predictors, but in the multi-dimensional setting these visusliazations are nof sufficient to determine the model fit. We will need to look at residual plots in the diagnosis, which we will revisit later.
 
 ### Model Evaluation
 
@@ -137,8 +141,6 @@ As an aside, we can also evaluate the model based just on the probability it pre
 Given this decision boundary, let's examine evaluate the model on the test set, and look at its accuracy rate:
 
 ```{python}
-y_test, X_test = model_matrix("Hypertension ~ BMI", nhanes_test)
-
 print('Accuracy = ', accuracy_score(y_test, logit_model.predict(X_test))) 
 ```
 
@@ -170,7 +172,6 @@ What happened exactly? Let's look back at the Training Data: it seems that from 
 What can we do? There are lot's of things we can change about the model, but let's tinker around with the decision boundary for a moment. We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be .2?
 
 ```{python}
-
 new_pred = [1 if x >= .2 else 0 for x in logit_model.predict_proba(X_test)[:, 1]]
 
 cm = confusion_matrix(y_test, new_pred)
@@ -187,6 +188,44 @@ We have improved our sensitivity at the cost of our specificity! You can explore
 
 Let's pause here for model evaluation for now, and look back at the assumptions of logistic regression, as we did for linear regression.
 
+### Another model
+
+What happens if we refit the model with a 3rd degree polynomial? Let's see what it looks like at the Log-Odds scale. Is it better than the linear form?
+
+```{python}
+y_train2, X_train2 = model_matrix("Hypertension ~ poly(BMI, degree=3, raw=True)", nhanes_train)
+y_test2, X_test2 = model_matrix("Hypertension ~ poly(BMI, degree=3, raw=True)", nhanes_test)
+logit_model2 = LogisticRegression().fit(X_train2, np.ravel(y_train2))
+
+plt.clf()
+plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['log_odds'], color='blue')
+
+p = logit_model2.predict_proba(X_train2)[:, 1]
+log_odds = np.log(p / (1 - p))
+plt.scatter(X_train2[X_train2.columns[1]], log_odds, color="red", label="Fitted Line")
+
+plt.xlabel('BMI')
+plt.ylabel('Log Odds of Hypertension')
+plt.legend()
+plt.show()
+
+```
+
+Is it any better? Let's see its performance on the test set:
+
+```{python}
+print('Accuracy = ', accuracy_score(y_test2, logit_model2.predict(X_test2))) 
+```
+
+```{python}
+cm = confusion_matrix(y_test2, logit_model2.predict(X_test2))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["No Hypertension", "Hyptertension"])
+disp.plot()
+plt.show()
+```
+
+Oops! Even worse!
+
 ## Assumptions of logistic regression
 
 Similar to how we explored linear regression, let's examine the assumptions needed for logistic regression for good predictions.
@@ -201,7 +240,7 @@ can be rewritten as:
 
 $$log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$$
 
-where the left hand side is called the **log odds** or the **logit**. From exploratory data analysis, we need the log odds of the response to be in linear relationship with each predictor in logistic regression. We examined that in our example today. When have many predictors, that is harder to do.
+where the left hand side is called the **log odds** or the **logit**. From exploratory data analysis, we need the log odds of the response to be in linear relationship with each predictor in logistic regression. We examined that in our example today. When we have many predictors, this visualization is going to not work.
 
 Recall back in linear regression, we can check the linearity between response and multiple predictors by calculating the **residual** and compare it to the predicted response. There is a similar analysis in logistic regression: **residual** **deviance.** We plot the residual deviance against the predicted probability. Note that we have to use the `statsmodels` package here, as its model calculates residual deviance for us, whereas `sklearn` does not.
 
@@ -211,14 +250,13 @@ import statsmodels.api as sm
 model = sm.Logit(y_train, X_train)
 results = model.fit()
 
+plot_df = pd.DataFrame({'Predicted_Probability': results.predict(X_train), 'Residual_Deviance': results.resid_dev})
 plt.clf()
-plt.scatter(results.predict(), results.resid_dev)
-plt.xlabel('Predicted Probability')
-plt.ylabel('Residual Deviance')
+ax = sns.regplot(x="Predicted_Probability", y="Residual_Deviance", data=plot_df, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
 plt.show()
 ```
 
-Ideally the residual deviance should be centered around 0 for any predictor probability value, so what we see is not ideal!
+Ideally the residual deviance should be centered around 0 for any predictor probability value, so what we see is not ideal! If working with multiple predictors, we can break it down by plotting predictor value vs. residual devaince.
 
 There are three other assumptions in logistic regression, and they are identical as linear regression's assumptions: **predictors are not collinear**, **no outliers**, and **the number of predictors is less than the number of samples**.
 
@@ -245,7 +283,7 @@ Below is an example ROC curve showing good, worse, and bad performance. If the c
 
 ![Image source: https://www.researchgate.net/publication/347797026_Can_one_use_Earth's_magnetic_axial_dipole_field_intensity_to_predict_reversals](images/roc.png){width="400"}
 
-Let's see what our ROC (and AUC value) looks like with our data:
+Let's see what our ROC (and AUC value) of the two models we tried look like:
 
 ```{python}
 
@@ -253,9 +291,14 @@ from sklearn.metrics import RocCurveDisplay
 from sklearn.metrics import roc_curve, roc_auc_score
 
 # Compute ROC curve
-fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_intermediate=False)
+#fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_intermediate=False)
 
-display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
+plt.clf()
+l1_disp = RocCurveDisplay.from_estimator(logit_model, X_test, y_test, name="Logistic Regression 1")
+l2_disp = RocCurveDisplay.from_estimator(logit_model2, X_test2, y_test2, ax=l1_disp.ax_, name="Logistc Regression 2")
+
+
+#display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
 plt.show()
 ```
 

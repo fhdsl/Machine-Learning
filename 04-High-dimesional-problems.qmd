@@ -36,7 +36,7 @@ What is going on here?
 
 -   The **tuning parameter** (sometimes called **hyperparameter**) $\lambda$ ("lambda") serves to control the balance between minimizing the $MSE$ vs. minimizing the $Parameters$. When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression. When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero. Selecting the appropriate $\lambda$ is important in the model training process, and we will see how to do that in the Cross-Validation section below.
 
-Let's see an example of the effect of $\lambda$ on model parameter weights $\beta$:
+Let's see an example of the effect of $\lambda$ on a model with 5 predictors, parameter weights $\beta_1$... $\beta_5$.
 
 ```{python}
 import pandas as pd
@@ -47,25 +47,26 @@ from sklearn.datasets import load_diabetes
 from sklearn.linear_model import LassoCV, lasso_path
 
 X, y = load_diabetes(return_X_y=True)
+X = X[:, :5]
 X /= X.std(axis=0)
 
 alphas_lasso, coefs_lasso, _ = lasso_path(X, y, n_alphas=10, eps=5e-3)
 
 plt.clf()
 
-for coef_lasso in coefs_lasso:
-    plt.semilogx(alphas_lasso, coef_lasso)
+for i, coef_lasso in enumerate(coefs_lasso):
+    plt.semilogx(alphas_lasso, coef_lasso, label='beta'+str(i+1))
 
 plt.xlabel("lambda")
 plt.ylabel("coefficients")
-plt.title("Lasso Paths")
+plt.title("Effect of lambda on regression coefficients")
 plt.axis("tight")
 plt.legend()
 
 plt.show()
 ```
 
-As $\lambda$ increased on the x-axis, you can see the parameters, aka coefficients in colored lines move towards zero. We will need to find the optimal value of $\lambda$ for our model.
+As $\lambda$ increased on the x-axis, you can see the parameters, aka coefficients in colored lines $\beta_1$... $\beta_5$ move towards zero. We will need to find the optimal value of $\lambda$ for our model.
 
 Now, let's get to a real-world problem!
 
@@ -96,10 +97,6 @@ Let's look at the distribution of our response. The drug response is measured in
 plt.clf()
 g = sns.displot(x="GEFITINIB", data=gefitinib_expression)
 plt.show()
-
-#plt.clf()
-#g = sns.displot(x="DOCETAXEL", data=docetaxel_expression)
-#plt.show()
 ```
 
 It is quite skewed, with just a few having low values.
@@ -136,7 +133,7 @@ X_train_scaled = StandardScaler().fit_transform(X_train, y_train)
 X_test_scaled = StandardScaler().fit_transform(X_test, y_test)
 ```
 
-With that data standardization, we are almost ready for lasso regression.
+With this data standardization, we are almost ready for lasso regression.
 
 ## Cross-Validation
 
@@ -183,7 +180,7 @@ reg = LassoCV(cv=2, random_state=0).fit(X_train_scaled, np.ravel(y_train))
 end_time = time.perf_counter() 
 
 elapsed_time = end_time - start_time
-print(f"Elapsed time: {elapsed_time} seconds")
+print(f"Elapsed time to fit model: {elapsed_time} seconds")
 ```
 
 What is the $\lambda$ learned in the cross validation?
@@ -217,10 +214,9 @@ plt.axline((.9, .9), slope=1, color='r', linestyle='--')
 plt.xlabel('Predicted AUC')
 plt.ylabel('True AUC')
 plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
-
 plt.show()
 ```
 
 ## Exercises
 
-Exercises for week 4 can be found here.
+Exercises for week 4 can be found [here](https://colab.research.google.com/drive/17LFQzaGmnCsLdDZNnnvDsYwANwgj2dob?usp=sharing).

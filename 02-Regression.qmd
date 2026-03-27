@@ -72,15 +72,23 @@ If there's a trend in the data, that means there are non-linear associations bet
 
 ```{python}
 residual = y_train - y_train_predicted
+plot_df = pd.DataFrame({'Age': X_train.Age, 'Predicted_Response': np.ravel(y_train_predicted), 'Residual': np.ravel(residual)})
 
 plt.clf()
-plt.scatter(y_train_predicted, residual, alpha=.2)
-plt.xlabel('Predicted response')
-plt.ylabel('Residual')
+ax = sns.regplot(x="Predicted_Response", y="Residual", data=plot_df, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
 plt.show()
+
 ```
 
 We see there's a slight curve in our residual plot. We will look at ways to deal with this later in this lecture.
+
+In a model with more predictors, we can dig into more details by making a residual plot of a predictor vs. residual. This is often used to figure out which predictor is contributing to the shape of the predicted response vs. residual plot. (
+
+```{python}
+plt.clf()
+ax = sns.regplot(x="Age", y="Residual", data=plot_df, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+plt.show()
+```
 
 ### No Outliers
 
