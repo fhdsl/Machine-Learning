@@ -217,6 +217,18 @@ plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
 plt.show()
 ```
 
+## Some remarks
+
+-   Most variables in the model can be written as a combinatino of other variables, so the problem of predictors correlated to each other is present everywhere.
+
+-   Therefore, we can never identify the best predictors of the outcome, only one of of many possible models to consider.
+
+-   Most statistics of fit that applied to lower dimenisons, such as p-values, R\^2, AIC, BIC on the training dataset does not work at the high dimensional setting.
+
+-   Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
+
+## Appendix: Ridge and Lasso regression
+
 ## Exercises
 
 Exercises for week 4 can be found [here](https://colab.research.google.com/drive/17LFQzaGmnCsLdDZNnnvDsYwANwgj2dob?usp=sharing).

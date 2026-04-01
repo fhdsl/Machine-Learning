@@ -18,7 +18,9 @@ book:
     - 01-Problem-Setup.qmd
     - 02-Regression.qmd
     - 03-Classification.qmd
-    - 04-High-dimesional-problems.qmd
+    - 04-Model-Complexity.qmd
+    - 05-High-Dimesional-Problems.qmd
+    - 06-Neural-Networks.qmd
     - conclusion.qmd
     - references.qmd
   
