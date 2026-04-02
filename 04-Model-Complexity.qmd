@@ -300,6 +300,38 @@ Here, we end up using 8 predictors for our model. We see something that looks of
 
 To pick the number of cutoff points, we can also perform cross validation:
 
+```{python}
+y, X = model_matrix("MeanBloodPressure ~ BMI + cs(BMI, df=10)", nhanes_tiny)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
+linear_reg = linear_model.LinearRegression()
+scores = cross_val_score(linear_reg, X_train, y_train, cv=5, scoring="neg_mean_squared_error")
+
+-scores
+-np.mean(scores)
+```
+
+```{python}
+y_train_predicted = cross_val_predict(linear_reg, X_train, y_train, cv=5)
+
+plt.clf()
+
+plt.scatter(X_train[X_train.columns[1]], y_train_predicted, label="fitted line")
+plt.scatter(X_train[X_train.columns[1]], y_train, alpha=.5, color="brown", label="Training set")
+plt.xlabel('BMI')
+plt.ylabel('Mean Blood Pressure')
+plt.xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+plt.ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+plt.show()
+```
+
+```{python}
+y_test_predicted = linear_reg.fit(X_train, y_train).predict(X_test)
+mean_squared_error(y_test_predicted, y_test)
+
+```
+
 ## Appendix: Small datasets
 
 AIC, BIC, C_p
