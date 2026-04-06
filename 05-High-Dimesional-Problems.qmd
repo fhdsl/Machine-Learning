@@ -91,7 +91,7 @@ with open('classroom_data/DOCETAXEL_Expression.pickle', 'rb') as handle:
 
 Let's start looking at the cancer drug "Gefitinib", which is a targeted therapy for non-small cell lung cancer with EGFR mutation and high levels of EGFR expression. We might expect to find the the gene EGFR highly predictive of Gefitinib response.
 
-Let's look at the distribution of our response. The drug response is measured in terms of [Area Under the Curve](https://en.wikipedia.org/wiki/Area_under_the_curve_(pharmacokinetics)) (unrelated to the appendix of the ROC curve last week), and a lower value indicates that the drug is more effective against the cancer.
+Let's look at the distribution of our response. The drug response is measured in terms of [Area Under the Curve](https://en.wikipedia.org/wiki/Area_under_the_curve_(pharmacokinetics)) (unrelated to the appendix of the ROC curve in the 3rd week), and a lower value indicates that the drug is more effective against the cancer.
 
 ```{python}
 plt.clf()
@@ -135,41 +135,17 @@ X_test_scaled = StandardScaler().fit_transform(X_test, y_test)
 
 With this data standardization, we are almost ready for lasso regression.
 
-## Cross-Validation
-
 When using regularization methods, we have to figure out the value of $\lambda$ ("lambda"), which dictates the balance between the Mean Squared Error and model parameters to be minimized. Similar to the parameters $\beta$s in the model, $\lambda$ has to be learned in the training process also. However, there is something different about learning $\lambda$:
 
 -   One needs to pick the value of $\lambda$ before the parameters $\beta$s are learned. They cannot be learned simultaneously.
 
 -   There is no guidance on how to pick $\lambda$: one has to try many values and see how the model performs. Whereas, for the $\beta$s, there is an algorithm (called "least squares") that is deterministic for the optimal $\beta$ value.
 
-A simple solution is to pick a value of $\lambda$ , fit the $\beta$s on the Training Set, then see what the model performance is on the Testing Set. Then, pick another value of $\lambda$, and repeat the process again. Choose the model best-performing $\lambda$.
-
-However, this makes us at higher risk for **Overfitting**. Recall that we should not have the model know anything about the Testing Set as we develop the model. We use the Test Set to make sure that the model did not pick up patterns only specific to the Training Set. The Test Set is to see how the model generalize to a dataset it has never seen. In the simple solution above, we run the risk of overfitting our model to the test set because we look at it many times to figure out the optimal $\lambda$ value.
-
-(This also brings up a deeper question of whether in our previous classes we have been overfitting to the Test Set when we try many different of predictors to see which one works best. In general, one should not make evaluations on the Test Set until one has a pretty high confidence model.)
-
-What can we do? We could create a third subset of data called the **Validation Set** in which we pick a value of $\lambda$ , fit the $\beta$s on the Training Set, then see what the model performance is on the Validation Set. Then, pick another value of $\lambda$, and repeat the process again. Choose the model best-performing $\lambda$. Then, when we are ready, evaluate the final model on the Test Set. That is a very reasonable approach, but costly to the number of samples we have to use in our model building.
-
-Here's a popular solution: Instead of creating a Validation Set, we stick to our Training and Testing Sets, but in our Training Set, we set up a **K-Fold Cross Validation** process. The Training Set is partitioned into $k$ small sets (called "**K folds**"). As an example, let's suppose $k=5$. Here is what happens next:
-
--   A value of $\lambda$ is picked.
-
--   The model is trained on the folds 2-5. Then, evaluate the model on the fold that was not used: the 1st fold.
-
--   Permute to the next set of 4 folds: The model is trained on folds 1, 3, 4, 5, and is evaluated on the 2nd fold.
-
--   Permute to the next set of 4 folds: The model is trained on folds 1, 2, 4, 5 and is evaluated on the 3rd fold. And so on.
-
--   When finished, take the average of the evaluations: this is the average performance for the choice of $\lambda$.
-
-![Image source: https://scikit-learn.org/stable/modules/cross_validation.html](images/grid_search_cross_validation.png){width="500"}
-
-Within just the Training Set, we have partitioned it into smaller parts and resused it in an effective way that the training data never touches the evaluation data for each model. We create 5 models along the way, and we take the average of their performance as our overall performance. This is a super effiecient way to evaluate the model to figure out the optimal value of $\lambda$.
+Therefore, we have to find the optimal $\lambda$ to use. We can use Cross-Validation, which we learned from last week to explore the range of $\lambda$ to use.
 
 ## Lasso Regression
 
-Let's see how to implement cross validation in lasso regression:
+Let's see how to implement cross validation in lasso regression. The `LassoCV` function will perform a search for the optimal $\lambda$ for us via Cross Validation using whatever dataset you give it as a input. For speed, we use a 2-fold cross validation, but in general people use 5 to 10 fold cross-validation.
 
 ```{python}
 import time
@@ -219,13 +195,15 @@ plt.show()
 
 ## Some remarks
 
--   Most variables in the model can be written as a combinatino of other variables, so the problem of predictors correlated to each other is present everywhere.
+-   Most variables in the model can be written as a combination of other variables, so the problem of predictors correlated to each other is present everywhere.
 
 -   Therefore, we can never identify the best predictors of the outcome, only one of of many possible models to consider.
 
--   Most statistics of fit that applied to lower dimenisons, such as p-values, R\^2, AIC, BIC on the training dataset does not work at the high dimensional setting.
+-   Most statistics of fit that are used in low-dimensional regression, such as p-values, R\^2, AIC, BIC on the training dataset does not work at the high dimensional setting.
 
 -   Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
+
+## If time: Principal Components Regression
 
 ## Appendix: Ridge and Lasso regression
 
