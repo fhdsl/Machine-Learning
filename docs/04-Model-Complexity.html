@@ -243,12 +243,12 @@ window.Quarto = {
   <ul>
   <li><a href="#overfitting" id="toc-overfitting" class="nav-link active" data-scroll-target="#overfitting"><span class="header-section-number">5.1</span> Overfitting</a>
   <ul class="collapse">
-  <li><a href="#overly-flexible-models" id="toc-overly-flexible-models" class="nav-link" data-scroll-target="#overly-flexible-models"><span class="header-section-number">5.1.1</span> Overly-flexible models</a></li>
-  <li><a href="#over-use-of-predictors" id="toc-over-use-of-predictors" class="nav-link" data-scroll-target="#over-use-of-predictors"><span class="header-section-number">5.1.2</span> Over-use of predictors</a></li>
+  <li><a href="#over-use-of-predictors" id="toc-over-use-of-predictors" class="nav-link" data-scroll-target="#over-use-of-predictors"><span class="header-section-number">5.1.1</span> Over-use of predictors</a></li>
+  <li><a href="#overly-flexible-polynomial-models" id="toc-overly-flexible-polynomial-models" class="nav-link" data-scroll-target="#overly-flexible-polynomial-models"><span class="header-section-number">5.1.2</span> Overly-flexible polynomial models</a></li>
   </ul></li>
   <li><a href="#bias-variance-trade-off" id="toc-bias-variance-trade-off" class="nav-link" data-scroll-target="#bias-variance-trade-off"><span class="header-section-number">5.2</span> Bias-Variance Trade-off</a></li>
   <li><a href="#cross-validation" id="toc-cross-validation" class="nav-link" data-scroll-target="#cross-validation"><span class="header-section-number">5.3</span> Cross-Validation</a></li>
-  <li><a href="#cubic-splines" id="toc-cubic-splines" class="nav-link" data-scroll-target="#cubic-splines"><span class="header-section-number">5.4</span> Cubic Splines</a></li>
+  <li><a href="#appendix-cubic-splines" id="toc-appendix-cubic-splines" class="nav-link" data-scroll-target="#appendix-cubic-splines"><span class="header-section-number">5.4</span> Appendix: Cubic Splines</a></li>
   <li><a href="#appendix-small-datasets" id="toc-appendix-small-datasets" class="nav-link" data-scroll-target="#appendix-small-datasets"><span class="header-section-number">5.5</span> Appendix: Small datasets</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.6</span> Exercises</a></li>
   </ul>
@@ -278,16 +278,20 @@ window.Quarto = {
 
 <section id="overfitting" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="overfitting"><span class="header-section-number">5.1</span> Overfitting</h2>
-<p>In the first week, we discussed as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called <strong>Overfitting</strong>, and why we constructed the <strong>training</strong> and <strong>testing</strong> datasets to identify this phenomena. We will look at two common situations of Overfitting: overly-flexible models, and over-use of predictors.</p>
-<section id="overly-flexible-models" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="overly-flexible-models"><span class="header-section-number">5.1.1</span> Overly-flexible models</h3>
-<p>Generally, the more flexible models we employ, the higher risk there will be overfitting, because these models will identify patterns too specific to the training data and not generalize to the test data. For instance, linear regression is a fairly inflexible approach, because it just uses a straight line to model the data. However, if we use polynomial regression, especially for higher degree polynomials, the model becomes more flexible, with a higher risk of overfitting.</p>
-<p>Let’s take a look at our first model again:</p>
-<p><span class="math display">\[
-MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
-\]</span></p>
-<p>and compare the Training and Testing Errors. We deliberately use a small subset of the data to illustrate this phenoma:</p>
-<div id="73207f40" class="cell" data-execution_count="1">
+<p>In the first week, we discussed as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called <strong>Overfitting</strong>, and why we constructed the <strong>training</strong> and <strong>testing</strong> datasets to identify and safeguard against this phenomena. We will look at two common situations of Overfitting: over-use of predictors, and overly-flexible polynomial models.</p>
+<section id="over-use-of-predictors" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="over-use-of-predictors"><span class="header-section-number">5.1.1</span> Over-use of predictors</h3>
+<p>One way to increase the risk of Overfitting is to use a large amount of predictors in the model relative to the number of samples. When number of predictors approach the number of samples, the model becomes increasingly flexible: it can perform an almost perfect fit of the training data <em>regardless whether the predictors are related to the outcome</em>, but may perform quite poorly on the testing data. When the number of predictors <em>exceed</em> the number of samples, the model will always perfectly fit on training data with no training error, which is a problem called <strong>High Dimensional Problems</strong> in which we will address next week.</p>
+<p>Why does this happen? Imagine that we have two samples, and one single predictor <span class="math inline">\(X\)</span> to predict response <span class="math inline">\(Y\)</span>. In a Linear Regression setting, we would be estimating two <span class="math inline">\(\beta\)</span> parameters: <span class="math inline">\(Y = \beta_0 + \beta_1 \cdot X\)</span>, so this is an example where the number of parameters to be estimated is equal the number of samples. Well, two samples on a two dimensional space define an unique line, so we can get a perfect model fit in the right hand panel in the figure below. This model would have zero error on the Training Data, but we don’t know how it might generalize to the Testing Data.</p>
+<p>Whereas, if we had more samples, we would see a scenario on the left panel below, where there is a more less flexible, imperfect model. Sometimes less flexible, imperfect models are more useful, as they capture the average shape of the Training Data that generalize better to the Test Set.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/predictors_in_regression-01.png" class="img-fluid figure-img" width="500"></p>
+<figcaption>Source: An Introduction to Statistical Learning, Ch. 6, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.</figcaption>
+</figure>
+</div>
+<p>In our NHANES dataset, let’s see what happens if we just start piling on predictors for our model, without considering whether the predictors are useful or not.</p>
+<div id="9abdf181" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -305,78 +309,73 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Use a small part of the data to illlustrate overfitting.</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>nhanes_tiny <span class="op">=</span> nhanes.sample(n<span class="op">=</span><span class="dv">300</span>, random_state<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI"</span>, nhanes_tiny)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> []</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression().fit(X_train, y_train)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> linear_reg.predict(X_train)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> mean_squared_error(y_train_predicted, y_train)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> mean_squared_error(y_test_predicted, y_test)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, layout<span class="op">=</span><span class="st">'constrained'</span>)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>ax1.plot(X_train.BMI, y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>ax1.scatter(X_train.BMI, y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>ax1.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'BMI'</span>, ylabel<span class="op">=</span><span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>ax1.set_xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>ax1.set_ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">'Training Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(train_err, <span class="dv">2</span>)))</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>ax2.plot(X_test.BMI, y_test_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>ax2.scatter(X_test.BMI, y_test, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Testing set"</span>)</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>ax2.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'BMI'</span>, ylabel<span class="op">=</span><span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ax2.set_xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>ax2.set_ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">'Testing Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(test_err, <span class="dv">2</span>)))</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
-</div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> []</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># We pick predictors that don't have too much missing data and just start adding predictors to our model:</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>nhanes_tiny2 <span class="op">=</span> nhanes.loc[:, [<span class="st">"MeanBloodPressure"</span>, <span class="st">"Gender"</span>, <span class="st">"Age"</span>, <span class="st">"Race1"</span>, <span class="st">"Education"</span>, <span class="st">"MaritalStatus"</span>, <span class="st">"Poverty"</span>, <span class="st">"HomeRooms"</span>, <span class="st">"HomeOwn"</span>, <span class="st">"Work"</span>, <span class="st">"BMI"</span>, <span class="st">"Pulse"</span>, <span class="st">"DirectChol"</span>, <span class="st">"TotChol"</span>, <span class="st">"UrineVol1"</span>, <span class="st">"UrineVol2"</span>, <span class="st">"Diabetes"</span>, <span class="st">"HealthGen"</span>, <span class="st">"SleepHrsNight"</span>]]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ ."</span>, nhanes_tiny2)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>predictors_to_iterate <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, X.shape[<span class="dv">1</span>]))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n_predictors <span class="kw">in</span> predictors_to_iterate:</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  Xtemp <span class="op">=</span> X.iloc[:, :n_predictors]</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(Xtemp, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  linear_reg <span class="op">=</span> linear_model.LinearRegression().fit(X_train, y_train)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  y_train_predicted <span class="op">=</span> linear_reg.predict(X_train)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  train_err.append(mean_squared_error(y_train_predicted, y_train))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  test_err.append(mean_squared_error(y_test_predicted, y_test))</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>plt.plot(predictors_to_iterate, train_err, color<span class="op">=</span><span class="st">"blue"</span>, label<span class="op">=</span><span class="st">"Training Error"</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>plt.plot(predictors_to_iterate, test_err, color<span class="op">=</span><span class="st">"red"</span>, label<span class="op">=</span><span class="st">"Testing Error"</span>)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Predictors'</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Error'</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>plt.show()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="04-Model-Complexity_files/figure-html/cell-2-output-2.png" width="683" height="491" class="figure-img"></p>
+<p><img src="04-Model-Complexity_files/figure-html/cell-2-output-1.png" width="593" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>We see that Training Error &lt; Testing Error.</p>
-<p>Let’s look at what happens if we increase the flexibility of the model by fitting it with a degree 2 polynomial:</p>
-<div id="58be235f" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression().fit(X_train, y_train)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> linear_reg.predict(X_train)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> mean_squared_error(y_train_predicted, y_train)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> mean_squared_error(y_test_predicted, y_test)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, layout<span class="op">=</span><span class="st">'constrained'</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>ax1.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>ax1.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>ax1.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'BMI'</span>, ylabel<span class="op">=</span><span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">'Training Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(train_err, <span class="dv">2</span>)))</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>ax1.set_xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>ax1.set_ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>ax2.scatter(X_test[X_test.columns[<span class="dv">1</span>]], y_test, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Testing set"</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>ax2.scatter(X_test[X_test.columns[<span class="dv">1</span>]], y_test_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>ax2.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'BMI'</span>, ylabel<span class="op">=</span><span class="st">'Blood Pressure'</span>)</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">'Testing Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(test_err, <span class="dv">2</span>)))</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>ax2.set_xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>ax2.set_ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'Polynomial Degree: '</span> <span class="op">+</span> <span class="bu">str</span>(p_degree))</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The number of samples used is 300, and as we increased the number of predictor to 30, we see that the training error keeps dropping, but the optimal testing error was something around 5-10 predictors. That suggests using too many predictors created a model that was too flexible to the Training but not the Testing dataset.</p>
+</section>
+<section id="overly-flexible-polynomial-models" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="overly-flexible-polynomial-models"><span class="header-section-number">5.1.2</span> Overly-flexible polynomial models</h3>
+<p>Generally, the more flexible models we employ, the higher risk there will be Overfitting, because these models will identify patterns too specific to the training data and not generalize to the test data. An example of an overly-flexible model is to use a high number of predictors relative to the number of samples. Another example of this situation is when we use polynomial regression with increasingly higher order terms. The models become more flexible because we are increasing the number of predictors used in the polynomial expansion, and visually, they model looks increasingly flexible to any model pattern.</p>
+<p>Let’s look at an example data, split into Training and Testing data:</p>
+<div id="894bc3e8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PolynomialFeatures</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">100</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(x) <span class="op">+</span> np.random.normal(scale<span class="op">=</span><span class="fl">0.2</span>, size<span class="op">=</span>x.shape)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into training and testing sets</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>x_train, x_test, y_train, y_test <span class="op">=</span> train_test_split(x, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, layout<span class="op">=</span><span class="st">'constrained'</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>ax1.scatter(x_train, y_train, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">"Training Set"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>ax1.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">''</span>, ylabel<span class="op">=</span><span class="st">'Response'</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>ax2.scatter(x_test, y_test, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">"Testing Set"</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>ax2.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Predictor'</span>, ylabel<span class="op">=</span><span class="st">'Response'</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
 </div>
@@ -388,39 +387,39 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 </div>
-<p>We see that both Training and Testing error both decreased slightly!</p>
-<p>What happens if we keep increasing the model complexity?</p>
-<div id="c037f882" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p_degree <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">10</span>]:</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  linear_reg <span class="op">=</span> linear_model.LinearRegression().fit(X_train, y_train)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  y_train_predicted <span class="op">=</span> linear_reg.predict(X_train)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  train_err <span class="op">=</span> mean_squared_error(y_train_predicted, y_train)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  test_err <span class="op">=</span> mean_squared_error(y_test_predicted, y_test)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  plt.clf()</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, layout<span class="op">=</span><span class="st">'constrained'</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  ax1.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  ax1.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  ax1.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'BMI'</span>, ylabel<span class="op">=</span><span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  ax1.set_title(<span class="st">'Training Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(train_err, <span class="dv">2</span>)))</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  ax1.set_xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  ax1.set_ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  ax2.scatter(X_test[X_test.columns[<span class="dv">1</span>]], y_test, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Testing set"</span>)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  ax2.scatter(X_test[X_test.columns[<span class="dv">1</span>]], y_test_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  ax2.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'BMI'</span>, ylabel<span class="op">=</span><span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  ax2.set_title(<span class="st">'Testing Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(test_err, <span class="dv">2</span>)))</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  ax2.set_xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  ax2.set_ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  fig.suptitle(<span class="st">'Polynomial Degree: '</span> <span class="op">+</span> <span class="bu">str</span>(p_degree))</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then, we fit models of increasing flexibility via increasing polynomial terms. Look at each model fit: does the model fit well to the training set and test set? When does it generalize well, and when does it not?</p>
+<div id="6fd103d1" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit polynomial regression models of different degrees</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>degrees <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>, <span class="dv">20</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>train_errors <span class="op">=</span> []</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>test_errors <span class="op">=</span> []</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> degree <span class="kw">in</span> degrees:</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    poly_features <span class="op">=</span> PolynomialFeatures(degree<span class="op">=</span>degree)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    x_poly_train <span class="op">=</span> poly_features.fit_transform(x_train[:, np.newaxis])</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    x_poly_test <span class="op">=</span> poly_features.transform(x_test[:, np.newaxis])</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> LinearRegression()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    model.fit(x_poly_train, y_train)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    train_predictions <span class="op">=</span> model.predict(x_poly_train)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    test_predictions <span class="op">=</span> model.predict(x_poly_test)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    train_errors.append(mean_squared_error(y_train, train_predictions))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    test_errors.append(mean_squared_error(y_test, test_predictions))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    plt.clf()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, layout<span class="op">=</span><span class="st">'constrained'</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    ax1.scatter(x_train, y_train, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    ax1.scatter(x_train, train_predictions, color<span class="op">=</span><span class="st">'red'</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    ax1.set_title(<span class="st">"Training Set on Degree "</span> <span class="op">+</span> <span class="bu">str</span>(degree) <span class="op">+</span> <span class="st">" polynomial"</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    ax1.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">''</span>, ylabel<span class="op">=</span><span class="st">'Response'</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    ax2.scatter(x_test, y_test, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    ax2.scatter(x_test, test_predictions, color<span class="op">=</span><span class="st">'red'</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    ax2.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Predictor'</span>, ylabel<span class="op">=</span><span class="st">'Response'</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    ax2.set_title(<span class="st">"Testing Set on Degree "</span> <span class="op">+</span> <span class="bu">str</span>(degree) <span class="op">+</span> <span class="st">" polynomial"</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
 </div>
@@ -441,102 +440,59 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </figure>
 </div>
 </div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
 </div>
-<p>The training error decreased more, but the testing error increased!</p>
-<p>Let’s summarize it:</p>
-<div id="be00128f" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> []</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> []</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>polynomials <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">10</span>))</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p_degree <span class="kw">in</span> polynomials:</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> p_degree <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI"</span>, nhanes_tiny)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>:</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">")"</span>, nhanes_tiny)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  linear_reg <span class="op">=</span> linear_model.LinearRegression().fit(X_train, y_train)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  y_train_predicted <span class="op">=</span> linear_reg.predict(X_train)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  train_err.append(mean_squared_error(y_train_predicted, y_train))</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  test_err.append(mean_squared_error(y_test_predicted, y_test))</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>plt.plot(polynomials, train_err, color<span class="op">=</span><span class="st">"blue"</span>, label<span class="op">=</span><span class="st">"Training Error"</span>)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>plt.plot(polynomials, test_err, color<span class="op">=</span><span class="st">"red"</span>, label<span class="op">=</span><span class="st">"Testing Error"</span>)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Polynomial Degree'</span>)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Error'</span>)</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>plt.show()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="04-Model-Complexity_files/figure-html/cell-5-output-1.png" width="593" height="429" class="figure-img"></p>
+<p><img src="04-Model-Complexity_files/figure-html/cell-4-output-6.png" width="683" height="491" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-Model-Complexity_files/figure-html/cell-4-output-8.png" width="683" height="491" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Then, we look at the Training and Testing error for each polynomial degree:</p>
+<div id="752b0e53" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot learning curves</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.plot(degrees, train_errors, label<span class="op">=</span><span class="st">'Train Error'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>plt.plot(degrees, test_errors, label<span class="op">=</span><span class="st">'Test Error'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Learning Curves'</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Polynomial Degree'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Mean Squared Error'</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>plt.xticks(degrees)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-Model-Complexity_files/figure-html/cell-5-output-1.png" width="812" height="523" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We see that our Testing Error is always higher than the Training Error. That makes sense.</p>
 <p>As our Polynomial Degree increased, the following happened:</p>
 <ul>
-<li><p>In the linear model, we see that the Training Error is fairly high, and the Testing Error is even higher. This makes sense, as the model does not generalize as well to the testing set.</p></li>
-<li><p>As the degrees increased, both training and testing error decreased slightly.</p></li>
-<li><p>After degree 4, we see that the Training Error continued to decrease, but the Testing Error blew up! This is an example of <strong>Overfitting</strong>, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.</p></li>
+<li><p>As the degrees increased, both training and testing error decreased.</p></li>
+<li><p>After degree 10, we see that the Training Error remained mostly low, but the Testing Error blew up! This is an example of <strong>Overfitting</strong>, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.</p></li>
 </ul>
-<p>We want to find a model that is “just right” that doesn’t underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 4, with the minimal Testing Error.</p>
-<p>Here is another illustration of the phenomena, using synthetic data:</p>
-<p>On the left shows the Training Data in black dots. Then, three models are displayed: linear regression (orange line), two other models of increasing complexity in blue and green.</p>
-<p>On the right shows the training error (grey curve), testing error (red curve), and where each of the three models on the left land in the error rate with their respective colors. We see that as the flexibility of the model increased, the training error in grey decreased, but the testing error decreased for a bit before going up.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/testing_error.png" class="img-fluid figure-img" width="500"></p>
-<figcaption>Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.</figcaption>
-</figure>
-</div>
-</section>
-<section id="over-use-of-predictors" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="over-use-of-predictors"><span class="header-section-number">5.1.2</span> Over-use of predictors</h3>
-<p>We saw that by fitting more flexible models to the data, we run a higher risk of overfitting. Another way to increase the risk of overfitting is to use a large amount of predictors in the model relative to the number of samples. When number of predictors approach the number of samples, the model becomes increasingly flexible: it can perform an almost perfect fit of the training data, but perform quite poorly on the testing data. When the number of predictors exceed the number of samples, the model can be a perfect fit on training data, which is a problem called <strong>High Dimensional Problems</strong> in which we will address next week.</p>
-<p>Let’s see what happens if we just start piling on predictors for our model. We pick predictors that don’t have too much missing data and just start adding predictors to our model:</p>
-<div id="4e8e7c25" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> []</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> []</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>nhanes_tiny2 <span class="op">=</span> nhanes.loc[:, [<span class="st">"MeanBloodPressure"</span>, <span class="st">"Gender"</span>, <span class="st">"Age"</span>, <span class="st">"Race1"</span>, <span class="st">"Education"</span>, <span class="st">"MaritalStatus"</span>, <span class="st">"Poverty"</span>, <span class="st">"HomeRooms"</span>, <span class="st">"HomeOwn"</span>, <span class="st">"Work"</span>, <span class="st">"BMI"</span>, <span class="st">"Pulse"</span>, <span class="st">"DirectChol"</span>, <span class="st">"TotChol"</span>, <span class="st">"UrineVol1"</span>, <span class="st">"UrineVol2"</span>, <span class="st">"Diabetes"</span>, <span class="st">"HealthGen"</span>, <span class="st">"SleepHrsNight"</span>]]</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ ."</span>, nhanes_tiny2)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>predictors_to_iterate <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, X.shape[<span class="dv">1</span>]))</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n_predictors <span class="kw">in</span> predictors_to_iterate:</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  Xtemp <span class="op">=</span> X.iloc[:, :n_predictors]</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(Xtemp, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  linear_reg <span class="op">=</span> linear_model.LinearRegression().fit(X_train, y_train)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  y_train_predicted <span class="op">=</span> linear_reg.predict(X_train)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  y_test_predicted <span class="op">=</span> linear_reg.predict(X_test)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  train_err.append(mean_squared_error(y_train_predicted, y_train))</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  test_err.append(mean_squared_error(y_test_predicted, y_test))</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>plt.plot(predictors_to_iterate, train_err, color<span class="op">=</span><span class="st">"blue"</span>, label<span class="op">=</span><span class="st">"Training Error"</span>)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>plt.plot(predictors_to_iterate, test_err, color<span class="op">=</span><span class="st">"red"</span>, label<span class="op">=</span><span class="st">"Testing Error"</span>)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Predictors'</span>)</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Error'</span>)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>plt.show()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="04-Model-Complexity_files/figure-html/cell-6-output-1.png" width="593" height="429" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>What is the optimal number of predictors we should use for our final model?</p>
+<p>Usually, as the model becomes more flexible, the Training Error remains the same or keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model a polynomial of degree 10, with the minimal Testing Error.</p>
 </section>
 </section>
 <section id="bias-variance-trade-off" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="bias-variance-trade-off"><span class="header-section-number">5.2</span> Bias-Variance Trade-off</h2>
-<p>Another way to describe the underfitting/overfitting phenoma is via the theory “<strong>Bias-Variance Trade-off”.</strong> It breaks down our Testing Error of a single model by the following:</p>
+<p>Another way to describe the overfitting phenoma is via the theory “<strong>Bias-Variance Trade-off”.</strong> It breaks down our Testing Error of a single model by the following:</p>
 <p><span class="math display">\[\text{testing error} = \text{bias} + \text{variance} + \text{irreducible error}\]</span></p>
 <p>Suppose that we have a <strong>population</strong> of data that is out in the wild. We collect a <strong>sample</strong> as our training data set to build a model <span class="math inline">\(f_1()\)</span>, and suppose that we then sample <em>several</em> more <em>training</em> <em>datasets</em> to build models <span class="math inline">\(f_2(), … f_n()\)</span> with the same model specifications, but each of the models have slightly different learned parameters due to sampling differences. Then, suppose we evaluate each of these models on one single testing dataset, and look at the following</p>
 <ul>
@@ -577,53 +533,94 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </figure>
 </div>
 <p>Within just the Training Set, we have partitioned it into smaller parts and reused it in an effective way that the training data never touches the evaluation data for each model. We create 5 models along the way, and we take the average of their performance as our overall performance. This is a super efficient way to evaluate the model without touching the Test Set or creating a Validation Set.</p>
-<p>Let’s see how we can do that for 5-Fold Cross Validation:</p>
-<div id="a097591a" class="cell" data-execution_count="6">
+<p>Suppose that we want predict <span class="math inline">\(MeanBloodPressure\)</span> using the predictor <span class="math inline">\(BMI\)</span> via polynomial regression, and we are trying to decide what degree polynomial we want to use: we are going to consider polynomial degrees 2, 3, and 4. This is how we would do it in a 5-fold Cross Validation framework:</p>
+<ol type="1">
+<li>Fit a model of polynomial degree 2 in a 5-fold Cross Validation on the Training Set. Take the average of its performance.</li>
+<li>Fit a model of polynomial degree 3 in a 5-fold Cross Validation on the Training Set. Take the average of its performance.</li>
+<li>Fit a model of polynomial degree 4 in a 5-fold Cross Validation on the Training Set. Take the average of its performance.</li>
+<li>Compare the average performances of the three models.</li>
+<li>Evaluate the most promising model on the Test Set.</li>
+</ol>
+<p>Below is Step 1:</p>
+<div id="d24b3468" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>array([ 79.91396818, 160.7165208 , 162.58024718, 135.7086934 ,
-       198.07074813])</code></pre>
-</div>
-</div>
-<p>We take the average of the 5-fold performances:</p>
-<div id="65479ecf" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>linear_reg_poly2 <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg_poly2, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>np.float64(147.3980355355724)</code></pre>
 </div>
 </div>
 <p>We can also get the prediction that was obtained for that element when it was in the evaluation set, so we can visualize the predicted values in the Training Set.</p>
-<div id="6ee706de" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> cross_val_predict(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'BMI'</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>plt.xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>plt.ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="edf00f2a" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> cross_val_predict(linear_reg_poly2, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'BMI'</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Mean Blood Pressure'</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>plt.ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="04-Model-Complexity_files/figure-html/cell-9-output-1.png" width="593" height="429" class="figure-img"></p>
+<p><img src="04-Model-Complexity_files/figure-html/cell-7-output-1.png" width="593" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Step 2:</p>
+<div id="25913b1b" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>linear_reg_poly3 <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg_poly3, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>np.float64(156.05299296474814)</code></pre>
+</div>
+</div>
+<p>Step 3:</p>
+<div id="5bf4ebc5" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>linear_reg_poly4 <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg_poly4, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>np.float64(155.41886462093527)</code></pre>
+</div>
+</div>
+<p>It looks like the degree-2 polynomial had the lowest error in Cross Validation. Let’s evaluate this model on the Test Set:</p>
+<div id="1ab95afe" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg_poly4.fit(X_train, y_train).predict(X_test)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>mean_squared_error(y_test_predicted, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>164.58586895833724</code></pre>
+</div>
+</div>
 </section>
-<section id="cubic-splines" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="cubic-splines"><span class="header-section-number">5.4</span> Cubic Splines</h2>
+<section id="appendix-cubic-splines" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="appendix-cubic-splines"><span class="header-section-number">5.4</span> Appendix: Cubic Splines</h2>
 <p>To see another use of Cross Validation, let’s look at variations of polynomial regression. Sometimes, polynomials are not sufficient to capture the non-linearity of the data: polynomials of degrees 2-4 tend to be useful, but after degree 4, often the shape of the polynomial isn’t flexible enough - it often leads to higher Variance in the Bias-Variance decomposition. Rather, people started to explore building a regression from pieces of polynomials, called <strong>Piecewise Polynomial Regression</strong>. For instance, instead of a degree 3 (Cubic) polynomial:</p>
 <p><span class="math display">\[
 Y = \beta_0 + \beta_1 \cdot X + \beta_2 \cdot X^2 + \beta_3 \cdot X^3
@@ -640,61 +637,61 @@ Y = \begin{cases}
 <p>Here, we end up using 8 predictors for our model. We see something that looks off immediately: our model is not continuous at the cutoff point! To fix the problem, we can constrain our model to be continuous: we require that the first and second derivatives of the piecewise polynomials to be continuous at the cutoff point. This fix is shown in the bottom panel, which is called <strong>Cubic Spline Regression</strong>. We can increase the number of cutoff points as we like in a piecewise or spline model. This cubic spline model uses <span class="math inline">\(K + 4\)</span> predictors, where <span class="math inline">\(K\)</span> is the number of cutoff points used.</p>
 <p>To pick the number of cutoff points, we can also perform cross validation.</p>
 <p>For 10 cutoff points, here is the cross validation result:</p>
-<div id="0c8c549d" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + cs(BMI, df=10)"</span>, nhanes_tiny)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div id="33b445df" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + cs(BMI, df=10)"</span>, nhanes_tiny)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>np.float64(158.49517792353657)</code></pre>
 </div>
 </div>
 <p>For 5 cutoff points, here is the cross validation result:</p>
-<div id="7cd591aa" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + cs(BMI, df=5)"</span>, nhanes_tiny)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="39152538" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + cs(BMI, df=5)"</span>, nhanes_tiny)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>np.float64(149.89569088108254)</code></pre>
 </div>
 </div>
 <p>Looks like 5-cutoff points is better. We then use this model to visualize with the training data:</p>
-<div id="b88a5838" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> cross_val_predict(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'BMI'</span>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Mean Blood Pressure'</span>)</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>plt.xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>plt.ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="ad49c19f" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> cross_val_predict(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train_predicted, label<span class="op">=</span><span class="st">"fitted line"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_train[X_train.columns[<span class="dv">1</span>]], y_train, alpha<span class="op">=</span><span class="fl">.5</span>, color<span class="op">=</span><span class="st">"brown"</span>, label<span class="op">=</span><span class="st">"Training set"</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'BMI'</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Mean Blood Pressure'</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>plt.xlim(np.<span class="bu">min</span>(nhanes_tiny.BMI), np.<span class="bu">max</span>(nhanes_tiny.BMI))</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>plt.ylim(np.<span class="bu">min</span>(nhanes_tiny.MeanBloodPressure), np.<span class="bu">max</span>(nhanes_tiny.MeanBloodPressure))</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="04-Model-Complexity_files/figure-html/cell-12-output-1.png" width="593" height="429" class="figure-img"></p>
+<p><img src="04-Model-Complexity_files/figure-html/cell-13-output-1.png" width="593" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Finally, how does it do on the test set?</p>
-<div id="2c05313f" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.fit(X_train, y_train).predict(X_test)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>mean_squared_error(y_test_predicted, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div id="e4d1a834" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.fit(X_train, y_train).predict(X_test)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mean_squared_error(y_test_predicted, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>168.4702986647149</code></pre>
 </div>
 </div>
@@ -706,7 +703,7 @@ Y = \begin{cases}
 </section>
 <section id="exercises" class="level2" data-number="5.6">
 <h2 data-number="5.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.6</span> Exercises</h2>
-<p>Exercises for week 4 can be found <a href="#">here</a>.</p>
+<p>Exercises for week 4 can be found <a href="https://colab.research.google.com/drive/14jWAUPI6ieTWs7msPIaKlDvD9FjWOsU5?usp=sharing">here</a>.</p>
 
 
 </section>
