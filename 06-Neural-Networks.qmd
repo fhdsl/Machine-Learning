@@ -1,2 +1,5 @@
 # Neural Networks
 
+![](images/neural-net-1.png){width="300"}
+
+![](images/neural-net-2.png){width="300"}

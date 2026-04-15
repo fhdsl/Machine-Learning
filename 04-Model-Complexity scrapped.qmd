@@ -2,19 +2,19 @@
 
 ## Overfitting
 
-In the first week, we discussed as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called **Overfitting**, and why we constructed the **training** and **testing** datasets to identify and safeguard against this phenomena. We will look at two common situations of Overfitting: over-use of predictors, and overly-flexible polynomial models.
+In the first week, we discussed as the model learns from any data, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not reproducible anywhere else. This is called **Overfitting**, and why we constructed the **training** and **testing** datasets to identify this phenomena. We will look at two common situations of Overfitting: overly-flexible models, and over-use of predictors.
 
-### Over-use of predictors
+### Overly-flexible models
 
-One way to increase the risk of Overfitting is to use a large amount of predictors in the model relative to the number of samples. When number of predictors approach the number of samples, the model becomes increasingly flexible: it can perform an almost perfect fit of the training data *regardless whether the predictors are related to the outcome*, but may perform quite poorly on the testing data. When the number of predictors *exceed* the number of samples, the model will always perfectly fit on training data with no training error, which is a problem called **High Dimensional Problems** in which we will address next week.
+Generally, the more flexible models we employ, the higher risk there will be overfitting, because these models will identify patterns too specific to the training data and not generalize to the test data. For instance, linear regression is a fairly inflexible approach, because it just uses a straight line to model the data. However, if we use polynomial regression, especially for higher degree polynomials, the model becomes more flexible, with a higher risk of overfitting.
 
-Why does this happen? Imagine that we have two samples, and one single predictor $X$ to predict response $Y$. In a Linear Regression setting, we would be estimating two $\beta$ parameters: $Y = \beta_0 + \beta_1 \cdot X$, so this is an example where the number of parameters to be estimated is equal the number of samples. Well, two samples on a two dimensional space define an unique line, so we can get a perfect model fit in the right hand panel in the figure below. This model would have zero error on the Training Data, but we don't know how it might generalize to the Testing Data.
+Let's take a look at our first model again:
 
-Whereas, if we had more samples, we would see a scenario on the left panel below, where there is a more less flexible, imperfect model. Sometimes less flexible, imperfect models are more useful, as they capture the average shape of the Training Data that generalize better to the Test Set.
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
+$$
 
-![Source: An Introduction to Statistical Learning, Ch. 6, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/predictors_in_regression-01.png){width="500"}
-
-In our NHANES dataset, let's see what happens if we just start piling on predictors for our model, without considering whether the predictors are useful or not.
+and compare the Training and Testing Errors. We deliberately use a small subset of the data to illustrate this phenoma:
 
 ```{python}
 import pandas as pd
@@ -34,10 +34,171 @@ nhanes['MeanBloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes[
 #Use a small part of the data to illlustrate overfitting.
 nhanes_tiny = nhanes.sample(n=300, random_state=2)
 
-train_err = []
+y, X = model_matrix("MeanBloodPressure ~ BMI", nhanes_tiny)
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
+linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+y_test_predicted = linear_reg.predict(X_test)
+train_err = mean_squared_error(y_train_predicted, y_train)
+test_err = mean_squared_error(y_test_predicted, y_test)
+
+plt.clf()
+fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
+
+ax1.plot(X_train.BMI, y_train_predicted, label="fitted line")
+ax1.scatter(X_train.BMI, y_train, alpha=.5, color="brown", label="Training set")
+ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+ax1.set_title('Training Error: ' + str(round(train_err, 2)))
+
+ax2.plot(X_test.BMI, y_test_predicted, label="fitted line")
+ax2.scatter(X_test.BMI, y_test, alpha=.5, color="brown", label="Testing set")
+ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
+
+plt.show()
+```
+
+We see that Training Error \< Testing Error.
+
+Let's look at what happens if we increase the flexibility of the model by fitting it with a degree 2 polynomial:
+
+```{python}
+p_degree = 2
+y, X = model_matrix("MeanBloodPressure ~ poly(BMI, degree=" + str(p_degree) + ", raw=True)", nhanes_tiny)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
+linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+y_train_predicted = linear_reg.predict(X_train)
+y_test_predicted = linear_reg.predict(X_test)
+train_err = mean_squared_error(y_train_predicted, y_train)
+test_err = mean_squared_error(y_test_predicted, y_test)
+
+plt.clf()
+fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
+
+ax1.scatter(X_train[X_train.columns[1]], y_train, alpha=.5, color="brown", label="Training set")
+ax1.scatter(X_train[X_train.columns[1]], y_train_predicted, label="fitted line")
+ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+ax1.set_title('Training Error: ' + str(round(train_err, 2)))
+ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+
+ax2.scatter(X_test[X_test.columns[1]], y_test, alpha=.5, color="brown", label="Testing set")
+ax2.scatter(X_test[X_test.columns[1]], y_test_predicted, label="fitted line")
+ax2.set(xlabel='BMI', ylabel='Blood Pressure')
+ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
+ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+
+fig.suptitle('Polynomial Degree: ' + str(p_degree))
+plt.show()
+```
+
+We see that both Training and Testing error both decreased slightly!
+
+What happens if we keep increasing the model complexity?
+
+```{python}
+for p_degree in [4, 10]:
+  y, X = model_matrix("MeanBloodPressure ~ poly(BMI, degree=" + str(p_degree) + ", raw=True)", nhanes_tiny)
+  
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+  
+  linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+  y_train_predicted = linear_reg.predict(X_train)
+  y_test_predicted = linear_reg.predict(X_test)
+  train_err = mean_squared_error(y_train_predicted, y_train)
+  test_err = mean_squared_error(y_test_predicted, y_test)
+  
+  plt.clf()
+  fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
+  
+  ax1.scatter(X_train[X_train.columns[1]], y_train, alpha=.5, color="brown", label="Training set")
+  ax1.scatter(X_train[X_train.columns[1]], y_train_predicted, label="fitted line")
+  ax1.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+  ax1.set_title('Training Error: ' + str(round(train_err, 2)))
+  ax1.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+  ax1.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+
+  ax2.scatter(X_test[X_test.columns[1]], y_test, alpha=.5, color="brown", label="Testing set")
+  ax2.scatter(X_test[X_test.columns[1]], y_test_predicted, label="fitted line")
+  ax2.set(xlabel='BMI', ylabel='Mean Blood Pressure')
+  ax2.set_title('Testing Error: ' + str(round(test_err, 2)))
+  ax2.set_xlim(np.min(nhanes_tiny.BMI), np.max(nhanes_tiny.BMI))
+  ax2.set_ylim(np.min(nhanes_tiny.MeanBloodPressure), np.max(nhanes_tiny.MeanBloodPressure))
+
+  fig.suptitle('Polynomial Degree: ' + str(p_degree))
+  plt.show()
+
+```
+
+The training error decreased more, but the testing error increased!
+
+Let's summarize it:
+
+```{python}
+train_err = []
 test_err = []
-# We pick predictors that don't have too much missing data and just start adding predictors to our model:
+polynomials = list(range(1, 10))
+
+for p_degree in polynomials:
+  if p_degree == 1:
+    y, X = model_matrix("MeanBloodPressure ~ BMI", nhanes_tiny)
+  else:
+    y, X = model_matrix("MeanBloodPressure ~ poly(BMI, degree=" + str(p_degree) + ")", nhanes_tiny)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+  
+  linear_reg = linear_model.LinearRegression().fit(X_train, y_train)
+  y_train_predicted = linear_reg.predict(X_train)
+  y_test_predicted = linear_reg.predict(X_test)
+  train_err.append(mean_squared_error(y_train_predicted, y_train))
+  test_err.append(mean_squared_error(y_test_predicted, y_test))
+  
+plt.clf()
+plt.plot(polynomials, train_err, color="blue", label="Training Error")
+plt.plot(polynomials, test_err, color="red", label="Testing Error")
+plt.xlabel('Polynomial Degree')
+plt.ylabel('Error')
+plt.legend()
+plt.show()  
+
+```
+
+As our Polynomial Degree increased, the following happened:
+
+-   In the linear model, we see that the Training Error is fairly high, and the Testing Error is even higher. This makes sense, as the model does not generalize as well to the testing set.
+
+-   As the degrees increased, both training and testing error decreased slightly.
+
+-   After degree 4, we see that the Training Error continued to decrease, but the Testing Error blew up! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.
+
+We want to find a model that is "just right" that doesn't underfit or overfit the data. Usually, as the model becomes more flexible, the Training Error keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model is around a polynomial of degree 4, with the minimal Testing Error.
+
+Here is another illustration of the phenomena, using synthetic data:
+
+On the left shows the Training Data in black dots. Then, three models are displayed: linear regression (orange line), two other models of increasing complexity in blue and green.
+
+On the right shows the training error (grey curve), testing error (red curve), and where each of the three models on the left land in the error rate with their respective colors. We see that as the flexibility of the model increased, the training error in grey decreased, but the testing error decreased for a bit before going up.
+
+![Source: An Introduction to Statistical Learning, Ch. 2, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/testing_error.png){width="500"}
+
+### Over-use of predictors
+
+We saw that by fitting more flexible models to the data, we run a higher risk of overfitting. Another way to increase the risk of overfitting is to use a large amount of predictors in the model relative to the number of samples. When number of predictors approach the number of samples, the model becomes increasingly flexible: it can perform an almost perfect fit of the training data, but perform quite poorly on the testing data. When the number of predictors exceed the number of samples, the model can be a perfect fit on training data, which is a problem called **High Dimensional Problems** in which we will address next week.
+
+Let's see what happens if we just start piling on predictors for our model. We pick predictors that don't have too much missing data and just start adding predictors to our model:
+
+```{python}
+train_err = []
+test_err = []
+
 nhanes_tiny2 = nhanes.loc[:, ["MeanBloodPressure", "Gender", "Age", "Race1", "Education", "MaritalStatus", "Poverty", "HomeRooms", "HomeOwn", "Work", "BMI", "Pulse", "DirectChol", "TotChol", "UrineVol1", "UrineVol2", "Diabetes", "HealthGen", "SleepHrsNight"]]
 y, X = model_matrix("MeanBloodPressure ~ .", nhanes_tiny2)
 
@@ -61,110 +222,11 @@ plt.legend()
 plt.show()  
 ```
 
-The number of samples used is 300, and as we increased the number of predictor to 30, we see that the training error keeps dropping, but the optimal testing error was something around 5-10 predictors. That suggests using too many predictors created a model that was too flexible to the Training but not the Testing dataset.
-
-### Overly-flexible polynomial models
-
-Generally, the more flexible models we employ, the higher risk there will be Overfitting, because these models will identify patterns too specific to the training data and not generalize to the test data. An example of an overly-flexible model is to use a high number of predictors relative to the number of samples. Another example of this situation is when we use polynomial regression with increasingly higher order terms. The models become more flexible because we are increasing the number of predictors used in the polynomial expansion, and visually, they model looks increasingly flexible to any model pattern.
-
-Let's look at an example data, split into Training and Testing data:
-
-```{python}
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-
-# Generate synthetic data
-np.random.seed(0)
-x = np.linspace(0, 10, 100)
-y = np.sin(x) + np.random.normal(scale=0.2, size=x.shape)
-
-# Split data into training and testing sets
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
-
-plt.clf()
-fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
-
-ax1.scatter(x_train, y_train, color='blue')
-ax1.set_title("Training Set")
-ax1.set(xlabel='', ylabel='Response')
-
-ax2.scatter(x_test, y_test, color='blue')
-ax2.set_title("Testing Set")
-ax2.set(xlabel='Predictor', ylabel='Response')
-
-plt.show()
-
-```
-
-Then, we fit models of increasing flexibility via increasing polynomial terms. Look at each model fit: does the model fit well to the training set and test set? When does it generalize well, and when does it not?
-
-```{python}
-# Fit polynomial regression models of different degrees
-degrees = [1, 3, 10, 20]
-train_errors = []
-test_errors = []
-for degree in degrees:
-    poly_features = PolynomialFeatures(degree=degree)
-    x_poly_train = poly_features.fit_transform(x_train[:, np.newaxis])
-    x_poly_test = poly_features.transform(x_test[:, np.newaxis])
-    
-    model = LinearRegression()
-    model.fit(x_poly_train, y_train)
-    
-    train_predictions = model.predict(x_poly_train)
-    test_predictions = model.predict(x_poly_test)
-    
-    train_errors.append(mean_squared_error(y_train, train_predictions))
-    test_errors.append(mean_squared_error(y_test, test_predictions))
-    
-    plt.clf()
-    fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
-    ax1.scatter(x_train, y_train, color='blue')
-    ax1.scatter(x_train, train_predictions, color='red')
-    ax1.set_title("Training Set on Degree " + str(degree) + " polynomial")
-    ax1.set(xlabel='', ylabel='Response')
-    
-    ax2.scatter(x_test, y_test, color='blue')
-    ax2.scatter(x_test, test_predictions, color='red')
-    ax2.set(xlabel='Predictor', ylabel='Response')
-    ax2.set_title("Testing Set on Degree " + str(degree) + " polynomial")
-    
-    plt.show()
-
-```
-
-Then, we look at the Training and Testing error for each polynomial degree:
-
-```{python}
-# Plot learning curves
-plt.figure(figsize=(10, 6))
-plt.plot(degrees, train_errors, label='Train Error', marker='o')
-plt.plot(degrees, test_errors, label='Test Error', marker='o')
-plt.title('Learning Curves')
-plt.xlabel('Polynomial Degree')
-plt.ylabel('Mean Squared Error')
-plt.xticks(degrees)
-plt.legend()
-plt.show()
-```
-
-We see that our Testing Error is always higher than the Training Error. That makes sense.
-
-As our Polynomial Degree increased, the following happened:
-
--   As the degrees increased, both training and testing error decreased.
-
--   After degree 10, we see that the Training Error remained mostly low, but the Testing Error blew up! This is an example of **Overfitting**, in which our model fitted the shape of of the training set so well that it fails to generalize to the testing set at all.
-
-Usually, as the model becomes more flexible, the Training Error remains the same or keeps lowering, and the Testing Error will lower a bit before increasing. It seems that our ideal prediction model a polynomial of degree 10, with the minimal Testing Error.
+What is the optimal number of predictors we should use for our final model?
 
 ## Bias-Variance Trade-off
 
-Another way to describe the overfitting phenoma is via the theory "**Bias-Variance Trade-off".** It breaks down our Testing Error of a single model by the following:
+Another way to describe the underfitting/overfitting phenoma is via the theory "**Bias-Variance Trade-off".** It breaks down our Testing Error of a single model by the following:
 
 $$\text{testing error} = \text{bias} + \text{variance} + \text{irreducible error}$$
 
@@ -373,4 +435,4 @@ AIC, BIC, C_p
 
 ## Exercises
 
-Exercises for week 4 can be found [here](https://colab.research.google.com/drive/14jWAUPI6ieTWs7msPIaKlDvD9FjWOsU5?usp=sharing).
+Exercises for week 4 can be found [here](#).

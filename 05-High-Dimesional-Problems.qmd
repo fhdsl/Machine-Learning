@@ -203,6 +203,8 @@ plt.show()
 
 -   Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
 
+## Feature engineering
+
 ## If time: Principal Components Regression
 
 ## Appendix: Ridge and Lasso regression
