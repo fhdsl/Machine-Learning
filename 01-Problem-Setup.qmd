@@ -189,6 +189,8 @@ Given our (very brief) Exploratory Data Analysis, let's pick a few predictors th
 
 As we look at data with a huge number of predictors, we will have to find ways to automate this process called **feature selection**.
 
+And sometimes, we need to make additional encoding or transformations on our predictors to make them more appropriate for our model. This process is called **feature engineering**.
+
 ## Picking a model: Linear Regression
 
 We will explore a whole range of models in this course to try in our predictive model, but one of the most fundamental model that has been robust and connects to nearly all Machine Learning models is **Linear Regression**. A common strategy is to start with a simple model such as Linear Regression and build out complexity from it. So we gotta see this in action.

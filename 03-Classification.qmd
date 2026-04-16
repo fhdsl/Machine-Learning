@@ -26,7 +26,7 @@ nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
 nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
 
 plt.clf()
-plt.hist(nhanes['Hypertension2'])
+ax = sns.histplot(x = "Hypertension2", data = nhanes)
 plt.show()
 
 ```
@@ -230,7 +230,7 @@ Oops! Even worse!
 
 Similar to how we explored linear regression, let's examine the assumptions needed for logistic regression for good predictions.
 
-### Linearity of log odds - predictor relationship
+### Linearity of log odds of response - predictor relationship
 
 Recall that our logistic regression model
 
@@ -290,15 +290,10 @@ Let's see what our ROC (and AUC value) of the two models we tried look like:
 from sklearn.metrics import RocCurveDisplay
 from sklearn.metrics import roc_curve, roc_auc_score
 
-# Compute ROC curve
-#fpr, tpr, thresholds = roc_curve(y_test, logit_model.predict(X_test), drop_intermediate=False)
-
 plt.clf()
 l1_disp = RocCurveDisplay.from_estimator(logit_model, X_test, y_test, name="Logistic Regression 1")
 l2_disp = RocCurveDisplay.from_estimator(logit_model2, X_test2, y_test2, ax=l1_disp.ax_, name="Logistc Regression 2")
 
-
-#display = RocCurveDisplay.from_predictions(y_test, logit_model.predict(X_test))
 plt.show()
 ```
 
