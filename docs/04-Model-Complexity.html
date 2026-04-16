@@ -291,7 +291,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>In our NHANES dataset, let’s see what happens if we just start piling on predictors for our model, without considering whether the predictors are useful or not.</p>
-<div id="9abdf181" class="cell" data-execution_count="1">
+<div id="36ef9c5b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -348,7 +348,7 @@ window.Quarto = {
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="overly-flexible-polynomial-models"><span class="header-section-number">5.1.2</span> Overly-flexible polynomial models</h3>
 <p>Generally, the more flexible models we employ, the higher risk there will be Overfitting, because these models will identify patterns too specific to the training data and not generalize to the test data. An example of an overly-flexible model is to use a high number of predictors relative to the number of samples. Another example of this situation is when we use polynomial regression with increasingly higher order terms. The models become more flexible because we are increasing the number of predictors used in the polynomial expansion, and visually, they model looks increasingly flexible to any model pattern.</p>
 <p>Let’s look at an example data, split into Training and Testing data:</p>
-<div id="894bc3e8" class="cell" data-execution_count="2">
+<div id="a62eee46" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -388,7 +388,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Then, we fit models of increasing flexibility via increasing polynomial terms. Look at each model fit: does the model fit well to the training set and test set? When does it generalize well, and when does it not?</p>
-<div id="6fd103d1" class="cell" data-execution_count="3">
+<div id="062ae374" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit polynomial regression models of different degrees</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>degrees <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>, <span class="dv">20</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>train_errors <span class="op">=</span> []</span>
@@ -462,7 +462,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Then, we look at the Training and Testing error for each polynomial degree:</p>
-<div id="752b0e53" class="cell" data-execution_count="4">
+<div id="8c7e619d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot learning curves</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.plot(degrees, train_errors, label<span class="op">=</span><span class="st">'Train Error'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
@@ -542,7 +542,7 @@ window.Quarto = {
 <li>Evaluate the most promising model on the Test Set.</li>
 </ol>
 <p>Below is Step 1:</p>
-<div id="d24b3468" class="cell" data-execution_count="5">
+<div id="285171a9" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
@@ -554,11 +554,11 @@ window.Quarto = {
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>np.float64(147.3980355355724)</code></pre>
+<pre><code>np.float64(147.39803553557252)</code></pre>
 </div>
 </div>
 <p>We can also get the prediction that was obtained for that element when it was in the evaluation set, so we can visualize the predicted values in the Training Set.</p>
-<div id="edf00f2a" class="cell" data-execution_count="6">
+<div id="4a8b1319" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> cross_val_predict(linear_reg_poly2, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
@@ -579,7 +579,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Step 2:</p>
-<div id="25913b1b" class="cell" data-execution_count="7">
+<div id="f4d74fae" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
@@ -591,11 +591,11 @@ window.Quarto = {
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>np.float64(156.05299296474814)</code></pre>
+<pre><code>np.float64(156.05299296468448)</code></pre>
 </div>
 </div>
 <p>Step 3:</p>
-<div id="5bf4ebc5" class="cell" data-execution_count="8">
+<div id="4eb0c889" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p_degree <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(BMI, degree="</span> <span class="op">+</span> <span class="bu">str</span>(p_degree) <span class="op">+</span> <span class="st">", raw=True)"</span>, nhanes_tiny)</span>
@@ -607,15 +607,15 @@ window.Quarto = {
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>np.float64(155.41886462093527)</code></pre>
+<pre><code>np.float64(155.41886462282142)</code></pre>
 </div>
 </div>
 <p>It looks like the degree-2 polynomial had the lowest error in Cross Validation. Let’s evaluate this model on the Test Set:</p>
-<div id="1ab95afe" class="cell" data-execution_count="9">
+<div id="08ae7f7c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg_poly4.fit(X_train, y_train).predict(X_test)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>mean_squared_error(y_test_predicted, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>164.58586895833724</code></pre>
+<pre><code>164.5858689508419</code></pre>
 </div>
 </div>
 </section>
@@ -637,7 +637,7 @@ Y = \begin{cases}
 <p>Here, we end up using 8 predictors for our model. We see something that looks off immediately: our model is not continuous at the cutoff point! To fix the problem, we can constrain our model to be continuous: we require that the first and second derivatives of the piecewise polynomials to be continuous at the cutoff point. This fix is shown in the bottom panel, which is called <strong>Cubic Spline Regression</strong>. We can increase the number of cutoff points as we like in a piecewise or spline model. This cubic spline model uses <span class="math inline">\(K + 4\)</span> predictors, where <span class="math inline">\(K\)</span> is the number of cutoff points used.</p>
 <p>To pick the number of cutoff points, we can also perform cross validation.</p>
 <p>For 10 cutoff points, here is the cross validation result:</p>
-<div id="33b445df" class="cell" data-execution_count="10">
+<div id="d46709d5" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + cs(BMI, df=10)"</span>, nhanes_tiny)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
@@ -648,11 +648,11 @@ Y = \begin{cases}
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span>
 <span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>np.float64(158.49517792353657)</code></pre>
+<pre><code>np.float64(158.49517792353663)</code></pre>
 </div>
 </div>
 <p>For 5 cutoff points, here is the cross validation result:</p>
-<div id="39152538" class="cell" data-execution_count="11">
+<div id="bee1105e" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + cs(BMI, df=5)"</span>, nhanes_tiny)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
@@ -663,11 +663,11 @@ Y = \begin{cases}
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>scores</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>np.mean(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>np.float64(149.89569088108254)</code></pre>
+<pre><code>np.float64(149.89569088108257)</code></pre>
 </div>
 </div>
 <p>Looks like 5-cutoff points is better. We then use this model to visualize with the training data:</p>
-<div id="ad49c19f" class="cell" data-execution_count="12">
+<div id="4b90e0fe" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>y_train_predicted <span class="op">=</span> cross_val_predict(linear_reg, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
@@ -688,11 +688,11 @@ Y = \begin{cases}
 </div>
 </div>
 <p>Finally, how does it do on the test set?</p>
-<div id="e4d1a834" class="cell" data-execution_count="13">
+<div id="11e5c4db" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> linear_reg.fit(X_train, y_train).predict(X_test)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mean_squared_error(y_test_predicted, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>168.4702986647149</code></pre>
+<pre><code>168.47029866471496</code></pre>
 </div>
 </div>
 </section>

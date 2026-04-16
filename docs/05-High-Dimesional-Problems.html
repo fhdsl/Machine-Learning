@@ -246,10 +246,11 @@ window.Quarto = {
   <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">6.3</span> Data Preparation</a></li>
   <li><a href="#lasso-regression" id="toc-lasso-regression" class="nav-link" data-scroll-target="#lasso-regression"><span class="header-section-number">6.4</span> Lasso Regression</a></li>
   <li><a href="#some-remarks" id="toc-some-remarks" class="nav-link" data-scroll-target="#some-remarks"><span class="header-section-number">6.5</span> Some remarks</a></li>
-  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering"><span class="header-section-number">6.6</span> Feature engineering</a></li>
-  <li><a href="#if-time-principal-components-regression" id="toc-if-time-principal-components-regression" class="nav-link" data-scroll-target="#if-time-principal-components-regression"><span class="header-section-number">6.7</span> If time: Principal Components Regression</a></li>
-  <li><a href="#appendix-ridge-and-lasso-regression" id="toc-appendix-ridge-and-lasso-regression" class="nav-link" data-scroll-target="#appendix-ridge-and-lasso-regression"><span class="header-section-number">6.8</span> Appendix: Ridge and Lasso regression</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6.9</span> Exercises</a></li>
+  <li><a href="#other-ways-to-reduce-dimensions" id="toc-other-ways-to-reduce-dimensions" class="nav-link" data-scroll-target="#other-ways-to-reduce-dimensions"><span class="header-section-number">6.6</span> Other ways to reduce dimensions</a></li>
+  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering"><span class="header-section-number">6.7</span> Feature engineering</a></li>
+  <li><a href="#if-time-principal-components-regression" id="toc-if-time-principal-components-regression" class="nav-link" data-scroll-target="#if-time-principal-components-regression"><span class="header-section-number">6.8</span> If time: Principal Components Regression</a></li>
+  <li><a href="#appendix-ridge-and-lasso-regression" id="toc-appendix-ridge-and-lasso-regression" class="nav-link" data-scroll-target="#appendix-ridge-and-lasso-regression"><span class="header-section-number">6.9</span> Appendix: Ridge and Lasso regression</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6.10</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ottrproject/OTTR_Quarto/edit/main/05-High-Dimesional-Problems.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfBvVELBg8lcynKj0TrzMlov1zil-Sbkh9VhMKRcSpeo1xo6g/viewform" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -301,7 +302,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <li><p>The <strong>tuning parameter</strong> (sometimes called <strong>hyperparameter</strong>) <span class="math inline">\(\lambda\)</span> (“lambda”) serves to control the balance between minimizing the <span class="math inline">\(MSE\)</span> vs.&nbsp;minimizing the <span class="math inline">\(Parameters\)</span>. When <span class="math inline">\(\lambda=0\)</span>, we just have to minimize the <span class="math inline">\(MSE\)</span>, ie. linear regression. When <span class="math inline">\(\lambda\)</span> is large, then we start to minimize <span class="math inline">\(Parameters\)</span> more and encourages some of the parameter estimates to be zero. Selecting the appropriate <span class="math inline">\(\lambda\)</span> is important in the model training process, and we will see how to do that in the Cross-Validation section below.</p></li>
 </ul>
 <p>Let’s see an example of the effect of <span class="math inline">\(\lambda\)</span> on a model with 5 predictors, parameter weights <span class="math inline">\(\beta_1\)</span>… <span class="math inline">\(\beta_5\)</span>.</p>
-<div id="dab337bc" class="cell" data-execution_count="1">
+<div id="3d05e2e0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -341,7 +342,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <section id="example-dataset" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="example-dataset"><span class="header-section-number">6.2</span> Example dataset</h2>
 <p>Our example dataset for the high-dimensional setting centers around this question: Can we use RNA gene expression predict response to a cancer treatment? If so, then we can use RNA gene expression as a biomarker to predict how cancer patients may respond to various cancer treatments. We use data from the <a href="https://depmap.org/portal/">Dependency Map Project</a>, which has RNA gene expression profiles and cancer treatment responses on the largest collection of cancer cell line models.</p>
-<div id="d670a585" class="cell" data-execution_count="2">
+<div id="a2f347b4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> formulaic <span class="im">import</span> model_matrix</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -357,7 +358,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 <p>Let’s start looking at the cancer drug “Gefitinib”, which is a targeted therapy for non-small cell lung cancer with EGFR mutation and high levels of EGFR expression. We might expect to find the the gene EGFR highly predictive of Gefitinib response.</p>
 <p>Let’s look at the distribution of our response. The drug response is measured in terms of <a href="https://en.wikipedia.org/wiki/Area_under_the_curve_(pharmacokinetics)">Area Under the Curve</a> (unrelated to the appendix of the ROC curve in the 3rd week), and a lower value indicates that the drug is more effective against the cancer.</p>
-<div id="d698527a" class="cell" data-execution_count="3">
+<div id="ac1a1997" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.displot(x<span class="op">=</span><span class="st">"GEFITINIB"</span>, data<span class="op">=</span>gefitinib_expression)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -377,7 +378,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <section id="data-preparation" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">6.3</span> Data Preparation</h2>
 <p>Then, let’s look at the dimensions of this Dataframe:</p>
-<div id="fa9667af" class="cell" data-execution_count="4">
+<div id="657b629b" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gefitinib_expression.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>(554, 19213)</code></pre>
@@ -385,17 +386,17 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 <p>We have way more potential predictors than samples even before we split into training and testing sets! This is definitely a high-dimensional problem.</p>
 <p>Now, let’s split our data into training and testing:</p>
-<div id="4690232e" class="cell" data-execution_count="5">
+<div id="866dbba2" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gefitinib_expression_train, gefitinib_expression_test <span class="op">=</span> train_test_split(gefitinib_expression, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We create our <code>y_train</code> and <code>X_train</code> variables, and when we need to use all predictors, we indicate via the <code>.</code> symbol.</p>
-<div id="1293a63a" class="cell" data-execution_count="6">
+<div id="27061964" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_train)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Before we fit the model, we have to do some data transformations. In linear and logistic regression, all the parameter estimates for the models are <strong>scale equivariant</strong>. That is, if we multiple a predictor by a constant <span class="math inline">\(c\)</span> and did not change anything else, the parameter estimate for that predictor will be scaled automatically <span class="math inline">\(\frac{1}{c}\)</span> in the model training process. However, in regularization methods, because we are minimizing the Mean Squared Error and the magnitude of the parameters, the parameter estimates may change substantially if the scale of a predictor changes.</p>
 <p>Therefore, the best practice is to first <strong>standardize the predictors</strong> before using regularization methods. We use the following code to ensure that each predictor has a mean of 0 and variance of 1:</p>
-<div id="a4dce80c" class="cell" data-execution_count="7">
+<div id="4357683b" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> StandardScaler().fit_transform(X_train, y_train)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> StandardScaler().fit_transform(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -410,7 +411,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <section id="lasso-regression" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="lasso-regression"><span class="header-section-number">6.4</span> Lasso Regression</h2>
 <p>Let’s see how to implement cross validation in lasso regression. The <code>LassoCV</code> function will perform a search for the optimal <span class="math inline">\(\lambda\)</span> for us via Cross Validation using whatever dataset you give it as a input. For speed, we use a 2-fold cross validation, but in general people use 5 to 10 fold cross-validation.</p>
-<div id="00df4d2a" class="cell" data-execution_count="8">
+<div id="4df9e350" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>start_time <span class="op">=</span> time.perf_counter()</span>
@@ -421,11 +422,11 @@ minimize(MSE + \lambda \cdot Parameters)
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>elapsed_time <span class="op">=</span> end_time <span class="op">-</span> start_time</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Elapsed time to fit model: </span><span class="sc">{</span>elapsed_time<span class="sc">}</span><span class="ss"> seconds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Elapsed time to fit model: 17.71319622699997 seconds</code></pre>
+<pre><code>Elapsed time to fit model: 12.208689639999989 seconds</code></pre>
 </div>
 </div>
 <p>What is the <span class="math inline">\(\lambda\)</span> learned in the cross validation?</p>
-<div id="2e8feada" class="cell" data-execution_count="9">
+<div id="11be67b7" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reg.alpha_)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0.012408022529117964</code></pre>
@@ -433,7 +434,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 <p>(Notice in the code we refer to it as “alpha”. This is due to the a different in variable naming by Scikit-Learn.)</p>
 <p>We expect that only a small subset of predictors end up being used for the lasso model. What are the genes that have non-zero coefficients?</p>
-<div id="a9f25c51" class="cell" data-execution_count="10">
+<div id="92484ab3" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_train.columns[np.nonzero(reg.coef_)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>Index(['PGM3', 'RNF14', 'BEST2', 'TNS2', 'PLSCR4', 'CSTA', 'SNX21', 'ELK1',
@@ -442,7 +443,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 </div>
 <p>Now, let’s see how the model performs on the Test Set:</p>
-<div id="ce35f376" class="cell" data-execution_count="11">
+<div id="ff2e2c3f" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> reg.predict(X_test_scaled)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> mean_absolute_error(y_test_predicted, y_test)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>test_err</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -451,7 +452,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 </div>
 <p>Let’s look at the plot:</p>
-<div id="bdd7a41e" class="cell" data-execution_count="12">
+<div id="db69ff71" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test_predicted, y_test, alpha<span class="op">=</span><span class="fl">.5</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="fl">.9</span>, <span class="fl">.9</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
@@ -477,17 +478,40 @@ minimize(MSE + \lambda \cdot Parameters)
 <li><p>Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.</p></li>
 </ul>
 </section>
-<section id="feature-engineering" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="feature-engineering"><span class="header-section-number">6.6</span> Feature engineering</h2>
+<section id="other-ways-to-reduce-dimensions" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="other-ways-to-reduce-dimensions"><span class="header-section-number">6.6</span> Other ways to reduce dimensions</h2>
+<p>The Lasso Regularization method is one of the many ways one can reduce the number of dimensions in your modeling process. Here are some other common methods of reducing the number of dimensions, and they don’t necessarily have to be mutually exclusive! It is common to combine multiple methods together:</p>
+<ul>
+<li><p>Removing predictors with a large number of missing values. Many regression methods will only run on samples with non-missing values. Giving a predictor with high number of missing values may reduce the number of available samples.</p>
+<ul>
+<li><p>It is important to explore <em>why</em> there are missing values in the dataset, especially whether it is related to the response variable or not. If there is a strong trend, it may create strong bias in the model.</p></li>
+<li><p>As a sidenote, one can consider imputing the missing values with educated guesses. This is a big topic in statistical literature that goes beyond the scope of the course. See this <a href="https://tmb.njtierney.com/">well-used reference</a> in the R community.</p></li>
+</ul></li>
+<li><p>We know from Linear and Logistic Regression that having co-linear predictors affect the performance of our models. We can remove the most correlated predictors.</p>
+<ul>
+<li><p>A more nuanced way of doing this is to “remove the minimum number of predictors to ensure that all pairwise correlations are below a certain threshold”. The algorithm is as follows (from “Applied Preidcted Modeling by Kuhn and Johnson):</p>
+<ol type="1">
+<li>Calculate the correlation matrix of the predictors</li>
+<li>Determine the two predictors associated with the largest absolute pairwise correlation (call them predictors A and B)</li>
+<li>Determine the average correlation between A and other variables. Do the same for predictor B.</li>
+<li>If A has a larger average correlation, remove it; otherwise remove B.</li>
+<li>Repeat Steps 2-4 until no absolute correlations are above the threshold.</li>
+</ol></li>
+</ul></li>
+<li><p>pca</p></li>
+</ul>
 </section>
-<section id="if-time-principal-components-regression" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="if-time-principal-components-regression"><span class="header-section-number">6.7</span> If time: Principal Components Regression</h2>
+<section id="feature-engineering" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="feature-engineering"><span class="header-section-number">6.7</span> Feature engineering</h2>
 </section>
-<section id="appendix-ridge-and-lasso-regression" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="appendix-ridge-and-lasso-regression"><span class="header-section-number">6.8</span> Appendix: Ridge and Lasso regression</h2>
+<section id="if-time-principal-components-regression" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="if-time-principal-components-regression"><span class="header-section-number">6.8</span> If time: Principal Components Regression</h2>
 </section>
-<section id="exercises" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="exercises"><span class="header-section-number">6.9</span> Exercises</h2>
+<section id="appendix-ridge-and-lasso-regression" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="appendix-ridge-and-lasso-regression"><span class="header-section-number">6.9</span> Appendix: Ridge and Lasso regression</h2>
+</section>
+<section id="exercises" class="level2" data-number="6.10">
+<h2 data-number="6.10" class="anchored" data-anchor-id="exercises"><span class="header-section-number">6.10</span> Exercises</h2>
 <p>Exercises for week 4 can be found <a href="https://colab.research.google.com/drive/17LFQzaGmnCsLdDZNnnvDsYwANwgj2dob?usp=sharing">here</a>.</p>
 
 
