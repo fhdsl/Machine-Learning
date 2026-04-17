@@ -86,7 +86,7 @@ Our usual Linear Regression model
 
 $$P(Hypertension)=\beta_0+\beta_1 \cdot BMI$$
 
-*does not* give us outputs between 0 and 1. To deal with this, we perform the **Logistic Transformation:**
+*does not* give us outputs between 0 and 1. To deal with this, we perform the **Logistic Transformation** (also known as the **Sigmoid Transformation):**
 
 $$P(Hypertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
 

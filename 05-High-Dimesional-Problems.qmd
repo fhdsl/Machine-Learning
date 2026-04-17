@@ -215,7 +215,7 @@ The Lasso Regularization method is one of the many ways one can reduce the numbe
 
 -   We know from Linear and Logistic Regression that having co-linear predictors affect the performance of our models. We can remove the most correlated predictors.
 
-    -   A more nuanced way of doing this is to "remove the minimum number of predictors to ensure that all pairwise correlations are below a certain threshold". The algorithm is as follows (from "Applied Preidcted Modeling by Kuhn and Johnson):
+    -   A more nuanced way of doing this is to "remove the minimum number of predictors to ensure that all pairwise correlations are below a certain threshold". The algorithm is as follows (from "Applied Predicted Modeling" by Kuhn and Johnson):
 
         1.  Calculate the correlation matrix of the predictors
         2.  Determine the two predictors associated with the largest absolute pairwise correlation (call them predictors A and B)
@@ -223,13 +223,13 @@ The Lasso Regularization method is one of the many ways one can reduce the numbe
         4.  If A has a larger average correlation, remove it; otherwise remove B.
         5.  Repeat Steps 2-4 until no absolute correlations are above the threshold.
 
--   pca
+-   Predictors with extremely low variance are generally unhelpful predictors. Imagine that a predictor only contains one single value, which has a variance of 0. It would not relate at all to the response value. It is common practice to remove predictors with variance below a low threshold.
 
-## Feature engineering
-
-## If time: Principal Components Regression
+-   Principal Components Analysis (PCA) is a way to reduce the number of predictors by generating a new, smaller set of predictors that seek to capture the majority of information in the original variables. Suppose that you have 100 predictors, and you look at the variance of each predictor and sum all of them up as the *total variance*. When one performs PCA, the process will take a combination of the 100 original predictors to yield a new predictor (the first principal component) that captures the most variability of the total variance. Then, the second principal component is another combination of the 100 original predictors that captures the most of the *remaining* variability, and is uncorrelated with the first principal component. And so on. Thus, it is possible to take the first few principal components into a new regression model while capturing most of the total variance in the data.
 
 ## Appendix: Ridge and Lasso regression
+
+In regularization methods, the most common methods are Ridge and Lasso Regression. We only talk about Lasso Regression in this course, but in this appendix we expand in more technicality what is behind the scenes and what are some other variations.
 
 ## Exercises
 

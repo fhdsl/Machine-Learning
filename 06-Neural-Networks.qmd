@@ -1,5 +1,69 @@
 # Neural Networks
 
-![](images/neural-net-1.png){width="300"}
+The neural network, which was developed in the late 1980s, has now become a cornerstone in modern data science work. For a long time, other machine learning methods performed better than neural networks, so they fell out of favor. However, in the 2010s, neural networks resurfaced due to the larger capacity of computing systems and larger training datasets, and the complexity grew to what became known as **Deep Learning**. Here, we give a light introduction to what neural networks are, and show a few simple implementations in Scikit-Learn. Most mature, large-scale neural networks are implemented in other Python packages, such as [PyTorch](https://pytorch.org/) or [Tensorflow](https://www.tensorflow.org/) that have a very different code syntax than Scikit-Learn and is out of the scope of this course.
 
-![](images/neural-net-2.png){width="300"}
+## Single Layer Neural Networks
+
+A neural network takes in predictors $X_1$, $X_2$, ..., $X_p$ and builds a *nonlinear* function $f(X)$ to predict a response $Y$. The equation of the model can be quite complex, and it is often depicted using a network diagram such as the one below:
+
+![Source: An Introduction to Statistical Learning, Ch. 10, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/neural-net-1.png){width="300"}
+
+Each circle in the diagram refers to a variable of in the model, with the arrows indicating a relationship between variables. Therefore, there is a relationship between each one of the $X_i$ predictors and the $Y$ response variable. Each relationship between the variables contributes to a portion of a linear equation. For example, in the diagram above, the following equations are implied:
+
+-   $A_1 = \beta_{1,0} + \beta_{1, 1} \cdot X_1 + \beta_{1, 2} \cdot X_2 + \beta_{1, 3} \cdot X_3 + \beta_{1, 4} \cdot X_4$
+
+-   $A_2 = \beta_{2,0} + \beta_{2, 1} \cdot X_1 + \beta_{2, 2} \cdot X_2 + \beta_{2, 3} \cdot X_3 + \beta_{2, 4} \cdot X_4$
+
+-   . . .
+
+-   $A_5 = \beta_{5,0} + \beta_{5, 1} \cdot X_1 + \beta_{5, 2} \cdot X_2 + \beta_{5, 3} \cdot X_3 + \beta_{5, 4} \cdot X_4$
+
+-   $Y = f(X) = \beta_{6,0} + \beta_{6, 1} \cdot A_1 + \beta_{6, 2} \cdot A_2 + \beta_{6, 3} \cdot A_3 + \beta_{6, 4} \cdot A_4 + \beta_{6, 5} \cdot A_5$
+
+The intermediate variables $A_1$, ..., $A_5$ are called **hidden units** that create additional transformations of the data. By algebraic substitution, we can link the relationship between the response $Y$ with all the $X_1$, ..., $X_4$ predictors. Right now, all these relationship are linear, but in the final model we will have non-linear transformations. To incorproate the non-linear transformations, a transformation $g()$ for each of the equations:
+
+-   $A_1 = g(\beta_{1,0} + \beta_{1, 1} \cdot X_1 + \beta_{1, 2} \cdot X_2 + \beta_{1, 3} \cdot X_3 + \beta_{1, 4} \cdot X_4)$
+
+-   $A_2 = g(\beta_{2,0} + \beta_{2, 1} \cdot X_1 + \beta_{2, 2} \cdot X_2 + \beta_{2, 3} \cdot X_3 + \beta_{2, 4} \cdot X_4)$
+
+-   . . .
+
+-   $A_5 = g(\beta_{5,0} + \beta_{5, 1} \cdot X_1 + \beta_{5, 2} \cdot X_2 + \beta_{5, 3} \cdot X_3 + \beta_{5, 4} \cdot X_4)$
+
+-   $Y = f(X) = g(\beta_{6,0} + \beta_{6, 1} \cdot A_1 + \beta_{6, 2} \cdot A_2 + \beta_{6, 3} \cdot A_3 + \beta_{6, 4} \cdot A_4 + \beta_{6, 5} \cdot A_5)$
+
+This transformation $g()$ has two common forms:
+
+-   A sigmoid transformation, which is the same transformation you saw in the logistic regression model. This is shown in the green curve in the figure below.
+
+-    A rectified linear unit (ReLU) transformation. This is shown in the black curve in the figure below.
+
+![Source: An Introduction to Statistical Learning, Ch. 10, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/neural-net-2.png){width="350"}
+
+Both transformations are quite popular in neural networks, but the ReLU transformation is easier to compute, so for more larger, complex networks, people tend to use the ReLU transformation. The non-linear transformation create shapes in the neural network model that is unable to be created using linear models.
+
+To fit the neural network model, all the $\beta$s in the equation above are estimated in a way that minimizes the Mean Squared Error, similar to how a Linear Regression minimizes its Mean Squared Error to obtain its optimal parameters.
+
+## A modern example
+
+## When should you use neural networks?
+
+We see laud and hype about deep learning and AI, being deployed to various applications from marketing to biomedical research. As scientists, we need to know when it is appropriate to use a specific type of model. Let's do some reviewing about the models we have explored in this course via this figure below.
+
+![Source: An Introduction to Statistical Learning, Ch. 1, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/flexibility_vs_interpretability.png){width="500"}
+
+The two axis in the diagram here are as follows:
+
+-   **Flexibility** refers to how specific the model can fit to your Training Data. The more flexible a model is, the more likely it will over-fit to your Training Set. The less flexible a model is, the more likely it will under-fit your Training Set. The appropriate choice of flexibility is *dependent* on your Training and Testing Data. For instance, a highly non-linear dataset may require a very flexible model to get a "just-right" model that minimizes the Testing Error.
+
+-   **Interpretability** refers to how easy it is for the user to understand the learned parameters (referred to be $\beta$ in this course) of the model. For Linear and Logistic regression, there is an direct way to interpret the model, but for a highly non-linear model, such as Deep Learning, it may be much harder. Interpretability was not the focus of this course, but many researchers care about the model interpretability, which relates closely to statistical inference.
+
+Let's see where our models fall on this diagram -- we have some terminology to unpack in the context of this course.
+
+-   **Least Squares** refers to Linear Regression and its close cousin, Logistic Regression. These models are moderately flexible, but if you use too little or too many predictors you may underfitting or overfitting phenomena. These models are quite straightforward to interpret.
+
+-   **Generative Additive Models** are a class of Linear Regression closely related to the Splines Regression you saw in the week 4 exercises. These models are more flexible the Least Squares as they often have nonlinear terms glued together at breakpoints. They are harder to interpret because the nonlinear terms make it harder to explain what the weights are.
+
+-   **Lasso** is a regularization method that is arguably less flexible than Least Squares because the hyperparameter $\lambda$ forces the model to pick a smaller set of predictors, although $\lambda$ can be learned. Because the resulting terms are in a smaller linear or logistic regression form, it is quite easy to interpret. I would personally argue that **lasso** is not substantially different in interpretability and flexibility as Least Squares.
+
+-   **Deep Learning** builds the most complex model compared to the models we have seen so far in this course. It tends to have a massive amount of parameters to learn, and is very flexible to all sorts of non-linear patterns. However, the parameters are very difficult to interpret, although there is active research to develop new metrics to interpret the result of a deep learning model. Usually, because these models are big, they require a huge amount of Training Data to perform well.
