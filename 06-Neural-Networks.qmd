@@ -44,6 +44,8 @@ Both transformations are quite popular in neural networks, but the ReLU transfor
 
 To fit the neural network model, all the $\beta$s in the equation above are estimated in a way that minimizes the Mean Squared Error, similar to how a Linear Regression minimizes its Mean Squared Error to obtain its optimal parameters.
 
+Here is a tutorial that goes into a bit more depth on the model fitting progress and how it relates to the original linear model we have been working with: [https://lucy.shinyapps.io/neural-net-linear/](https://lucy.shinyapps.io/neural-net-linear/https://lucy.shinyapps.io/neural-net-linear/)
+
 ## A modern example
 
 ## When should you use neural networks?
