@@ -71,6 +71,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 import pickle
+import numpy as np
 
 with open('classroom_data/GEFITINIB_Expression.pickle', 'rb') as handle:
     gefitinib_expression = pickle.load(handle)
