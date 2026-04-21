@@ -300,7 +300,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <li><p>The <strong>tuning parameter</strong> (sometimes called <strong>hyperparameter</strong>) <span class="math inline">\(\lambda\)</span> (“lambda”) serves to control the balance between minimizing the <span class="math inline">\(MSE\)</span> vs.&nbsp;minimizing the <span class="math inline">\(Parameters\)</span>. When <span class="math inline">\(\lambda=0\)</span>, we just have to minimize the <span class="math inline">\(MSE\)</span>, ie. linear regression. When <span class="math inline">\(\lambda\)</span> is large, then we start to minimize <span class="math inline">\(Parameters\)</span> more and encourages some of the parameter estimates to be zero. Selecting the appropriate <span class="math inline">\(\lambda\)</span> is important in the model training process, and we will see how to do that in the Cross-Validation section below.</p></li>
 </ul>
 <p>Let’s see an example of the effect of <span class="math inline">\(\lambda\)</span> on a model with 5 predictors, parameter weights <span class="math inline">\(\beta_1\)</span>… <span class="math inline">\(\beta_5\)</span>.</p>
-<div id="e0c04199" class="cell" data-execution_count="1">
+<div id="b18a49e0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -340,7 +340,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <section id="example-dataset" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="example-dataset"><span class="header-section-number">6.2</span> Example dataset</h2>
 <p>Our example dataset for the high-dimensional setting centers around this question: Can we use RNA gene expression predict response to a cancer treatment? If so, then we can use RNA gene expression as a biomarker to predict how cancer patients may respond to various cancer treatments. We use data from the <a href="https://depmap.org/portal/">Dependency Map Project</a>, which has RNA gene expression profiles and cancer treatment responses on the largest collection of cancer cell line models.</p>
-<div id="02d2df16" class="cell" data-execution_count="2">
+<div id="88a34c09" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> formulaic <span class="im">import</span> model_matrix</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -356,7 +356,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 <p>Let’s start looking at the cancer drug “Gefitinib”, which is a targeted therapy for non-small cell lung cancer with EGFR mutation and high levels of EGFR expression. We might expect to find the the gene EGFR highly predictive of Gefitinib response.</p>
 <p>Let’s look at the distribution of our response. The drug response is measured in terms of <a href="https://en.wikipedia.org/wiki/Area_under_the_curve_(pharmacokinetics)">Area Under the Curve</a> (unrelated to the appendix of the ROC curve in the 3rd week), and a lower value indicates that the drug is more effective against the cancer.</p>
-<div id="d43f61a0" class="cell" data-execution_count="3">
+<div id="43ce7469" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.displot(x<span class="op">=</span><span class="st">"GEFITINIB"</span>, data<span class="op">=</span>gefitinib_expression)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -376,7 +376,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <section id="data-preparation" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">6.3</span> Data Preparation</h2>
 <p>Then, let’s look at the dimensions of this Dataframe:</p>
-<div id="0c8bb573" class="cell" data-execution_count="4">
+<div id="8c90a98d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gefitinib_expression.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>(554, 19213)</code></pre>
@@ -384,17 +384,17 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 <p>We have way more potential predictors than samples even before we split into training and testing sets! This is definitely a high-dimensional problem.</p>
 <p>Now, let’s split our data into training and testing:</p>
-<div id="6874fe77" class="cell" data-execution_count="5">
+<div id="7851406f" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gefitinib_expression_train, gefitinib_expression_test <span class="op">=</span> train_test_split(gefitinib_expression, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We create our <code>y_train</code> and <code>X_train</code> variables, and when we need to use all predictors, we indicate via the <code>.</code> symbol.</p>
-<div id="6b9d46ad" class="cell" data-execution_count="6">
+<div id="0f440a8b" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_train)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Before we fit the model, we have to do some data transformations. In linear and logistic regression, all the parameter estimates for the models are <strong>scale equivariant</strong>. That is, if we multiple a predictor by a constant <span class="math inline">\(c\)</span> and did not change anything else, the parameter estimate for that predictor will be scaled automatically <span class="math inline">\(\frac{1}{c}\)</span> in the model training process. However, in regularization methods, because we are minimizing the Mean Squared Error and the magnitude of the parameters, the parameter estimates may change substantially if the scale of a predictor changes.</p>
 <p>Therefore, the best practice is to first <strong>standardize the predictors</strong> before using regularization methods. We use the following code to ensure that each predictor has a mean of 0 and variance of 1:</p>
-<div id="7fe36062" class="cell" data-execution_count="7">
+<div id="bc926c12" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> StandardScaler().fit_transform(X_train, y_train)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> StandardScaler().fit_transform(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -409,7 +409,7 @@ minimize(MSE + \lambda \cdot Parameters)
 <section id="lasso-regression" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="lasso-regression"><span class="header-section-number">6.4</span> Lasso Regression</h2>
 <p>Let’s see how to implement cross validation in lasso regression. The <code>LassoCV</code> function will perform a search for the optimal <span class="math inline">\(\lambda\)</span> for us via Cross Validation using whatever dataset you give it as a input. For speed, we use a 2-fold cross validation, but in general people use 5 to 10 fold cross-validation.</p>
-<div id="11eb6a1c" class="cell" data-execution_count="8">
+<div id="5202f289" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>start_time <span class="op">=</span> time.perf_counter()</span>
@@ -420,11 +420,11 @@ minimize(MSE + \lambda \cdot Parameters)
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>elapsed_time <span class="op">=</span> end_time <span class="op">-</span> start_time</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Elapsed time to fit model: </span><span class="sc">{</span>elapsed_time<span class="sc">}</span><span class="ss"> seconds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Elapsed time to fit model: 13.257099218000008 seconds</code></pre>
+<pre><code>Elapsed time to fit model: 18.040170321999994 seconds</code></pre>
 </div>
 </div>
 <p>What is the <span class="math inline">\(\lambda\)</span> learned in the cross validation?</p>
-<div id="ea440f0e" class="cell" data-execution_count="9">
+<div id="5fb7c3ec" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reg.alpha_)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0.012408022529117964</code></pre>
@@ -432,7 +432,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 <p>(Notice in the code we refer to it as “alpha”. This is due to the a different in variable naming by Scikit-Learn.)</p>
 <p>We expect that only a small subset of predictors end up being used for the lasso model. What are the genes that have non-zero coefficients?</p>
-<div id="eec2237b" class="cell" data-execution_count="10">
+<div id="ca6841f4" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_train.columns[np.nonzero(reg.coef_)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>Index(['PGM3', 'RNF14', 'BEST2', 'TNS2', 'PLSCR4', 'CSTA', 'SNX21', 'ELK1',
@@ -441,7 +441,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 </div>
 <p>Now, let’s see how the model performs on the Test Set:</p>
-<div id="4f92f608" class="cell" data-execution_count="11">
+<div id="a44d2b2c" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> reg.predict(X_test_scaled)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> mean_absolute_error(y_test_predicted, y_test)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>test_err</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -450,7 +450,7 @@ minimize(MSE + \lambda \cdot Parameters)
 </div>
 </div>
 <p>Let’s look at the plot:</p>
-<div id="84ec1bac" class="cell" data-execution_count="12">
+<div id="87d9a60e" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test_predicted, y_test, alpha<span class="op">=</span><span class="fl">.5</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="fl">.9</span>, <span class="fl">.9</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>

@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -208,8 +242,12 @@ window.Quarto = {
    
   <ul>
   <li><a href="#single-layer-neural-networks" id="toc-single-layer-neural-networks" class="nav-link active" data-scroll-target="#single-layer-neural-networks"><span class="header-section-number">7.1</span> Single Layer Neural Networks</a></li>
-  <li><a href="#a-modern-example" id="toc-a-modern-example" class="nav-link" data-scroll-target="#a-modern-example"><span class="header-section-number">7.2</span> A modern example</a></li>
+  <li><a href="#a-modern-example" id="toc-a-modern-example" class="nav-link" data-scroll-target="#a-modern-example"><span class="header-section-number">7.2</span> A modern example</a>
+  <ul class="collapse">
+  <li><a href="#a-toy-example" id="toc-a-toy-example" class="nav-link" data-scroll-target="#a-toy-example"><span class="header-section-number">7.2.1</span> A Toy Example</a></li>
+  </ul></li>
   <li><a href="#when-should-you-use-neural-networks" id="toc-when-should-you-use-neural-networks" class="nav-link" data-scroll-target="#when-should-you-use-neural-networks"><span class="header-section-number">7.3</span> When should you use neural networks?</a></li>
+  <li><a href="#appendix-additional-topics-we-did-not-touch-on-in-this-course" id="toc-appendix-additional-topics-we-did-not-touch-on-in-this-course" class="nav-link" data-scroll-target="#appendix-additional-topics-we-did-not-touch-on-in-this-course"><span class="header-section-number">7.4</span> Appendix: Additional topics we did not touch on in this course</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ottrproject/OTTR_Quarto/edit/main/06-Neural-Networks.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfBvVELBg8lcynKj0TrzMlov1zil-Sbkh9VhMKRcSpeo1xo6g/viewform" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -278,6 +316,84 @@ window.Quarto = {
 </section>
 <section id="a-modern-example" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="a-modern-example"><span class="header-section-number">7.2</span> A modern example</h2>
+<p>In the 2010s, a big improvement was made in the classification of images due neural networks. A problem that researchers tackled was how to classify people’s handwriting. The figure below shows examples of handwritten digits from the “MNIST” dataset. Each grayscale image has 28x28 pixels, each with a 0-255 number showing how dark the pixel is.</p>
+<p><img src="images/neural-net-3.png" class="img-fluid" width="300"></p>
+<p>A successful classification neural network model was built with the following schematic structure:</p>
+<p><img src="images/neural-net-4.png" class="img-fluid" width="400"></p>
+<p>The input layer has 784 predictors (one for each pixel of an image), and two hidden layers with 256 and 128 predictors. This network has an astounding 235,146 parameters to be learned! In the training process, 60,000 images were used, and the final model was evaluated on 10,000 test images. Note that the sample size is significantly less than the number of parameters to be learned. That is feasible in a neural network setting, but would certainly not work for linear regression models.</p>
+<p>One might ask, how does one arrive at such a neural network structure? The answer is that the intuition is built out of careful trial and error via Cross-Validation.</p>
+<section id="a-toy-example" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="a-toy-example"><span class="header-section-number">7.2.1</span> A Toy Example</h3>
+<p>Let’s load in our high dimensional gene expression - drug sensitivity data back in. We will construct a neural network with all of the genes are predictors, have a hidden layer size of 200, and predict the drug response of Gefitinib.</p>
+<div id="10eae700" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> formulaic <span class="im">import</span> model_matrix</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pickle</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'classroom_data/GEFITINIB_Expression.pickle'</span>, <span class="st">'rb'</span>) <span class="im">as</span> handle:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    gefitinib_expression <span class="op">=</span> pickle.load(handle)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'classroom_data/DOCETAXEL_Expression.pickle'</span>, <span class="st">'rb'</span>) <span class="im">as</span> handle:</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    docetaxel_expression <span class="op">=</span> pickle.load(handle)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>gefitinib_expression_train, gefitinib_expression_test <span class="op">=</span> train_test_split(gefitinib_expression, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_train)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_test)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> StandardScaler().fit_transform(X_train, y_train)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> StandardScaler().fit_transform(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We fit the model with the following settings:</p>
+<div id="9b29ccbb" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neural_network <span class="im">import</span> MLPRegressor</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>nn <span class="op">=</span> MLPRegressor(hidden_layer_sizes<span class="op">=</span>(<span class="dv">200</span>,), random_state<span class="op">=</span><span class="dv">1</span>, max_iter<span class="op">=</span><span class="dv">5000</span>, tol<span class="op">=</span><span class="fl">0.1</span>).fit(X_train_scaled, np.ravel(y_train))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s examine the learned parameter’s dimensions:</p>
+<div id="bf5f376d" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(nn.coefs_[<span class="dv">0</span>].shape)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(nn.coefs_[<span class="dv">1</span>].shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(19213, 200)
+(200, 1)</code></pre>
+</div>
+</div>
+<p>We have a matrix of parameters of size 19,213 by 200, and a list of parameters of size 200. That’s 3.8 million parameters!</p>
+<p>Now, let’s see how the model performs on the Test Set:</p>
+<div id="c83aadde" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> nn.predict(X_test_scaled)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> mean_absolute_error(y_test_predicted, y_test)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>test_err</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>1.5499888101398203</code></pre>
+</div>
+</div>
+<p>Let’s look at the plot:</p>
+<div id="d7a3bf57" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test_predicted, y_test, alpha<span class="op">=</span><span class="fl">.5</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="fl">.9</span>, <span class="fl">.9</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Predicted AUC'</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True AUC'</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Mean Absolute Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(test_err, <span class="dv">2</span>)))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-Neural-Networks_files/figure-html/cell-6-output-1.png" width="597" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That’s pretty terrible performance, considering that the True AUC range is from .7 to 1, and the mean absolute error is 1.55!</p>
+</section>
 </section>
 <section id="when-should-you-use-neural-networks" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="when-should-you-use-neural-networks"><span class="header-section-number">7.3</span> When should you use neural networks?</h2>
@@ -298,7 +414,17 @@ window.Quarto = {
 <li><p><strong>Least Squares</strong> refers to Linear Regression and its close cousin, Logistic Regression. These models are moderately flexible, but if you use too little or too many predictors you may underfitting or overfitting phenomena. These models are quite straightforward to interpret.</p></li>
 <li><p><strong>Generative Additive Models</strong> are a class of Linear Regression closely related to the Splines Regression you saw in the week 4 exercises. These models are more flexible the Least Squares as they often have nonlinear terms glued together at breakpoints. They are harder to interpret because the nonlinear terms make it harder to explain what the weights are.</p></li>
 <li><p><strong>Lasso</strong> is a regularization method that is arguably less flexible than Least Squares because the hyperparameter <span class="math inline">\(\lambda\)</span> forces the model to pick a smaller set of predictors, although <span class="math inline">\(\lambda\)</span> can be learned. Because the resulting terms are in a smaller linear or logistic regression form, it is quite easy to interpret. I would personally argue that <strong>lasso</strong> is not substantially different in interpretability and flexibility as Least Squares.</p></li>
-<li><p><strong>Deep Learning</strong> builds the most complex model compared to the models we have seen so far in this course. It tends to have a massive amount of parameters to learn, and is very flexible to all sorts of non-linear patterns. However, the parameters are very difficult to interpret, although there is active research to develop new metrics to interpret the result of a deep learning model. Usually, because these models are big, they require a huge amount of Training Data to perform well.</p></li>
+<li><p><strong>Deep Learning</strong> builds the most complex model compared to the models we have seen so far in this course. It tends to have a massive amount of parameters to learn, and is very flexible to all sorts of non-linear patterns. However, the parameters are very difficult to interpret, although there is active research to develop new metrics to interpret the result of a deep learning model. Usually, because these models are big, they require a huge amount of Training Data to be well trained.</p></li>
+</ul>
+</section>
+<section id="appendix-additional-topics-we-did-not-touch-on-in-this-course" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="appendix-additional-topics-we-did-not-touch-on-in-this-course"><span class="header-section-number">7.4</span> Appendix: Additional topics we did not touch on in this course</h2>
+<ul>
+<li><p>Predicting Count Data</p></li>
+<li><p>Supervised vs Unsupervised Learning</p></li>
+<li><p>Statistical Inference</p></li>
+<li><p>Feature Engineering</p></li>
+<li><p>Model Deployment</p></li>
 </ul>
 
 
