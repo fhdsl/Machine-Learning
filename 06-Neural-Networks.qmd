@@ -48,6 +48,84 @@ Here is a tutorial that goes into a bit more depth on the model fitting progress
 
 ## A modern example
 
+In the 2010s, a big improvement was made in the classification of images due neural networks. A problem that researchers tackled was how to classify people's handwriting. The figure below shows examples of handwritten digits from the "MNIST" dataset. Each grayscale image has 28x28 pixels, each with a 0-255 number showing how dark the pixel is.
+
+![](images/neural-net-3.png){width="300"}
+
+A successful classification neural network model was built with the following schematic structure:
+
+![](images/neural-net-4.png){width="400"}
+
+The input layer has 784 predictors (one for each pixel of an image), and two hidden layers with 256 and 128 predictors. This network has an astounding 235,146 parameters to be learned! In the training process, 60,000 images were used, and the final model was evaluated on 10,000 test images. Note that the sample size is significantly less than the number of parameters to be learned. That is feasible in a neural network setting, but would certainly not work for linear regression models.
+
+One might ask, how does one arrive at such a neural network structure? The answer is that the intuition is built out of careful trial and error via Cross-Validation.
+
+### A Toy Example
+
+Let's load in our high dimensional gene expression - drug sensitivity data back in. We will construct a neural network with all of the genes are predictors, have a hidden layer size of 200, and predict the drug response of Gefitinib.
+
+```{python}
+from sklearn.model_selection import train_test_split
+from formulaic import model_matrix
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+import pickle
+
+with open('classroom_data/GEFITINIB_Expression.pickle', 'rb') as handle:
+    gefitinib_expression = pickle.load(handle)
+    
+with open('classroom_data/DOCETAXEL_Expression.pickle', 'rb') as handle:
+    docetaxel_expression = pickle.load(handle)
+    
+gefitinib_expression_train, gefitinib_expression_test = train_test_split(gefitinib_expression, test_size=0.2, random_state=42)
+
+y_train, X_train = model_matrix("GEFITINIB ~ .", gefitinib_expression_train)
+y_test, X_test = model_matrix("GEFITINIB ~ .", gefitinib_expression_test)
+
+X_train_scaled = StandardScaler().fit_transform(X_train, y_train)
+X_test_scaled = StandardScaler().fit_transform(X_test, y_test)
+```
+
+We fit the model with the following settings:
+
+```{python}
+from sklearn.neural_network import MLPRegressor
+
+nn = MLPRegressor(hidden_layer_sizes=(200,), random_state=1, max_iter=5000, tol=0.1).fit(X_train_scaled, np.ravel(y_train))
+```
+
+Let's examine the learned parameter's dimensions:
+
+```{python}
+print(nn.coefs_[0].shape)
+print(nn.coefs_[1].shape)
+```
+
+We have a matrix of parameters of size 19,213 by 200, and a list of parameters of size 200. That's 3.8 million parameters!
+
+Now, let's see how the model performs on the Test Set:
+
+```{python}
+y_test_predicted = nn.predict(X_test_scaled)
+test_err = mean_absolute_error(y_test_predicted, y_test)
+test_err
+```
+
+Let's look at the plot:
+
+```{python}
+plt.clf()
+plt.scatter(y_test_predicted, y_test, alpha=.5)
+plt.axline((.9, .9), slope=1, color='r', linestyle='--')
+plt.xlabel('Predicted AUC')
+plt.ylabel('True AUC')
+plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
+plt.show()
+```
+
+That's pretty terrible performance, considering that the True AUC range is from .7 to 1, and the mean absolute error is 1.55!
+
 ## When should you use neural networks?
 
 We see laud and hype about deep learning and AI, being deployed to various applications from marketing to biomedical research. As scientists, we need to know when it is appropriate to use a specific type of model. Let's do some reviewing about the models we have explored in this course via this figure below.
@@ -68,4 +146,16 @@ Let's see where our models fall on this diagram -- we have some terminology to u
 
 -   **Lasso** is a regularization method that is arguably less flexible than Least Squares because the hyperparameter $\lambda$ forces the model to pick a smaller set of predictors, although $\lambda$ can be learned. Because the resulting terms are in a smaller linear or logistic regression form, it is quite easy to interpret. I would personally argue that **lasso** is not substantially different in interpretability and flexibility as Least Squares.
 
--   **Deep Learning** builds the most complex model compared to the models we have seen so far in this course. It tends to have a massive amount of parameters to learn, and is very flexible to all sorts of non-linear patterns. However, the parameters are very difficult to interpret, although there is active research to develop new metrics to interpret the result of a deep learning model. Usually, because these models are big, they require a huge amount of Training Data to perform well.
+-   **Deep Learning** builds the most complex model compared to the models we have seen so far in this course. It tends to have a massive amount of parameters to learn, and is very flexible to all sorts of non-linear patterns. However, the parameters are very difficult to interpret, although there is active research to develop new metrics to interpret the result of a deep learning model. Usually, because these models are big, they require a huge amount of Training Data to be well trained.
+
+## Appendix: Additional topics we did not touch on in this course
+
+-   Predicting Count Data
+
+-   Supervised vs Unsupervised Learning
+
+-   Statistical Inference
+
+-   Feature Engineering
+
+-   Model Deployment
