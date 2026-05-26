@@ -18,6 +18,18 @@ If we try to run linear or logistic regression in a high-dimensional problem, it
 
 What people typically do in light of a high-dimensional problem is to use a **dimensional reduction** method, to reduce the number of features *lower* than the number of samples in the analysis. We will explore two methods today: **regularization methods** and **principal components analysis**.
 
+## Challenges of high dimension regression
+
+-   Most predictors in the model can be written as a combination of other predictors, so the problem of predictors correlated to each other is present everywhere.
+
+-   Therefore, we can never identify the best predictors of the outcome, only one of of many possible models to consider. The response can also be written as a combination of other predictors too.
+
+-   Predictor-response plots will not tell the whole story, due to projecting down too many dimensions.
+
+-   Most statistics of fit that are used in low-dimensional regression, such as p-values, $R^2$, AIC, BIC on the training dataset does not work at the high dimensional setting.
+
+-   Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
+
 ## **Regularization** methods
 
 Regularization methods will let us fit all the predictors in a model, and in the process of creating the model, it will naturally encourage some of the parameter estimates to be zero. This is an example of dimension reduction. The resulting model will have less predictors than samples. The best known regularization techniques are called **ridge** **regression** and **lasso regression**. For this class, we will use lasso regression, and you can read in the appendix the difference between the two methods.
@@ -34,7 +46,7 @@ What is going on here?
 
 -   When the $Parameters$ are minimized (such as $\beta_1, … \beta_p$), it reduces the magnitude of the parameters towards zero. This reduces the number of predictors being used in the final model, performing dimension reduction.
 
--   The **tuning parameter** (sometimes called **hyperparameter**) $\lambda$ ("lambda") serves to control the balance between minimizing the $MSE$ vs. minimizing the $Parameters$. When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression. When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero. Selecting the appropriate $\lambda$ is important in the model training process, and we will see how to do that in the Cross-Validation section below.
+-   The **tuning parameter** (sometimes called **hyperparameter**) $\lambda$ ("lambda") serves to control the balance between minimizing the $MSE$ vs. minimizing the $Parameters$. When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression. When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero. Selecting the appropriate $\lambda$ is important in the model training process, and we will see how to do that via Cross-Validation.
 
 Let's see an example of the effect of $\lambda$ on a model with 5 predictors, parameter weights $\beta_1$... $\beta_5$.
 
@@ -193,25 +205,31 @@ plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
 plt.show()
 ```
 
-## Some remarks
+## Benchmarking the Lasso
 
--   Most variables in the model can be written as a combination of other variables, so the problem of predictors correlated to each other is present everywhere.
+To understand the performance of a model, often people run **simulations** to see how it perform using a generated ground truth. In this simulation, 100 observations were generated with $p=20$, $p=50$, or $p=2000$ features, of which 20 are truly associated with the outcome. Lasso was performed on each dataset, and the X-axis on the boxplot below shows the different number of predictors chosen (Degrees of freedom) based on different values of $\lambda$, and the corresponding error on the Y-axis. We see that when the number of predictors is fairly low, Lasso was able to find a strong performing model with the number of predictors chosen close to the number of predictors truly associated with the outcome. When the number of predictors is high, the performance decreases. Even though Lasso is capable to tackling high dimensional problems, it can still get bogged by large number of dimensions.
 
--   Therefore, we can never identify the best predictors of the outcome, only one of of many possible models to consider.
+![Source: An Introduction to Statistical Learning, Ch. 6, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/lasso_simulation.png){width="500"}
 
--   Most statistics of fit that are used in low-dimensional regression, such as p-values, R\^2, AIC, BIC on the training dataset does not work at the high dimensional setting.
+## Principal Components Analysis
 
--   Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
+P**rincipal Components Analysis (PCA)** is another way to reduce the number of predictors by generating a new, smaller set of predictors that seek to capture the majority of information in the original set of predictors. Suppose that you have 100 predictors, and you look at the total variance of the predictors. When one performs PCA, the process will take a linear combination of the 100 original predictors to yield a new predictor (the first principal component) that captures the most variability of the total variance: $Z_1 = \sum^{100}_{i=1}\phi_{1i}X_i$ Then, the second principal component is another combination of the 100 original predictors that captures the most of the *remaining* variability, and is perpendicular with the first principal component: $Z_2 = \sum^{100}_{i=1}\phi_{2i}X_i$ And so on. Thus, it is possible to take the first few principal components into a new regression model while capturing most of the total variance in the data; perhaps it is possible to use $Z_1$, ..., $Z_5$ as our new predictors that capture most of the variability for $X_1$, ..., $X_{100}$ This is done with the assumption that the variability of the predictors is correlated with the variance of the response - and it is usually a fair assumption as in high dimensional data.
+
+In the plots below, we look at two predictors, Population and Ad Spending. The first plot shows the scatterplot of the two predictors, with a green line drawn through as the dimension with the most variability in the sum of variance for the two predictors. This will be the first principal component: $Z_1 = \phi_{11}X_1+\phi_{12}X_2$. Then, the dotted blue line, perpendicular to our green line, captures the remaining variability of the data. This will be the second principal component: $Z_2 = \phi_{21}X_1+\phi_{22}X_2$.
+
+![Source: An Introduction to Statistical Learning, Ch. 6, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/pca1.png){width="399"}
+
+We can now transform our original data to these principal components, using the equations above. The transformed data looks like the bottom right panel in the figure below for the first two principal components. We can then use these two components are the predictors for our model. This example is to visually illustrate what PCA looks like for two dimensions, which is not very useful because there is not a lot of dimensional reduction to make with two predictors. One can imagine that with many predictors, we can pick a few of the top principal components that capture the majority of the predictors' variance to reduce our predictor dimensional space.
+
+![Source: An Introduction to Statistical Learning, Ch. 6, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/pca2.png){width="600"}
+
+The choice of number of principal components to keep is usually decided by Cross Validation, or plotting a **Scree Plot** to find the number of principal components that the captured variance is not as significant. People typically limit the number of dimension just beyond the "elbow" shape of the Scree Plot.
+
+![Source: https://statisticsglobe.com/scree-plot-pca](images/screeplot_pca.png){width="400"}
 
 ## Other ways to reduce dimensions
 
 The Lasso Regularization method is one of the many ways one can reduce the number of dimensions in your modeling process. Here are some other common methods of reducing the number of dimensions, and they don't necessarily have to be mutually exclusive! It is common to combine multiple methods together:
-
--   Removing predictors with a large number of missing values. Many regression methods will only run on samples with non-missing values. Giving a predictor with high number of missing values may reduce the number of available samples.
-
-    -   It is important to explore *why* there are missing values in the dataset, especially whether it is related to the response variable or not. If there is a strong trend, it may create strong bias in the model.
-
-    -   As a sidenote, one can consider imputing the missing values with educated guesses. This is a big topic in statistical literature that goes beyond the scope of the course. See this [well-used reference](https://tmb.njtierney.com/) in the R community.
 
 -   We know from Linear and Logistic Regression that having co-linear predictors affect the performance of our models. We can remove the most correlated predictors.
 
@@ -225,7 +243,11 @@ The Lasso Regularization method is one of the many ways one can reduce the numbe
 
 -   Predictors with extremely low variance are generally unhelpful predictors. Imagine that a predictor only contains one single value, which has a variance of 0. It would not relate at all to the response value. It is common practice to remove predictors with variance below a low threshold.
 
--   Principal Components Analysis (PCA) is a way to reduce the number of predictors by generating a new, smaller set of predictors that seek to capture the majority of information in the original variables. Suppose that you have 100 predictors, and you look at the variance of each predictor and sum all of them up as the *total variance*. When one performs PCA, the process will take a combination of the 100 original predictors to yield a new predictor (the first principal component) that captures the most variability of the total variance. Then, the second principal component is another combination of the 100 original predictors that captures the most of the *remaining* variability, and is uncorrelated with the first principal component. And so on. Thus, it is possible to take the first few principal components into a new regression model while capturing most of the total variance in the data.
+-   Removing predictors with a large number of missing values. Many regression methods will only run on samples with non-missing values. Giving a predictor with high number of missing values may reduce the number of available samples.
+
+    -   It is important to explore *why* there are missing values in the dataset, especially whether it is related to the response variable or not. If there is a strong trend, it may create strong bias in the model.
+
+    -   As a sidenote, one can consider imputing the missing values with educated guesses. This is a big topic in statistical literature that goes beyond the scope of the course. See this [well-used reference](https://tmb.njtierney.com/) in the R community.
 
 ## Appendix: Ridge and Lasso regression
 

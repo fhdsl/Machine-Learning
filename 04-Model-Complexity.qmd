@@ -104,7 +104,8 @@ Then, we fit models of increasing flexibility via increasing polynomial terms. L
 
 ```{python}
 # Fit polynomial regression models of different degrees
-degrees = [1, 3, 10, 20]
+
+degrees = range(1, 21)
 train_errors = []
 test_errors = []
 for degree in degrees:
@@ -121,19 +122,20 @@ for degree in degrees:
     train_errors.append(mean_squared_error(y_train, train_predictions))
     test_errors.append(mean_squared_error(y_test, test_predictions))
     
-    plt.clf()
-    fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
-    ax1.scatter(x_train, y_train, color='blue')
-    ax1.scatter(x_train, train_predictions, color='red')
-    ax1.set_title("Training Set on Degree " + str(degree) + " polynomial")
-    ax1.set(xlabel='', ylabel='Response')
-    
-    ax2.scatter(x_test, y_test, color='blue')
-    ax2.scatter(x_test, test_predictions, color='red')
-    ax2.set(xlabel='Predictor', ylabel='Response')
-    ax2.set_title("Testing Set on Degree " + str(degree) + " polynomial")
-    
-    plt.show()
+    if degree == 1 or degree == 3 or degree == 6 or degree == 20:
+      plt.clf()
+      fig, (ax1, ax2) = plt.subplots(2, layout='constrained')
+      ax1.scatter(x_train, y_train, color='blue')
+      ax1.scatter(x_train, train_predictions, color='red')
+      ax1.set_title("Training Set on Degree " + str(degree) + " polynomial")
+      ax1.set(xlabel='', ylabel='Response')
+      
+      ax2.scatter(x_test, y_test, color='blue')
+      ax2.scatter(x_test, test_predictions, color='red')
+      ax2.set(xlabel='Predictor', ylabel='Response')
+      ax2.set_title("Testing Set on Degree " + str(degree) + " polynomial")
+      
+      plt.show()
 
 ```
 
@@ -367,9 +369,19 @@ mean_squared_error(y_test_predicted, y_test)
 
 ## Appendix: Small datasets
 
-Throughout this course, we have assumed that we have the luxury to consider a dataset big enough to be split into Training and Testing Sets. There are also situations where the dataset is small where we do not have enough samples to be split into Training and Testing Sets to be ready to have enough statistical certainty.
+Throughout this course, we have assumed that we have the luxury to consider a dataset big enough to be split into Training and Testing Sets. There are also situations where the dataset is small where we do not have enough samples to be split into Training and Testing Sets. The dataset is small enough that we need to maximize the number of samples for model fitting, as the model parameters require a sample size large enough to have statistical certainty.
 
-AIC, BIC, C_p
+In these scenarios, we only have one dataset to work with. Our standard metric of Mean Squared Error or Mean Absolute Error is likely an underestimate of the real world Mean Squared Error or Mean Absolute Error. This underestimate is going to be more pronounced if the drivers of Overfitting, such as a large number of predictors, or a flexible model is at use.
+
+However, there are metrics that will "adjust" the error to consider the possible amount of overfitting at risk:
+
+-   The **Akaike Information Criterion (AIC)** takes the Mean Squared Error and add a penalty for the number of predictors added. This metric is optimized for prediction and classification uses.
+
+-   The B**ayesican Information Criterion (BIC)** has a similar form as the AIC, but this metric is optimized for inference uses.
+
+For both metrics, you can calculate it after the model fit, and you should pick the model with the lowest AIC or BIC.
+
+These metrics are automatically calculated in the model fits of the `statsmodels` package.
 
 ## Exercises
 

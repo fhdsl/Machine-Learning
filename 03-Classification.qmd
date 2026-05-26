@@ -1,8 +1,6 @@
 # Classification
 
-*In the third week of class, we will look at classification...*
-
-So far, we have looked at making predictions in which the outcome is a continous value. Today, we will look at **classification**, in which our outcome is a categorical value. We first start with binary classification, in which there is only two possible outcomes, usually defined by `True` or `False` values. However, for many classification models, they predict the *probability* of whether an event happens or not, on a continuous scale from 0 to 1. Then, given the predicted probability, we draw a boundary to classify the outcome as `True` or `False` values.
+So far, we have looked at making predictions in which the outcome is a continuous value. Today, we will look at **classification**, in which our outcome is a categorical value. We first start with binary classification, in which there is only two possible outcomes, usually defined by `True` or `False` values. However, for many classification models, they predict the *probability* of whether an event happens or not, on a continuous scale from 0 to 1. Then, given the predicted probability, we draw a boundary to classify the outcome as `True` or `False` values.
 
 Using the same data as before, we define someone is at risk for $Hypertension$ if their diastolic pressure is greater than 80 or their systolic pressure is greater than 130. Our goal is to classify whether someone is at high risk for $Hypertension$.
 
@@ -101,7 +99,7 @@ logit_model = LogisticRegression().fit(X_train, y_train)
 plt.clf()
 plt.scatter(X_train.BMI, logit_model.predict_proba(X_train)[:, 1], color="red", label="Fitted Line")
 plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
-plt.xlabel('BMI')
+plt.xlabel('BMI - Binned Midpoint')
 plt.ylabel('Proportion of people with Hypertension')
 plt.ylim(0, 1)
 plt.legend()
@@ -122,7 +120,7 @@ p = logit_model.predict_proba(X_train)[:, 1]
 log_odds = np.log(p / (1 - p))
 plt.scatter(X_train.BMI, log_odds, color="red", label="Fitted Line")
 plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['log_odds'], color='blue')
-plt.xlabel('BMI')
+plt.xlabel('BMI - Binned Midpoint')
 plt.ylabel('Log Odds of Hypertension')
 plt.legend()
 plt.show()
@@ -169,7 +167,7 @@ The top left hand corner is the number of True Negatives (1128), the top right h
 
 What happened exactly? Let's look back at the Training Data: it seems that from the plots that we are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range. This range wasn't high enough for our decision boundary of 50% probability, so we missed out most of our Hypertension people.
 
-What can we do? There are lot's of things we can change about the model, but let's tinker around with the decision boundary for a moment. We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be .2?
+What can we do? There are lot's of things we can change about the model, but let's tinker around with the decision boundary for a moment. We can change the decision boundary to be lower, which will improve our sensitivity at the expense of our specificity, and vice versa if we change the decision boundary to be higher. What if we set the new decision boundary to be `.2`?
 
 ```{python}
 new_pred = [1 if x >= .2 else 0 for x in logit_model.predict_proba(X_test)[:, 1]]
@@ -277,7 +275,7 @@ logit_model_sm.summary()
 
 ## Appendix: ROC Curve
 
-If we want to explore how our decision boundary impacts our sensitivity and specificity of our classifier, the Receiver Operating Characteristic (ROC) curve is a nice visualization. The plot explores a large range of decision boundary cutoffs, and calculates the corresponding sensitivity (true positive rate) and 1 - sensitivity (false positive rate) for each cutoff.
+If we want to explore how our decision boundary impacts our sensitivity and specificity of our classifier, the Receiver Operating Characteristic (ROC) curve is a nice visualization. The plot explores a large range of decision boundary cutoffs, and calculates the corresponding sensitivity (true positive rate) and 1 - specificity (false positive rate) for each cutoff.
 
 Below is an example ROC curve showing good, worse, and bad performance. If the classifier guesses with a 50% probability, it will fall on the "chance line". The closer the curve hugs the top left corner, the better. One can also summarize this ROC curve by calculating the **Area Under the Curve**, with the highest being 1, if the ROC curve creates a perfect square, and the lowest being .5 via area created by the "chance line".
 

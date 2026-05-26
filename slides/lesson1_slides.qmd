@@ -1,0 +1,442 @@
+---
+title: "W1: The Whole Picture"
+format: 
+  revealjs:
+    smaller: true
+    scrollable: true
+    echo: true
+output-location: fragment
+---
+
+## Welcome!
+
+Please sign up for Google Classroom ([link](https://classroom.google.com/c/ODYwNjYzNzQwMjMx?cjc=bi4cgjpu)) if you haven't already.
+
+## Introductions
+
+-   Who am I?
+
+. . .
+
+-   What is [DaSL](https://ocdo.fredhutch.org/)?
+
+. . .
+
+-   Who are you?
+
+    -   Name, pronouns, group you work in
+
+    -   What you want to get out of the class
+
+    -   Something that is sprouting for you in the spring!
+
+## Who is this course for?
+
+. . .
+
+-   Folks with basic Python programming experience who are interested in implementing machine learning models for predictive modeling.
+
+. . .
+
+-   Folks who are interested to communicate with data scientists to understand the ins and outs of a machine learning problem.
+
+## Goals of the course
+
+. . .
+
+-   Implement several popular machine learning models based on the question of interest and the size and distribution of dataset at hand.
+
+. . .
+
+-   Evaluate the models based on their performance and diagnostics to understand its strengths and limitations, and improve upon it.
+
+. . .
+
+-   Technical mathematics and algorithms will not be emphasized.
+
+## Content of the course
+
+1.  Overview: the Machine Learning Workflow
+2.  Linear Regression
+3.  Logistic Regression
+4.  Model Complexity
+5.  High Dimensional Data
+6.  Neural Networks and additional topics
+
+Full course page here: <https://hutchdatascience.org/Machine-Learning/>
+
+## Format of the course
+
+. . .
+
+-   Hybrid, and recordings will be available.
+
+. . .
+
+-   1-2 hour exercises after each session are encouraged for practice; time at beginning of class provided to work on exercises.
+
+## Culture of the course
+
+. . .
+
+-   Challenge: We are learning a new language, but you already have a full-time job
+
+. . .
+
+-   *Teach not for mastery, but teach for empowerment to learn effectively.*
+
+## Culture of the course
+
+-   Challenge: We sometimes struggle with our data science in isolation, unaware that someone two doors down from us has gone through the same struggle.
+
+. . .
+
+-   *We learn and work better with our peers.*
+
+. . .
+
+-   *If you have a question, other people will likely have it.*
+
+. . .
+
+## Badge of completion
+
+We offer a [badge of completion](https://www.credly.com/org/fred-hutch/badge/machine-learning-for-python) when you finish the course!
+
+What it is:
+
+-   A display of what you accomplished in the course, shareable in your professional networks such as LinkedIn, similar to online education services such as Coursera.
+
+What it isn't:
+
+-   Accreditation through an university or degree-granting program.
+
+. . .
+
+Requirements:
+
+-   Complete badge-required sections of the exercises for 4 out of 5 assignments.
+
+## What's in a model?
+
+Suppose that we are given the [**N**ational **H**ealth **A**nd **N**utrition **E**xamination **S**urvey (NHANES) dataset](https://www.cdc.gov/nchs/nhanes/) and want to build a machine learning model to predict a person's [Mean Blood Pressure](https://en.wikipedia.org/wiki/Mean_arterial_pressure). The dataset can be [viewed here](https://docs.google.com/spreadsheets/d/1QpKCFr5EHGrTr3sbnSM_KKDgpo7GegLfa9UJxJj11OY/edit?gid=341848386#gid=341848386) in spreadsheet form.
+
+. . .
+
+**Response Variable / Outcome:** Mean Blood Pressure
+
+. . .
+
+**Predictor Variables**: 70 predictors we can consider: Age, BMI, Average Number of Hours Slept, Income, Highest Education, etc.
+
+. . .
+
+| MeanBloodPressure | Age | BMI |
+|-------------------|-----|-----|
+| 90                | 15  | 24  |
+| 120               | 52  | 30  |
+| 98                | 35  | 29  |
+| 91                | 22  | 24  |
+| 110               | 54  | 32  |
+
+Suppose that we decide to use the predictors $Age$ and $BMI$ .
+
+. . .
+
+In order to **train / fit / learn** from the data to build the model, we need:
+
+-   Data
+
+-   Response and predictor variables
+
+-   A model type
+
+The trained model will give us a function $f()$ such that $MeanBloodPressure=f(Age, BMI)$.
+
+## What's in a model?
+
+A trained Linear Model: $MeanBloodPressure= 20 + 3 \cdot Age - .2 \cdot BMI$.
+
+The numbers $20$, $3$, and $-.2$ are called **parameters** / **coefficients** of the model.
+
+. . .
+
+Then, we want to see how well the model predictions are on a *new* set of data:
+
+| True MeanBloodPressure | Predicted MeanBloodPressure | Age | BMI |
+|------------------------|-----------------------------|-----|-----|
+| 121                    | 20+3\*55-.2\*29 = 179.2     | 55  | 29  |
+| 130                    | ...                         | 36  | 24  |
+| 99                     | ...                         | 14  | 18  |
+| 89                     | ...                         | 8   | 20  |
+| 78                     | ...                         | 58  | 22  |
+
+## Broader usage
+
+A machine learning model, such as the one described above, has *two main uses:*
+
+1.  **Prediction and Classification (Focus of this course):** How accurately can we predict or classify the outcome?
+
+    -   Prediction: Given a person's $Age, BMI$, predict the person's $MeanBloodPressure$ value. The outcome is a continuous value.
+    -   Classification: Classifying Yes/No whether a person has $Hypertension$ or not using predictors $Age$ and $BMI$.
+
+. . .
+
+2.  **Inference (Secondary in this course):** How do we interpret the model?
+
+## Break!
+
+First course survey: <https://forms.gle/ytqFz67dABJzQX547>
+
+## The whole picture
+
+1.  What is the response variable's distribution?
+
+```{python}
+#| echo: false
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from formulaic import model_matrix
+import statsmodels.api as sm
+
+nhanes = pd.read_csv("../classroom_data/NHANES.csv")
+nhanes.drop_duplicates(inplace=True)
+nhanes['MeanBloodPressure'] = nhanes['BPDiaAve'] + (nhanes['BPSysAve'] - nhanes['BPDiaAve']) / 3 
+
+plt.clf()
+g = sns.displot(x="MeanBloodPressure", data=nhanes)
+g.refline(x=70, color='r', linestyle='--')
+g.refline(x=90, color='r', linestyle='--')
+plt.show()
+
+```
+
+. . .
+
+-   A lot of models assume a symmetric, continuous distribution for the model to perform well.
+
+-   If the response distribution is strongly skewed, then we may want to perform mathematical transformations fix it.
+
+-   If the response distribution has multiple peaks (multi-modal), we may want to perform mathematical transformations, or consider reformulate the problem as a (multi-class) classification problem
+
+## 2. Splitting the data
+
+The dimension of our dataset:
+
+```{python}
+#| echo: false
+print(nhanes.shape)
+```
+
+. . .
+
+-   We reserve some of the data, called the **Training Set,** to allow the model learn from the data.
+
+-   We reserve the rest of the data, called the **Testing Set,** to allow the model to be tested/evaluated on new, unseen data.
+
+-   This is to reduce **Overfitting:** As the model learns from a dataset, it will learn to recognize its patterns, and sometimes it will recognize patterns that are only specific to this data and not generalizable anywhere else. [See illustration](https://en.wikipedia.org/wiki/Overfitting#/media/File:Pyplot_overfitting.png).
+
+. . .
+
+We split the entire data *randomly* into Training and Testing sets, giving 80% of the data to Training, and 20% of the data to Testing.
+
+```{python}
+#| echo: false
+nhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)
+print("Training size:", nhanes_train.shape)
+print("Testing size:", nhanes_test.shape)
+```
+
+## 3. Exploratory Data Analysis
+
+Now, using *only* the Training Set, we try to discern which variables might be good predictors of our response by examining how they relate - is it linear, nonlinear, or something else?
+
+. . .
+
+BMI vs. MeanBloodPressure
+
+```{python}
+#| echo: false
+plt.clf()
+ax = sns.regplot(y="MeanBloodPressure", x="BMI", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+ax.set_xlim([10, 50])
+plt.show()
+```
+
+. . .
+
+Age vs. MeanBloodPressure
+
+```{python}
+#| echo: false
+plt.clf()
+ax = sns.regplot(y="MeanBloodPressure", x="Age", data=nhanes_train, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+ax.set_xlim([10, 50])
+plt.show()
+```
+
+. . .
+
+Gender vs. MeanBloodPressure
+
+```{python}
+#| echo: false
+plt.clf()
+ax = sns.boxplot(x="Gender", y="MeanBloodPressure", data=nhanes)
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+plt.show()
+```
+
+. . .
+
+DirectChol vs. MeanBloodPressure
+
+```{python}
+#| echo: false
+plt.clf()
+ax = sns.regplot(y="MeanBloodPressure", x="DirectChol", data=nhanes, lowess=True, scatter_kws={'alpha':0.1}, line_kws={'color':"r"})
+ax.axhline(y=70, color='black', linestyle='--')
+ax.axhline(y=90, color='black', linestyle='--')
+plt.show()
+```
+
+## 4. Fitting a model
+
+One of the most fundamental model that has been robust and connects to nearly all Machine Learning models is **Linear Regression**.
+
+. . .
+
+From Step 3 we decide the model will look like this:
+
+$$
+MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot BMI + \beta_3 \cdot Gender
+$$
+
+where the unknown variables $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, called **parameters** or **coefficients**, will be learned in the model training process.
+
+. . .
+
+We specify the model in our code as follows:
+
+```{python}
+y_train, X_train = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_train)
+```
+
+. . .
+
+And fit the model, which gives our parameters:
+
+```{python}
+linear_reg = linear_model.LinearRegression()
+linear_reg = linear_reg.fit(X_train, y_train)
+print(linear_reg.intercept_)
+print(linear_reg.coef_)
+```
+
+## 5. Evaluating the model
+
+Now that we have fitted our model on the training set, we can see how it performs on the testing set. In our testing set, we feed the predictors to the model, let it make a prediction, and compare it to the true outcome.
+
+. . .
+
+We need to use a metric to compare predicted vs. true outcome.
+
+-   **Mean Absolute Error (MAE**): the average of the *absolute* difference between predicted vs. true outcome.
+
+-   **Mean Squared Error (MSE)**: the average of the *squared* difference between predicted vs. true outcome. What the model is optimized to minimize.
+
+. . .
+
+```{python}
+#| echo: false
+y_test, X_test = model_matrix("MeanBloodPressure ~ Age + BMI + Gender", nhanes_test)
+y_test_predicted = linear_reg.predict(X_test)
+
+test_err = round(mean_absolute_error(y_test_predicted, y_test), 2)
+print("Test error: ", test_err)
+```
+
+. . .
+
+Let's visualize this:
+
+```{python}
+#| echo: false
+plt.clf()
+plt.scatter(y_test_predicted, y_test, alpha=.5)
+plt.axline((70, 70), slope=1, color='r', linestyle='--')
+plt.xlabel('Predicted MeanBloodPressure')
+plt.ylabel('True MeanBloodPressure')
+plt.title('Linear Regression MAE:' + str(test_err))
+plt.show()
+```
+
+## Everything together
+
+1.  The response variable
+2.  Splitting the data
+3.  Exploratory Data Analysis
+4.  Fitting a model
+5.  Evaluating the model
+
+## Questions to ask each model
+
+-   What are the assumptions needed for a model to perform well? Are the assumptions minimal, or is it highly specific to only a type of data?
+
+-   How "flexible" can the model be to fit the data? Is it easy to overfit the model to the patterns of the training data?
+
+-   How interpretable is the model? Is it easy to explain what it is doing, or is it a black box?
+
+## Notes on Python computing
+
+-   Focus of course is not on what each line of ML code is doing, but conceptually what each code chunk is doing.
+
+-   I will offer you code chunks, and you modify parts of it to fit different models.
+
+-   Data will be stored in [Pandas Dataframes](https://pandas.pydata.org/docs/index.html) and [Numpy Array](https://numpy.org/doc/stable/index.html)
+
+-   Models will involve [Scikit-Learn](https://scikit-learn.org/stable/index.html) (prediction), and [statsmodels](https://www.statsmodels.org/stable/index.html) (inference)
+
+-   Plotting packages will involve [Seaborn](https://seaborn.pydata.org/index.html) and [Matplotlib](https://matplotlib.org/)
+
+## Review of Data Structures
+
+Formally, a data structure in Python (also known as an **Object**) may contain the following:
+
+-   **Value** that holds the essential data for the data structure.
+
+-   **Attributes** that hold subset or additional data for the data structure.
+
+-   Functions called **Methods** that are for the data structure and *have to* take in the variable referenced as an input.
+
+## Dataframes
+
+-   **Value**: the 2-dimensional spreadsheet of the dataframe.
+
+-   **Attributes** that store additional values: `df.shape` gives the number of rows and columns. `df.my_col_name` access the column called "my_col_name".
+
+-   **Methods** that can be used: [df.merge(other_df, on="column_name")](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html)
+
+Feel free to look at the [cheatsheet on data structures from Intro to Python](https://docs.google.com/document/d/1IHD9_Edg3mbMY9lilAF0QWVjaKBK0eE0-hbo0fSywAA/edit?tab=t.0#heading=h.2bko76vfr8r6) to refresh yourself.
+
+## Scikit-Learn Linear Regression
+
+-   **Value**: The model itself
+
+-   **Attributes** that store additional values: `model.intercept_` gives the y-intercept value. `model.coef_` gives the coefficients.
+
+-   **Methods** that can be used:
+
+    -   `mymodel.fit(X, y)` fits the model to predictors `X` and response `y`
+
+    -   `mymodel.predict(X_test)` returns predicted values of the model given predictors `X_test`

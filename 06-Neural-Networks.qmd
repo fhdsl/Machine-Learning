@@ -36,7 +36,7 @@ This transformation $g()$ has two common forms:
 
 -   A sigmoid transformation, which is the same transformation you saw in the logistic regression model. This is shown in the green curve in the figure below.
 
--    A rectified linear unit (ReLU) transformation. This is shown in the black curve in the figure below.
+-   A rectified linear unit (ReLU) transformation. This is shown in the black curve in the figure below.
 
 ![Source: An Introduction to Statistical Learning, Ch. 10, by Gareth James, Daniela Witten, Trevor Hastie, Roebert Tibshirani, Jonathan Taylor.](images/neural-net-2.png){width="350"}
 

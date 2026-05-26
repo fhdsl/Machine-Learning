@@ -21,8 +21,6 @@ book:
     - 04-Model-Complexity.qmd
     - 05-High-Dimesional-Problems.qmd
     - 06-Neural-Networks.qmd
-    - conclusion.qmd
-    - references.qmd
   
   sidebar: 
     logo: "img/logo.png"

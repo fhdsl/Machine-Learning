@@ -1,0 +1,341 @@
+---
+title: "W3: Classification"
+format: 
+  revealjs:
+    smaller: true
+    scrollable: true
+    echo: true
+output-location: fragment
+---
+
+## Insights from Exercise 2?
+
+-   Any questions about the code?
+
+-   Does using `log()` transformation on `crim` help with model performance?
+
+-   Which predictor(s) looked colinear? How did removing change the model performance?
+
+-   Did anyone consider using polynomial regression to model non-linear relationships?
+
+-   Any outliers that we want to be mindful of?
+
+## Classification
+
+-   Today, we will look at **classification**, in which our outcome is a categorical value.
+-   For many classification models, they predict the *probability* of whether an event happens or not, on a continuous scale from 0 to 1.
+-   Then, given the predicted probability, we draw a boundary to classify the outcome as `True` or `False` values.
+-   We define someone is at risk for $Hypertension$ if their diastolic pressure is greater than 80 or their systolic pressure is greater than 130.
+
+. . .
+
+```{python}
+#| echo: False
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from formulaic import model_matrix
+from sklearn import linear_model
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.metrics import mean_squared_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+
+nhanes = pd.read_csv("../classroom_data/NHANES.csv")
+nhanes.drop_duplicates(inplace=True)
+nhanes['Hypertension'] = (nhanes['BPDiaAve'] > 80) | (nhanes['BPSysAve'] > 130)
+
+nhanes['Hypertension2'] = nhanes['Hypertension'].replace({True: "Hypertension", False: "No Hypertension"})
+
+plt.clf()
+ax = sns.histplot(x = "Hypertension2", data = nhanes)
+plt.show()
+
+```
+
+We see that there is a lot more data for the No Hypertension group (88%) compared Hypertension group (22%), so this could be a potential **class imbalance** in our modeling.
+
+## Exploratory data analysis
+
+After splitting into Training and Testing sets, we start looking at possible predictors for our model. Let's consider $BMI$ as a candidate predictor:
+
+```{python}
+#| echo: False
+nhanes_train, nhanes_test = train_test_split(nhanes, test_size=0.2, random_state=42)
+
+plt.clf()
+ax = sns.boxplot(y="Hypertension2", x="BMI", data=nhanes_train)
+ax.set_ylabel('')
+plt.show()
+```
+
+. . .
+
+However, recall that our classification model is going to be *making predictions of probabilit*y *on a continuous scale of 0 to 1* before we classify it into two categories.
+
+. . .
+
+Therefore, it makes sense to examine the relationship between BMI and empirical Hypertension probability in our data exploration.
+
+. . .
+
+To do so, we will need to *bin* our data by small chunks of BMI values and calculate the empirical Hypertension probability for that bin.
+
+. . .
+
+We plot the midpoint binned BMI value vs. empirical Hypertension probability for 20 bins:
+
+```{python}
+#| echo: False
+
+nhanes_train['bins'] = pd.cut(nhanes_train['BMI'], bins=20) 
+
+nhanes_train_binned = nhanes_train.groupby('bins')['Hypertension'].agg(['sum', 'count']).reset_index()
+nhanes_train_binned['p'] = nhanes_train_binned['sum'] / nhanes_train_binned['count']
+ 
+nhanes_train_binned['log_odds'] = np.log(nhanes_train_binned['p'] / (1 - nhanes_train_binned['p']))
+nhanes_train_binned['bin_midpoint'] = nhanes_train_binned['bins'].apply(lambda x: x.mid)
+
+nhanes_train_binned = nhanes_train_binned.replace([np.inf, -np.inf], np.nan)
+nhanes_train_binned = nhanes_train_binned.dropna()
+
+#predictor vs probability
+plt.clf()
+plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
+plt.xlabel('BMI - Binned Midpoint')
+plt.ylabel('Proportion of people with Hypertension')
+plt.ylim(0, 1)
+plt.grid(True)
+plt.show()
+```
+
+## Logistic Transformation
+
+-   Let's build the model $P(Hypertension) = f(BMI)$ , where the $P()$ function is continuous value between 0 and 1.
+
+. . .
+
+-   Can this work? $P(Hypertension)=\beta_0+\beta_1 \cdot BMI$
+
+. . .
+
+-   This does not give us outputs between 0 and 1. But the **Logistic (Sigmoid) Transformation** does:
+
+$$P(Hypertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
+
+. . .
+
+-   It gives a "S-shaped" curve between 0 and 1:
+
+```{python}
+#| echo: False
+
+y_train, X_train = model_matrix("Hypertension ~ BMI", nhanes_train)
+y_test, X_test = model_matrix("Hypertension ~ BMI", nhanes_test)
+
+logit_model = LogisticRegression().fit(X_train, y_train)
+
+plt.clf()
+plt.scatter(X_train.BMI, logit_model.predict_proba(X_train)[:, 1], color="red", label="Fitted Line")
+plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['p'], color='blue')
+plt.xlabel('BMI - Binned Midpoint')
+plt.ylabel('Proportion of people with Hypertension')
+plt.ylim(0, 1)
+plt.legend()
+plt.show()
+```
+
+## Log-Odds form
+
+Showing goodness of fit via this plot is rather difficult, because it is hard to figure out visually when the data can potentially fall on a logistic S-curve.
+
+. . .
+
+If we move the equation around so that the right hand side is linear:
+
+$$log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$$
+
+The left hand side of the equation is called the **Log-Odds**.
+
+. . .
+
+A Log-Odds of 0 indicate a 50:50 probability, positive values indicate a higher than 50% probability, and negative values indicate a lower than 50% probability.
+
+. . .
+
+If we plot BMI vs. Log-Odds:
+
+```{python}
+#| echo: False
+
+plt.clf()
+p = logit_model.predict_proba(X_train)[:, 1]
+log_odds = np.log(p / (1 - p))
+plt.scatter(X_train.BMI, log_odds, color="red", label="Fitted Line")
+plt.scatter(nhanes_train_binned['bin_midpoint'], nhanes_train_binned['log_odds'], color='blue')
+plt.xlabel('BMI - Binned Midpoint')
+plt.ylabel('Log Odds of Hypertension')
+plt.legend()
+plt.show()
+```
+
+## Model Evaluation
+
+Let's move from probability to classification: If the probability of having Hypertension is \>=50%, then classify that person having Hypertension. Otherwise, they do not have Hypertension. This cutoff called the **Decision Boundary**.
+
+. . .
+
+Given this decision boundary, let's examine evaluate the model on the test set, and look at its accuracy rate:
+
+```{python}
+#| echo: False
+
+print('Accuracy = ', accuracy_score(y_test, logit_model.predict(X_test))) 
+```
+
+What do you think?
+
+. . .
+
+Recall the class imbalance we saw: 88% of our data has No Hypertension. If we have a classifier that *always* predicted No Hypertension, then we achieve a 88% accuracy rate!
+
+## Sensitivity and Specificity
+
+Let's break down the accuracy by the Hypertension events and No Hypertension events:
+
+. . .
+
+Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TruePositives}{TruePostives+FalseNegatives}$, which is 15/(15+325) = 4%
+
+. . .
+
+Our **Specificity** (accuracy of No Hypertension events) is defined as: $\frac{TrueNegatives}{TrueNegatives+FalsePositives}$, which is 1128/(1128+24) = 98%.
+
+. . .
+
+The information is summarized via the **Confusion Matrix:**
+
+```{python}
+#| echo: False
+
+cm = confusion_matrix(y_test, logit_model.predict(X_test))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["No Hypertension", "Hyptertension"])
+disp.plot()
+plt.show()
+```
+
+The top left hand corner is the number of True Negatives (1128), the top right hand corner is the number of False Positives (24), the bottom left corner is the number of False Negatives (325), and the bottom right corner is the number of True Positives (15).
+
+## Changing the Decision Boundary
+
+We are making predictions of Hypertension for BMI of 50 or more. However, there are so few people with such a high BMI that even if most of those folks have Hypertension, the model missed most of the folks with Hypertension in the 20-40 BMI range.
+
+. . .
+
+What if we set the new decision boundary to be `.2`?
+
+```{python}
+#| echo: False
+
+new_pred = [1 if x >= .2 else 0 for x in logit_model.predict_proba(X_test)[:, 1]]
+cm = confusion_matrix(y_test, new_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["No Hypertension", "Hyptertension"])
+disp.plot()
+plt.show()
+```
+
+. . .
+
+Our **Sensitivity** (accuracy of Hypertension events) is defined as: $\frac{TP}{TP+FN}$, which is 254/(254+86) = 74%
+
+Our **Specificity** (accuracy of No Hypertension events) is defined as: $\frac{TN}{TN+FP}$, which is 582/(582+570) = 51%.
+
+## ROC Curve
+
+If we want to explore how our decision boundary impacts our sensitivity and specificity of our classifier, the **Receiver Operating Characteristic (ROC) curve** is a nice visualization. The plot calculates the corresponding Sensitivity (true positive rate) and 1 - Specificity (false positive rate) for each cutoff.
+
+![](images/roc.png){width="400"}
+
+. . .
+
+One can also summarize this ROC curve by calculating the **Area Under the Curve**, with the highest being 1, if the ROC curve creates a perfect square, and the lowest being .5 via area created by the "chance line".
+
+. . .
+
+Our model (where do our 50%, 20% cutoffs point to?):
+
+```{python}
+#| echo: False
+
+from sklearn.metrics import RocCurveDisplay
+from sklearn.metrics import roc_curve, roc_auc_score
+
+plt.clf()
+l1_disp = RocCurveDisplay.from_estimator(logit_model, X_test, y_test, name="Logistic Regression 1")
+
+plt.show()
+```
+
+## Assumptions of logistic regression
+
+Recall that our logistic regression model
+
+$$P(Hyptertension) = \frac{1}{1+e^{-(\beta_0 + \beta_1 \cdot BMI)}}$$
+
+can be rewritten as:
+
+$$log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$$
+
+. . .
+
+Therefore, we need the log odds of the response to be in linear relationship with each predictor in logistic regression.
+
+. . .
+
+Similar to the **residual** in linear regression, we compute the for **residual deviance** for logistic regression.
+
+We plot residual deviance vs predicted probability. Note that we have to use the `statsmodel` package here, as its model calculates residual deviance for us, whereas `sklearn` does not.
+
+. . .
+
+```{python}
+#| echo: False
+
+import statsmodels.api as sm
+
+model = sm.Logit(y_train, X_train)
+results = model.fit()
+
+plot_df = pd.DataFrame({'Predicted_Probability': results.predict(X_train), 'Residual_Deviance': results.resid_dev})
+plt.clf()
+ax = sns.regplot(x="Predicted_Probability", y="Residual_Deviance", data=plot_df, lowess=True, scatter_kws={'alpha':0.2}, line_kws={'color':"r"})
+plt.show()
+```
+
+. . .
+
+Ideally the residual deviance should be centered around 0 for any predictor probability value, so what we see is not ideal! If working with multiple predictors, we can break it down by plotting predictor value vs. residual devaince.
+
+. . .
+
+There are three other assumptions in logistic regression, and they are identical as linear regression's assumptions: **predictors are not collinear**, **no outliers**, and **the number of predictors is less than the number of samples**.
+
+## Inference
+
+We focus on the log-odds form of the model in inference:
+
+$$log(\frac{P(Hyptertension)}{1 - P(Hyptertension)}) = \beta_0 + \beta_1 \cdot BMI$$
+
+. . .
+
+$\beta_0$ is a parameter describing the log-odds of having $Hypertension$,\
+$\beta_1$ is a parameter describing the increase of log odds of having $Hyptertension$ per unit change of $BMI$.
+
+. . .
+
+```{python}
+#| echo: False
+
+logit_model_sm = sm.Logit(y_train, X_train).fit()
+logit_model_sm.summary()
+```
