@@ -222,18 +222,6 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Neural Networks</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">References</span></a>
-  </div>
-</li>
     </ul>
     </div>
 </nav>
@@ -303,7 +291,7 @@ window.Quarto = {
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 \]</span></p>
 <p>Our model would look like the following like the red line from our Training data:</p>
-<div id="3e12f666" class="cell" data-execution_count="1">
+<div id="e3dc2c60" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -343,7 +331,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <p>Another illustration:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://kenndanielso.github.io/mlrefined/mlrefined_images/superlearn_images/Least_Squares.png" class="img-fluid figure-img" width="800"></p>
+<p><img src="images/Least_Squares.png" class="img-fluid figure-img"></p>
 <figcaption>Image source: https://kenndanielso.github.io/mlrefined/blog_posts/8_Linear_regression/8_1_Least_squares_regression.html</figcaption>
 </figure>
 </div>
@@ -359,7 +347,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <p>The linear regression model assumes that there is a straight line (linear) relationship between the predictors and the response. It doesn’t ask for the straight line relationship to be perfect, but rather on average the cloud of points has a linear shape. If that is not true, then our prediction is going to be less accurate.</p>
 <p>We can check this relationship by seeing whether predictor is linear with the predicted response value, but this is cumbersome with multiple predictors. Rather, we typically calculate the <strong>residual</strong>, which is the difference between the response value and the predicted response value (similar to a type of model performance metrics we examined last week). Then, we can make a <strong>residual plot</strong> of the predicted response vs.&nbsp;residual. Ideally, this residual plot should have no pattern - some residuals above 0, some below 0, but no strong trend.</p>
 <p>If there’s a trend in the data, that means there are non-linear associations between some of the predictors and the response.</p>
-<div id="b18659f8" class="cell" data-execution_count="2">
+<div id="3f188519" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> y_train <span class="op">-</span> y_train_predicted</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> pd.DataFrame({<span class="st">'Age'</span>: X_train.Age, <span class="st">'Predicted_Response'</span>: np.ravel(y_train_predicted), <span class="st">'Residual'</span>: np.ravel(residual)})</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -376,7 +364,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 <p>We see there’s a slight curve in our residual plot. We will look at ways to deal with this later in this lecture.</p>
 <p>In a model with more predictors, we can dig into more details by making a residual plot of a predictor vs.&nbsp;residual. This is often used to figure out which predictor is contributing to the shape of the predicted response vs.&nbsp;residual plot.</p>
-<div id="5d31e93c" class="cell" data-execution_count="3">
+<div id="3e69c11a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(x<span class="op">=</span><span class="st">"Age"</span>, y<span class="op">=</span><span class="st">"Residual"</span>, data<span class="op">=</span>plot_df, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.2</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -391,7 +379,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </section>
 <section id="no-outliers" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="no-outliers"><span class="header-section-number">3.2.2</span> No Outliers</h3>
-<p>An <strong>outlier</strong> is an obseravtion for which the response is far from the value predicted response (y-axis). An observation has high <strong>leverage</strong> if it has an unusual predictor value (x-axis). Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. When these observations cause significant changes to the regression model, they are called <strong>influential</strong>. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.</p>
+<p>An <strong>outlier</strong> is an observation for which the response is far from the value predicted response (y-axis). An observation has high <strong>leverage</strong> if it has an unusual predictor value (x-axis). Outliers and high leverage observations arise may arise out of incorrect measurements, among many other causes. When these observations cause significant changes to the regression model, they are called <strong>influential</strong>. They may greatly contribute to the Mean Squared Error, as observations away the majority of the data will have exponentially large residuals.</p>
 <p>Some possible solutions:</p>
 <ul>
 <li><p>We can eyeball for for potential influential points by exploratory data analysis, and see how the model changes if we remove it. We may troubleshoot with the instruments that generated the data in the first place to diagnosis.</p></li>
@@ -405,10 +393,10 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <p>Some possible solutions:</p>
 <ul>
 <li><p>We can detect collinearity to look at the correlation matrix between predictors. This works well for pairwise correlations.</p></li>
-<li><p>When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn’t necessarily recommend which variables to remove.</p></li>
+<li><p>When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn’t that necessarily recommend which variables to remove.</p></li>
 </ul>
 <p>Suppose that we are consider the predictors of our training set:</p>
-<div id="5fba5a24" class="cell" data-execution_count="4">
+<div id="5750657b" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#some cleanup</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>obj_columns <span class="op">=</span> nhanes_train.select_dtypes([<span class="st">'object'</span>]).columns</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nhanes_train[obj_columns] <span class="op">=</span> nhanes_train[obj_columns].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x.astype(<span class="st">'category'</span>))</span>
@@ -431,7 +419,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 </div>
 </div>
 <p>Let’s look at a pair of predictors up close:</p>
-<div id="e10229a1" class="cell" data-execution_count="5">
+<div id="2a3b1fa7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.regplot(y<span class="op">=</span><span class="st">"Age"</span>, x<span class="op">=</span><span class="st">"Poverty"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">True</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>}, line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">"r"</span>})</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -458,7 +446,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 <p>Here is what polynomial regression is capable, visually:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="http://madrury.github.io/img/polynomial-various-degrees.png" class="img-fluid figure-img" width="700"></p>
+<p><img src="images/polynomial-various-degrees.png" class="img-fluid figure-img"></p>
 <figcaption>Source: https://madrury.github.io/jekyll/update/statistics/2017/08/04/basis-expansions.html</figcaption>
 </figure>
 </div>
@@ -470,7 +458,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
 MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 \]</span></p>
 <p>This is <em>still</em> a linear model – we have added a new predictor that gives us a quadratic shape. We use the <a href="https://matthewwardrop.github.io/formulaic/latest/guides/splines/#poly"><code>poly()</code> function</a> to generate our polynomial predictor.</p>
-<div id="841fef13" class="cell" data-execution_count="6">
+<div id="a5216d34" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ poly(Age, degree=2, raw=True)"</span>, nhanes_train)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
@@ -492,7 +480,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 </div>
 </div>
 <p>Let’s look at our Residual Plot:</p>
-<div id="7d190bf5" class="cell" data-execution_count="7">
+<div id="f45b32ce" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> y_train <span class="op">-</span> y_train_predicted</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> pd.DataFrame({<span class="st">'y_train_predicted'</span>: np.ravel(y_train_predicted), <span class="st">'residual'</span>: np.ravel(residual)})</span>
@@ -516,7 +504,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2
 <p>Here is another way to extend the Linear Model:</p>
 <p>Suppose we think that <span class="math inline">\(BMI\)</span> and <span class="math inline">\(Gender\)</span> may be good predictors of <span class="math inline">\(MeanBloodPressure\)</span>:</p>
 <p>Let’s explore the relationship between <span class="math inline">\(MeanBloodPressure\)</span> and <span class="math inline">\(BMI\)</span> separately for values of <span class="math inline">\(Gender\)</span>.</p>
-<div id="5ea90877" class="cell" data-execution_count="8">
+<div id="fdad64fa" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lmplot(y<span class="op">=</span><span class="st">"MeanBloodPressure"</span>, x<span class="op">=</span><span class="st">"BMI"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, data<span class="op">=</span>nhanes_train, lowess<span class="op">=</span><span class="va">False</span>, scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.1</span>})</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlim<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">50</span>)) </span>
@@ -542,7 +530,7 @@ MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender
 MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender
 \]</span></p>
 <p>Let’s see what happens:</p>
-<div id="f6f20dff" class="cell" data-execution_count="9">
+<div id="ec6bddb9" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI + Gender + BMI*Gender"</span>, nhanes_train)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_model.LinearRegression()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>linear_reg <span class="op">=</span> linear_reg.fit(X_train, y_train)</span>
@@ -585,7 +573,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 <p><span class="math inline">\(\beta_0\)</span> is a parameter describing the intercept of the line, and <span class="math inline">\(\beta_1\)</span> is a parameter describing the slope of the line.</p>
 <p>Suppose that from fitting the model on the Training Set, <span class="math inline">\(\beta_1=2\)</span>. That means increasing <span class="math inline">\(BMI\)</span> by 1 will lead to an increase of <span class="math inline">\(BloodPressure\)</span> by 2. This measures the strength of association between a variable and the outcome.</p>
 <p>Let’s see this in practice:</p>
-<div id="890b79b1" class="cell" data-execution_count="10">
+<div id="87b0d30c" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>y, X <span class="op">=</span> model_matrix(<span class="st">"MeanBloodPressure ~ BMI"</span>, nhanes_train)</span>
@@ -618,13 +606,13 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Date:</td>
-<td>Tue, 21 Apr 2026</td>
+<td>Thu, 11 Jun 2026</td>
 <td data-quarto-table-cell-role="th">Prob (F-statistic):</td>
 <td>4.11e-48</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Time:</td>
-<td>20:58:15</td>
+<td>22:24:10</td>
 <td data-quarto-table-cell-role="th">Log-Likelihood:</td>
 <td>-10325.</td>
 </tr>
@@ -720,7 +708,7 @@ BloodPressure=\beta_0 + \beta_1 \cdot BMI
 <br><br>Notes:<br>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 </div>
 </div>
-<p>Based on the output, <span class="math inline">\(\beta_0=69\)</span>, <span class="math inline">\(\beta_1=.55\)</span>. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the data (train or test set), so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87). Notice that we used a different package called <code>statsmodels</code> instead of <code>sklearn</code> to look the model inference.</p>
+<p>Based on the output, <span class="math inline">\(\beta_0=69\)</span>, <span class="math inline">\(\beta_1=.55\)</span>. We also see associated standard errors, p-values, and confidence intervals. This is necessarily to report and interpret because we derive these parameters based on a sample of the population, so there are statistical uncertainties associated with them. For instance, the 95% confidence interval of true population parameter will fall between (.22, .87). Notice that we used a different package called <code>statsmodels</code> instead of <code>sklearn</code> to look the model inference.</p>
 </section>
 </section>
 <section id="appendix-feature-engineering" class="level2" data-number="3.6">
