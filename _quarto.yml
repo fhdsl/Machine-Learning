@@ -43,8 +43,6 @@ book:
 
       
 
-bibliography: references.bib
-
 format:
   html:
     grid:
