@@ -87,18 +87,16 @@ Now, let's get to a real-world problem!
 Our example dataset for the high-dimensional setting centers around this question: Can we use RNA gene expression predict response to a cancer treatment? If so, then we can use RNA gene expression as a biomarker to predict how cancer patients may respond to various cancer treatments. We use data from the [Dependency Map Project](https://depmap.org/portal/), which has RNA gene expression profiles and cancer treatment responses on the largest collection of cancer cell line models.
 
 ```{python}
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from formulaic import model_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+
 import pickle
 
 with open('classroom_data/GEFITINIB_Expression.pickle', 'rb') as handle:
     gefitinib_expression = pickle.load(handle)
-    
-with open('classroom_data/DOCETAXEL_Expression.pickle', 'rb') as handle:
-    docetaxel_expression = pickle.load(handle)
 ```
 
 Let's start looking at the cancer drug "Gefitinib", which is a targeted therapy for non-small cell lung cancer with EGFR mutation and high levels of EGFR expression. We might expect to find the the gene EGFR highly predictive of Gefitinib response.
@@ -136,7 +134,7 @@ y_train, X_train = model_matrix("GEFITINIB ~ .", gefitinib_expression_train)
 y_test, X_test = model_matrix("GEFITINIB ~ .", gefitinib_expression_test)
 ```
 
-Before we fit the model, we have to do some data transformations. In linear and logistic regression, all the parameter estimates for the models are **scale equivariant**. That is, if we multiple a predictor by a constant $c$ and did not change anything else, the parameter estimate for that predictor will be scaled automatically $\frac{1}{c}$ in the model training process. However, in regularization methods, because we are minimizing the Mean Squared Error and the magnitude of the parameters, the parameter estimates may change substantially if the scale of a predictor changes.
+Before we fit the model, we have to do some data transformations. In linear and logistic regression, all the parameter estimates for the models are **scale equivariant**. That is, if we multiply a predictor by a constant $c$ and did not change anything else, the parameter estimate for that predictor will be scaled automatically $\frac{1}{c}$ in the model training process. However, in regularization methods, because we are minimizing the Mean Squared Error and the magnitude of the parameters, the parameter estimates may change substantially if the scale of a predictor changes.
 
 Therefore, the best practice is to first **standardize the predictors** before using regularization methods. We use the following code to ensure that each predictor has a mean of 0 and variance of 1:
 
@@ -198,7 +196,9 @@ Let's look at the plot:
 ```{python}
 plt.clf()
 plt.scatter(y_test_predicted, y_test, alpha=.5)
-plt.axline((.9, .9), slope=1, color='r', linestyle='--')
+plt.axline((.95, .95), slope=1, color='r', linestyle='--')
+plt.xlim(.8, 1)
+plt.ylim(.8, 1)
 plt.xlabel('Predicted AUC')
 plt.ylabel('True AUC')
 plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
@@ -213,7 +213,9 @@ To understand the performance of a model, often people run **simulations** to se
 
 ## Principal Components Analysis
 
-P**rincipal Components Analysis (PCA)** is another way to reduce the number of predictors by generating a new, smaller set of predictors that seek to capture the majority of information in the original set of predictors. Suppose that you have 100 predictors, and you look at the total variance of the predictors. When one performs PCA, the process will take a linear combination of the 100 original predictors to yield a new predictor (the first principal component) that captures the most variability of the total variance: $Z_1 = \sum^{100}_{i=1}\phi_{1i}X_i$ Then, the second principal component is another combination of the 100 original predictors that captures the most of the *remaining* variability, and is perpendicular with the first principal component: $Z_2 = \sum^{100}_{i=1}\phi_{2i}X_i$ And so on. Thus, it is possible to take the first few principal components into a new regression model while capturing most of the total variance in the data; perhaps it is possible to use $Z_1$, ..., $Z_5$ as our new predictors that capture most of the variability for $X_1$, ..., $X_{100}$ This is done with the assumption that the variability of the predictors is correlated with the variance of the response - and it is usually a fair assumption as in high dimensional data.
+P**rincipal Components Analysis (PCA)** is another way to reduce the number of predictors by generating a new, smaller set of predictors that seek to capture the majority of information in the original set of predictors. Suppose that you have 100 predictors, and you look at the total variance of the predictors. When one performs PCA, the process will take a linear combination of the 100 original predictors to yield a new predictor (the first principal component) that captures the most variability of the total variance: $Z_1 = \sum^{100}_{i=1}\phi_{1i}X_i$ .Then, the second principal component is another combination of the 100 original predictors that captures the most of the *remaining* variability, and is perpendicular with the first principal component: $Z_2 = \sum^{100}_{i=1}\phi_{2i}X_i$ And so on.
+
+Thus, it is possible to take the first few principal components into a new regression model while capturing most of the total variance in the data; perhaps it is possible to use $Z_1$, ..., $Z_5$ as our new predictors that capture most of the variability for $X_1$, ..., $X_{100}$ This is done with the assumption that the variability of the predictors is correlated with the variance of the response - and it is usually a fair assumption as in high dimensional data.
 
 In the plots below, we look at two predictors, Population and Ad Spending. The first plot shows the scatterplot of the two predictors, with a green line drawn through as the dimension with the most variability in the sum of variance for the two predictors. This will be the first principal component: $Z_1 = \phi_{11}X_1+\phi_{12}X_2$. Then, the dotted blue line, perpendicular to our green line, captures the remaining variability of the data. This will be the second principal component: $Z_2 = \phi_{21}X_1+\phi_{22}X_2$.
 
@@ -226,6 +228,83 @@ We can now transform our original data to these principal components, using the 
 The choice of number of principal components to keep is usually decided by Cross Validation, or plotting a **Scree Plot** to find the number of principal components that the captured variance is not as significant. People typically limit the number of dimension just beyond the "elbow" shape of the Scree Plot.
 
 ![Source: https://statisticsglobe.com/scree-plot-pca](images/screeplot_pca.png){width="400"}
+
+## Applying PCA on our dataset
+
+Scree Plot
+
+```{python}
+from sklearn.decomposition import PCA
+
+pca_full = PCA()
+pca_full.fit(X_train_scaled)
+
+seq = np.linspace(1, len(pca_full.explained_variance_ratio_), len(pca_full.explained_variance_ratio_)) 
+
+plt.clf()
+plt.bar(seq[:20], pca_full.explained_variance_ratio_[:20])
+plt.ylabel('Fraction of explained variances')
+plt.xlabel('Dimensions')
+plt.show()
+
+```
+
+Cross Validate our best set of PCs.
+
+```{python}
+pc_scores = pca_full.fit_transform(X_train_scaled)
+
+lin_reg = LinearRegression()
+
+components_used = []
+mean_absolute_errors = []
+nPC = 30
+
+for i in range(1, nPC + 1):
+    cv_scores = cross_val_score(estimator=lin_reg,
+                                X=pc_scores[:, 0:i],
+                                y=np.ravel(y_train),
+                                cv=5,
+                                scoring="neg_mean_absolute_error")
+
+    components_used.append(i)
+    mean_absolute_errors.append(cv_scores.mean() * -1)
+
+mse_by_n_components = pd.DataFrame(data=dict(components_used=components_used, mean_absolute_errors=mean_absolute_errors))
+
+plt.clf()
+plt.plot(np.linspace(1, nPC, nPC), mean_absolute_errors)
+plt.ylabel('Cross Validated Mean Absolute Error')
+plt.xlabel('Dimensions')
+plt.show()
+
+```
+
+Test set
+
+```{python}
+pca = PCA(n_components=20)
+
+X_train_pca = pca.fit_transform(X_train_scaled)
+X_test_pca = pca.transform(X_test_scaled)
+
+lin_reg = lin_reg.fit(X_train_pca, np.ravel(y_train))
+
+y_test_predicted = lin_reg.predict(X_test_pca)
+
+test_err = mean_absolute_error(y_test_predicted, y_test)
+test_err
+
+plt.clf()
+plt.scatter(y_test_predicted, y_test, alpha=.5)
+plt.axline((.95, .95), slope=1, color='r', linestyle='--')
+plt.xlim(.8, 1)
+plt.ylim(.8, 1)
+plt.xlabel('Predicted AUC')
+plt.ylabel('True AUC')
+plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
+plt.show()
+```
 
 ## Other ways to reduce dimensions
 

@@ -176,7 +176,6 @@ for degree in degrees:
 
 ```{python}
 #| echo: False
-
 plt.figure(figsize=(10, 6))
 plt.plot(degrees, train_errors, label='Train Error', marker='o')
 plt.plot(degrees, test_errors, label='Test Error', marker='o')
