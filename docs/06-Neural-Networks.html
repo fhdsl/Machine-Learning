@@ -311,62 +311,58 @@ window.Quarto = {
 <p>One might ask, how does one arrive at such a neural network structure? The answer is that the intuition is built out of careful trial and error via Cross-Validation.</p>
 <section id="a-toy-example" class="level3" data-number="7.2.1">
 <h3 data-number="7.2.1" class="anchored" data-anchor-id="a-toy-example"><span class="header-section-number">7.2.1</span> A Toy Example</h3>
-<p>Let’s load in our high dimensional gene expression - drug sensitivity data back in. We will construct a neural network with all of the genes are predictors, have a hidden layer size of 200, and predict the drug response of Gefitinib.</p>
-<div id="630810ef" class="cell" data-execution_count="1">
+<p>Let’s load in our high dimensional gene expression - vitamin A production rate back in. We will construct a neural network with all of the genes are predictors, have a hidden layer size of 200, and predict the production of vitamin A.</p>
+<div id="83753c16" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> formulaic <span class="im">import</span> model_matrix</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pickle</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'classroom_data/GEFITINIB_Expression.pickle'</span>, <span class="st">'rb'</span>) <span class="im">as</span> handle:</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    gefitinib_expression <span class="op">=</span> pickle.load(handle)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'classroom_data/DOCETAXEL_Expression.pickle'</span>, <span class="st">'rb'</span>) <span class="im">as</span> handle:</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    docetaxel_expression <span class="op">=</span> pickle.load(handle)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>gefitinib_expression_train, gefitinib_expression_test <span class="op">=</span> train_test_split(gefitinib_expression, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_train)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"GEFITINIB ~ ."</span>, gefitinib_expression_test)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> StandardScaler().fit_transform(X_train, y_train)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> StandardScaler().fit_transform(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>riboflavin_expression <span class="op">=</span> pd.read_csv(<span class="st">"classroom_data/riboflavin.csv"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>riboflavin_expression_train, riboflavin_expression_test <span class="op">=</span> train_test_split(riboflavin_expression, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">1234</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>y_train, X_train <span class="op">=</span> model_matrix(<span class="st">"y ~ ."</span>, riboflavin_expression_train)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>y_test, X_test <span class="op">=</span> model_matrix(<span class="st">"y ~ ."</span>, riboflavin_expression_test)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> StandardScaler().fit_transform(X_train, y_train)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> StandardScaler().fit_transform(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We fit the model with the following settings:</p>
-<div id="9450ccf6" class="cell" data-execution_count="2">
+<div id="778bf103" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neural_network <span class="im">import</span> MLPRegressor</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>nn <span class="op">=</span> MLPRegressor(hidden_layer_sizes<span class="op">=</span>(<span class="dv">200</span>,), random_state<span class="op">=</span><span class="dv">1</span>, max_iter<span class="op">=</span><span class="dv">5000</span>, tol<span class="op">=</span><span class="fl">0.1</span>).fit(X_train_scaled, np.ravel(y_train))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s examine the learned parameter’s dimensions:</p>
-<div id="0e9749e7" class="cell" data-execution_count="3">
+<div id="83140b2f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(nn.coefs_[<span class="dv">0</span>].shape)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(nn.coefs_[<span class="dv">1</span>].shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>(19213, 200)
+<pre><code>(4089, 200)
 (200, 1)</code></pre>
 </div>
 </div>
 <p>We have a matrix of parameters of size 19,213 by 200, and a list of parameters of size 200. That’s 3.8 million parameters!</p>
 <p>Now, let’s see how the model performs on the Test Set:</p>
-<div id="084c4742" class="cell" data-execution_count="4">
+<div id="fe1b4098" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>y_test_predicted <span class="op">=</span> nn.predict(X_test_scaled)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> mean_absolute_error(y_test_predicted, y_test)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>test_err</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>1.5499888101398203</code></pre>
+<pre><code>2.1317802171872198</code></pre>
 </div>
 </div>
 <p>Let’s look at the plot:</p>
-<div id="bb83d767" class="cell" data-execution_count="5">
+<div id="51586163" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test_predicted, y_test, alpha<span class="op">=</span><span class="fl">.5</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="fl">.9</span>, <span class="fl">.9</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="op">-</span><span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>), slope<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Predicted AUC'</span>)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True AUC'</span>)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Mean Absolute Error: '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(test_err, <span class="dv">2</span>)))</span>
@@ -374,12 +370,12 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06-Neural-Networks_files/figure-html/cell-6-output-1.png" width="597" height="449" class="figure-img"></p>
+<p><img src="06-Neural-Networks_files/figure-html/cell-6-output-1.png" width="587" height="449" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>That’s pretty terrible performance, considering that the True AUC range is from .7 to 1, and the mean absolute error is 1.55!</p>
+<p>That’s pretty terrible performance!</p>
 </section>
 </section>
 <section id="when-should-you-use-neural-networks" class="level2" data-number="7.3">
