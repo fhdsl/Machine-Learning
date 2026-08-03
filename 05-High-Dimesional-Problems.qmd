@@ -80,7 +80,7 @@ Now, let's get to a real-world problem!
 
 ## Example dataset
 
-Our example dataset for the high-dimensional setting centers around this question: Can we use RNA gene expression predict response to a cancer treatment? If so, then we can use RNA gene expression as a biomarker to predict how cancer patients may respond to various cancer treatments. We use data from the [Dependency Map Project](https://depmap.org/portal/), which has RNA gene expression profiles and cancer treatment responses on the largest collection of cancer cell line models.
+Our example dataset for the high-dimensional setting centers around this question: Can we use RNA gene expression a biological response? If so, then we can use RNA gene expression as a biomarker to predict downstream phenotype. We look at bacterial cultures of *Bacillus subtilis* to see whether we can use its gene expression levels to predict its riboflavin (Vitiman A) production.
 
 ```{python}
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -89,30 +89,25 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 
-import pickle
-
-with open('classroom_data/GEFITINIB_Expression.pickle', 'rb') as handle:
-    gefitinib_expression = pickle.load(handle)
+riboflavin_expression = pd.read_csv("classroom_data/riboflavin.csv")
 ```
 
-Let's start looking at the cancer drug "Gefitinib", which is a targeted therapy for non-small cell lung cancer with EGFR mutation and high levels of EGFR expression. We might expect to find the the gene EGFR highly predictive of Gefitinib response.
-
-Let's look at the distribution of our response. The drug response is measured in terms of [Area Under the Curve](https://en.wikipedia.org/wiki/Area_under_the_curve_(pharmacokinetics)) (unrelated to the appendix of the ROC curve in the 3rd week), and a lower value indicates that the drug is more effective against the cancer.
+The variable `y` corresponds to log-transformed riboflavin (vitamin B2) production rate of Bacillus subtilis. Let's take a look at its distribution.
 
 ```{python}
 plt.clf()
-g = sns.displot(x="GEFITINIB", data=gefitinib_expression)
+g = sns.displot(x="y", data=riboflavin_expression)
 plt.show()
 ```
 
-It is quite skewed, with just a few having low values.
+It looks mostly bell-shaped, with a bit of a tail in lower values.
 
 ## Data Preparation
 
 Then, let's look at the dimensions of this Dataframe:
 
 ```{python}
-gefitinib_expression.shape
+riboflavin_expression.shape
 ```
 
 We have way more potential predictors than samples even before we split into training and testing sets! This is definitely a high-dimensional problem.
@@ -120,14 +115,14 @@ We have way more potential predictors than samples even before we split into tra
 Now, let's split our data into training and testing:
 
 ```{python}
-gefitinib_expression_train, gefitinib_expression_test = train_test_split(gefitinib_expression, test_size=0.2, random_state=42)
+riboflavin_expression_train, riboflavin_expression_test = train_test_split(riboflavin_expression, test_size=0.2, random_state=1234)
 ```
 
 We create our `y_train` and `X_train` variables, and when we need to use all predictors, we indicate via the `.` symbol.
 
 ```{python}
-y_train, X_train = model_matrix("GEFITINIB ~ .", gefitinib_expression_train)
-y_test, X_test = model_matrix("GEFITINIB ~ .", gefitinib_expression_test)
+y_train, X_train = model_matrix("y ~ .", riboflavin_expression_train)
+y_test, X_test = model_matrix("y ~ .", riboflavin_expression_test)
 ```
 
 Before we fit the model, we have to do some data transformations. In linear and logistic regression, all the parameter estimates for the models are **scale equivariant**. That is, if we multiply a predictor by a constant $c$ and did not change anything else, the parameter estimate for that predictor will be scaled automatically $\frac{1}{c}$ in the model training process. However, in regularization methods, because we are minimizing the Mean Squared Error and the magnitude of the parameters, the parameter estimates may change substantially if the scale of a predictor changes.
@@ -276,7 +271,7 @@ plt.show()
 
 ```
 
-Test set
+Test set:
 
 ```{python}
 pca = PCA(n_components=20)
