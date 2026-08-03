@@ -92,7 +92,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, a
 riboflavin_expression = pd.read_csv("classroom_data/riboflavin.csv")
 ```
 
-The variable `y` corresponds to log-transformed riboflavin (vitamin B2) production rate of Bacillus subtilis. Let's take a look at its distribution.
+The variable `y` corresponds to log-transformed riboflavin (vitamin B2) production rate of *Bacillus subtilis*. Let's take a look at its distribution.
 
 ```{python}
 plt.clf()
