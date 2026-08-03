@@ -2,17 +2,15 @@
 
 In our linear and logistic regression models, we have always made the assumption that the number of predictors is less than the number of samples. However, that is not always true in the **high-dimensional** **problems.** This is when the number of predictors is *greater* than the number of samples analyzed. How could this be? Consider the following examples:
 
--   In molecular biology, high-throughput sequencing technologies can make thousands of measurements across a human genome at once, for a single sample. For instance, bulk RNA-seq can in theory measure 20,000 different gene expressions of a sample.
+- In molecular biology, high-throughput sequencing technologies can make thousands of measurements across a human genome at once, for a single sample. For instance, bulk RNA-seq can in theory measure 20,000 different gene expressions of a sample.
 
--   In computer vision, if each sample is an image, then one can derive a vast amount of measurements from an image. Each pixel could be a single measurement, or some defined **feature** of the image, such as the presence of a face or a cat. One can imagine gathering thousands of measurements from a image.
+- In computer vision, if each sample is an image, then one can derive a vast amount of measurements from an image. Each pixel could be a single measurement, or some defined **feature** of the image, such as the presence of a face or a cat. One can imagine gathering thousands of measurements from a image.
 
--   In Natural Language Processing (NLP), a document can be treated as a sample. A document consists of a large number of words, and one can derive measurements from single words, or a collection of words, such as themes or writing style. The number of measurements can be vast and large.
+- In Natural Language Processing (NLP), a document can be treated as a sample. A document consists of a large number of words, and one can derive measurements from single words, or a collection of words, such as themes or writing style. The number of measurements can be vast and large.
 
 In mathematical form, we say we have a high dimensional problem when $p$ , the number of predictors, is large relative to the number of samples:
 
-$$
-Y = \beta_0 + \beta_1 \cdot X_1 + ... + \beta_p \cdot X_p
-$$
+$$Y = \beta_0 + \beta_1 \cdot X_1 + ... + \beta_p \cdot X_p$$
 
 If we try to run linear or logistic regression in a high-dimensional problem, it will not work, due to the mathematical limits of these tools.
 
@@ -20,15 +18,15 @@ What people typically do in light of a high-dimensional problem is to use a **di
 
 ## Challenges of high dimension regression
 
--   Most predictors in the model can be written as a combination of other predictors, so the problem of predictors correlated to each other is present everywhere.
+- Most predictors in the model can be written as a combination of other predictors, so the problem of predictors correlated to each other is present everywhere.
 
--   Therefore, we can never identify the best predictors of the outcome, only one of of many possible models to consider. The response can also be written as a combination of other predictors too.
+- Therefore, we can never identify the best predictors of the outcome, only one of of many possible models to consider. The response can also be written as a combination of other predictors too.
 
--   Predictor-response plots will not tell the whole story, due to projecting down too many dimensions.
+- Predictor-response plots will not tell the whole story, due to projecting down too many dimensions.
 
--   Most statistics of fit that are used in low-dimensional regression, such as p-values, $R^2$, AIC, BIC on the training dataset does not work at the high dimensional setting.
+- Most statistics of fit that are used in low-dimensional regression, such as p-values, $R^2$, AIC, BIC on the training dataset does not work at the high dimensional setting.
 
--   Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
+- Our diagnostics plots are not feasible to scale to many dimensions, so they are generally not used in practice.
 
 ## **Regularization** methods
 
@@ -36,17 +34,15 @@ Regularization methods will let us fit all the predictors in a model, and in the
 
 Recall that in linear regression, we fit a line where the Mean Squared Error (MSE) is minimized. In regularization methods, the quantity we try to minimize for the model includes additional terms:
 
-$$
-minimize(MSE + \lambda \cdot Parameters)
-$$
+$$minimize(MSE + \lambda \cdot Parameters)$$
 
 What is going on here?
 
--   When $MSE$ is minimized, the model gives the shortest distance to the data points, just like we did in linear regression.
+- When $MSE$ is minimized, the model gives the shortest distance to the data points, just like we did in linear regression.
 
--   When the $Parameters$ are minimized (such as $\beta_1, … \beta_p$), it reduces the magnitude of the parameters towards zero. This reduces the number of predictors being used in the final model, performing dimension reduction.
+- When the $Parameters$ are minimized (such as $\beta_1, … \beta_p$), it reduces the magnitude of the parameters towards zero. This reduces the number of predictors being used in the final model, performing dimension reduction.
 
--   The **tuning parameter** (sometimes called **hyperparameter**) $\lambda$ ("lambda") serves to control the balance between minimizing the $MSE$ vs. minimizing the $Parameters$. When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression. When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero. Selecting the appropriate $\lambda$ is important in the model training process, and we will see how to do that via Cross-Validation.
+- The **tuning parameter** (sometimes called **hyperparameter**) $\lambda$ ("lambda") serves to control the balance between minimizing the $MSE$ vs. minimizing the $Parameters$. When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression. When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero. Selecting the appropriate $\lambda$ is important in the model training process, and we will see how to do that via Cross-Validation.
 
 Let's see an example of the effect of $\lambda$ on a model with 5 predictors, parameter weights $\beta_1$... $\beta_5$.
 
@@ -147,9 +143,9 @@ With this data standardization, we are almost ready for lasso regression.
 
 When using regularization methods, we have to figure out the value of $\lambda$ ("lambda"), which dictates the balance between the Mean Squared Error and model parameters to be minimized. Similar to the parameters $\beta$s in the model, $\lambda$ has to be learned in the training process also. However, there is something different about learning $\lambda$:
 
--   One needs to pick the value of $\lambda$ before the parameters $\beta$s are learned. They cannot be learned simultaneously.
+- One needs to pick the value of $\lambda$ before the parameters $\beta$s are learned. They cannot be learned simultaneously.
 
--   There is no guidance on how to pick $\lambda$: one has to try many values and see how the model performs. Whereas, for the $\beta$s, there is an algorithm (called "least squares") that is deterministic for the optimal $\beta$ value.
+- There is no guidance on how to pick $\lambda$: one has to try many values and see how the model performs. Whereas, for the $\beta$s, there is an algorithm (called "least squares") that is deterministic for the optimal $\beta$ value.
 
 Therefore, we have to find the optimal $\lambda$ to use. We can use Cross-Validation, which we learned from last week to explore the range of $\lambda$ to use.
 
@@ -310,23 +306,23 @@ plt.show()
 
 The Lasso Regularization method is one of the many ways one can reduce the number of dimensions in your modeling process. Here are some other common methods of reducing the number of dimensions, and they don't necessarily have to be mutually exclusive! It is common to combine multiple methods together:
 
--   We know from Linear and Logistic Regression that having co-linear predictors affect the performance of our models. We can remove the most correlated predictors.
+- We know from Linear and Logistic Regression that having co-linear predictors affect the performance of our models. We can remove the most correlated predictors.
 
-    -   A more nuanced way of doing this is to "remove the minimum number of predictors to ensure that all pairwise correlations are below a certain threshold". The algorithm is as follows (from "Applied Predicted Modeling" by Kuhn and Johnson):
+  - A more nuanced way of doing this is to "remove the minimum number of predictors to ensure that all pairwise correlations are below a certain threshold". The algorithm is as follows (from "Applied Predicted Modeling" by Kuhn and Johnson):
 
-        1.  Calculate the correlation matrix of the predictors
-        2.  Determine the two predictors associated with the largest absolute pairwise correlation (call them predictors A and B)
-        3.  Determine the average correlation between A and other variables. Do the same for predictor B.
-        4.  If A has a larger average correlation, remove it; otherwise remove B.
-        5.  Repeat Steps 2-4 until no absolute correlations are above the threshold.
+    1.  Calculate the correlation matrix of the predictors
+    2.  Determine the two predictors associated with the largest absolute pairwise correlation (call them predictors A and B)
+    3.  Determine the average correlation between A and other variables. Do the same for predictor B.
+    4.  If A has a larger average correlation, remove it; otherwise remove B.
+    5.  Repeat Steps 2-4 until no absolute correlations are above the threshold.
 
--   Predictors with extremely low variance are generally unhelpful predictors. Imagine that a predictor only contains one single value, which has a variance of 0. It would not relate at all to the response value. It is common practice to remove predictors with variance below a low threshold.
+- Predictors with extremely low variance are generally unhelpful predictors. Imagine that a predictor only contains one single value, which has a variance of 0. It would not relate at all to the response value. It is common practice to remove predictors with variance below a low threshold.
 
--   Removing predictors with a large number of missing values. Many regression methods will only run on samples with non-missing values. Giving a predictor with high number of missing values may reduce the number of available samples.
+- Removing predictors with a large number of missing values. Many regression methods will only run on samples with non-missing values. Giving a predictor with high number of missing values may reduce the number of available samples.
 
-    -   It is important to explore *why* there are missing values in the dataset, especially whether it is related to the response variable or not. If there is a strong trend, it may create strong bias in the model.
+  - It is important to explore *why* there are missing values in the dataset, especially whether it is related to the response variable or not. If there is a strong trend, it may create strong bias in the model.
 
-    -   As a sidenote, one can consider imputing the missing values with educated guesses. This is a big topic in statistical literature that goes beyond the scope of the course. See this [well-used reference](https://tmb.njtierney.com/) in the R community.
+  - As a sidenote, one can consider imputing the missing values with educated guesses. This is a big topic in statistical literature that goes beyond the scope of the course. See this [well-used reference](https://tmb.njtierney.com/) in the R community.
 
 ## Appendix: Ridge and Lasso regression
 

@@ -10,8 +10,8 @@ output-location: fragment
 
 ## Insights from Exercise 4?
 
--   Any questions about the code?
--   Last of class RSVP: <https://forms.gle/MtRJnFeUELSdU8Ny7>
+- Any questions about the code?
+- Last of class RSVP: <https://forms.gle/MtRJnFeUELSdU8Ny7>
 
 ## High Dimensional Problems
 
@@ -19,15 +19,15 @@ output-location: fragment
 
 . . .
 
--   In molecular biology, high-throughput sequencing technologies generate thousands of predictors across a human genome at once.
+- In molecular biology, high-throughput sequencing technologies generate thousands of predictors across a human genome at once.
 
 . . .
 
--   In computer vision, one can imagine gathering thousands of predictors from a image.
+- In computer vision, one can imagine gathering thousands of predictors from a image.
 
 . . .
 
--   In Natural Language Processing (NLP), one can derive predictors from single words, or a collection of words, such as themes or writing style.
+- In Natural Language Processing (NLP), one can derive predictors from single words, or a collection of words, such as themes or writing style.
 
 ## Challenges of high dimension regression
 
@@ -35,23 +35,23 @@ When the number of predictors is near the the number of samples or have exceeded
 
 . . .
 
--   Training error approaches 0.
+- Training error approaches 0.
 
 . . .
 
--   Most predictors in the model can be written as a combination of other predictors, so the problem of predictors correlated to each other is present everywhere.
+- Most predictors in the model can be written as a combination of other predictors, so the problem of predictors correlated to each other is present everywhere.
 
 . . .
 
--   Therefore, we can never identify the best predictors of the outcome, only one of of many possible combinations fo predictors to consider.
+- Therefore, we can never identify the best predictors of the outcome, only one of of many possible combinations fo predictors to consider.
 
 . . .
 
--   Predictor-response plots will not tell the whole story, due to projecting down too many dimensions.
+- Predictor-response plots will not tell the whole story, due to projecting down too many dimensions.
 
 . . .
 
--   Most statistics of fit that are used in low-dimensional regression, such as p-values, $R^2$, AIC, BIC on the training dataset does not work at the high dimensional setting.
+- Most statistics of fit that are used in low-dimensional regression, such as p-values, $R^2$, AIC, BIC on the training dataset does not work at the high dimensional setting.
 
 . . .
 
@@ -65,21 +65,19 @@ Solutions: **Dimension reduction** techniques, such as **regularization methods*
 
 Recall that in linear regression, we fit a line where the Mean Squared Error (MSE) is minimized. In regularization methods, the quantity we try to minimize for the model includes additional terms:
 
-$$
-minimize(MSE + \lambda \cdot Parameters)
-$$
+$$minimize(MSE + \lambda \cdot Parameters)$$
 
 . . .
 
--   When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression.
+- When $\lambda=0$, we just have to minimize the $MSE$, ie. linear regression.
 
 . . .
 
--   When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero.
+- When $\lambda$ is large, then we start to minimize $Parameters$ more and encourages some of the parameter estimates to be zero.
 
 . . .
 
--   We select $\lambda$ via Cross-Validation.
+- We select $\lambda$ via Cross-Validation.
 
 . . .
 
@@ -275,11 +273,11 @@ This is done with the assumption that the variability of the predictors is relat
 
 ## Choice on the number of Principal Components
 
--   Cross Validation
+- Cross Validation
 
 . . .
 
--   Scree Plot
+- Scree Plot
 
 . . .
 

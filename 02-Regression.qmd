@@ -10,9 +10,7 @@ Last week, we were exposed to the Linear Regression model. Today we will take it
 
 Suppose we just use one predictor, $Age$ to predict our outcome $MeanBloodPressure$.
 
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot Age
-$$
+$$MeanBloodPressure= \beta_0 + \beta_1 \cdot Age$$
 
 Our model would look like the following like the red line from our Training data:
 
@@ -96,11 +94,11 @@ An **outlier** is an observation for which the response is far from the value pr
 
 Some possible solutions:
 
--   We can eyeball for for potential influential points by exploratory data analysis, and see how the model changes if we remove it. We may troubleshoot with the instruments that generated the data in the first place to diagnosis.
+- We can eyeball for for potential influential points by exploratory data analysis, and see how the model changes if we remove it. We may troubleshoot with the instruments that generated the data in the first place to diagnosis.
 
--   We can detect an influential point via computing the studentized residuals or cook's distance and decide whether it makes sense to remove it.
+- We can detect an influential point via computing the studentized residuals or cook's distance and decide whether it makes sense to remove it.
 
--   We can use a different linear regression method, called Huber loss regression, that allows more tolerance for outliers.
+- We can use a different linear regression method, called Huber loss regression, that allows more tolerance for outliers.
 
 ### Predictors are not colinear
 
@@ -108,9 +106,9 @@ Some possible solutions:
 
 Some possible solutions:
 
--   We can detect collinearity to look at the correlation matrix between predictors. This works well for pairwise correlations.
+- We can detect collinearity to look at the correlation matrix between predictors. This works well for pairwise correlations.
 
--   When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn't that necessarily recommend which variables to remove.
+- When there is a collinear relationship between three or more predictors, pairwise methods will fail. We may consider the Variance Inflation Factor to detect them, but doesn't that necessarily recommend which variables to remove.
 
 Suppose that we are consider the predictors of our training set:
 
@@ -156,13 +154,10 @@ Here is what polynomial regression is capable, visually:
 
 Recall our original equation:
 
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot Age 
-$$ We can include transformed versions of the predictors to have other shapes, such as a quadratic shape:
+$$MeanBloodPressure= \beta_0 + \beta_1 \cdot Age $$
+We can include transformed versions of the predictors to have other shapes, such as a quadratic shape:
 
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2 
-$$
+$$MeanBloodPressure= \beta_0 + \beta_1 \cdot Age + \beta_2 \cdot Age^2 $$
 
 This is *still* a linear model -- we have added a new predictor that gives us a quadratic shape. We use the [`poly()` function](https://matthewwardrop.github.io/formulaic/latest/guides/splines/#poly) to generate our polynomial predictor.
 
@@ -215,17 +210,13 @@ plt.show()
 
 The only model we know that relates all of these variables is:
 
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender 
-$$
+$$MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender $$
 
 According to our model, the relationship between $BMI$ and $MeanBloodPressure$ is a linear line with slope $\beta_1$, and the additional predictor of $Gender$ will change our prediction by only a constant, $\beta_2$. Visually, that would look like two parallel lines, with $\beta_2$ dictating the distance between parallel lines. However, this plot suggests that our original model isn't quite right: the additional predictor of $Gender$ changes our prediction by more than a constant - it is dependent on $BMI$ also.
 
 When multiple predictors have an synergistic effect on the outcome, their effect on the outcome occurs jointly - this is called an **Interaction**. To incorporate this into our model, we add an interaction term:
 
-$$
-MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender 
-$$
+$$MeanBloodPressure= \beta_0 + \beta_1 \cdot BMI + \beta_2 \cdot Gender + \beta_3 \cdot BMI \cdot Gender $$
 
 Let's see what happens:
 
@@ -265,9 +256,7 @@ Now let's examine the function $f()$'s trained values, which are called **parame
 
 For the Linear Model, the model we first fitted was of the following form:
 
-$$
-BloodPressure=\beta_0 + \beta_1 \cdot BMI
-$$
+$$BloodPressure=\beta_0 + \beta_1 \cdot BMI$$
 
 which is an equation of a line.
 
