@@ -271,31 +271,7 @@ plt.show()
 
 ```
 
-Test set:
-
-```{python}
-pca = PCA(n_components=20)
-
-X_train_pca = pca.fit_transform(X_train_scaled)
-X_test_pca = pca.transform(X_test_scaled)
-
-lin_reg = lin_reg.fit(X_train_pca, np.ravel(y_train))
-
-y_test_predicted = lin_reg.predict(X_test_pca)
-
-test_err = mean_absolute_error(y_test_predicted, y_test)
-test_err
-
-plt.clf()
-plt.scatter(y_test_predicted, y_test, alpha=.5)
-plt.axline((.95, .95), slope=1, color='r', linestyle='--')
-plt.xlim(.8, 1)
-plt.ylim(.8, 1)
-plt.xlabel('Predicted AUC')
-plt.ylabel('True AUC')
-plt.title('Mean Absolute Error: ' + str(round(test_err, 2)))
-plt.show()
-```
+We would continue this on to be evaluated on the Test Set.
 
 ## Other ways to reduce dimensions
 
