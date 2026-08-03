@@ -72,6 +72,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, log_loss, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 riboflavin_expression = pd.read_csv("classroom_data/riboflavin.csv")
 
